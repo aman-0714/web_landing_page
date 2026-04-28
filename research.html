@@ -3,9 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Research - Madan Kumar Das</title>
+  <title>Research - Sandeep Anand</title>
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="research.css">
+  <style>
+  .sub-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    overflow-x: auto;
+  }
+  .sub-nav a {
+    text-decoration: none;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 10px 18px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sub-nav a:hover { color: var(--text); }
+  .sub-nav a.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
+
+  .highlight-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--green);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 8px;
+  }
+
+  .note { font-size: 12px; color: #999; margin-bottom: 20px; }
+
+  .research-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding-bottom: 48px;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .card img { width: 100%; display: block; object-fit: cover; max-height: 200px; }
+  .card p { font-size: 13px; color: var(--muted); padding: 14px 16px; line-height: 1.6; }
+  </style>
 </head>
 <body>
 
@@ -52,7 +102,7 @@
 </div>
 
 <footer class="site-footer">
-  <a href="admin-login.html">⚙ Admin</a>
+  <a href="admin-login.html" style="color:#3a7d1e;">⚙ Admin</a>
 </footer>
 
 <script>
@@ -90,13 +140,11 @@ cards.forEach(card => {
   if (src) {
     div.innerHTML =
       '<img src="' + src + '" onclick="window.open(this.src)" style="cursor:zoom-in" title="Click to view full size">' +
-      '<div class="card-body"><p>' + card.desc + '</p></div>' +
-      '<div class="card-footer">&nbsp;</div>';
+      '<p>' + card.desc + '</p>';
   } else {
     div.innerHTML =
-      '<div class="no-image">No image uploaded</div>' +
-      '<div class="card-body"><p>' + card.desc + '</p></div>' +
-      '<div class="card-footer">&nbsp;</div>';
+      '<div style="display:flex;align-items:center;justify-content:center;height:200px;background:#f5f5f5;color:#aaa;font-size:13px;">No image uploaded</div>' +
+      '<p>' + card.desc + '</p>';
   }
   grid.appendChild(div);
 });
