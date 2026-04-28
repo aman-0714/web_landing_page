@@ -2,27 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-<<<<<<< HEAD
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Research - Sandeep Anand</title>
-=======
-  <title>Research - Dr Madan Kumar Das</title>
->>>>>>> b0d7fd9e02cd7f9b281fae7ab76a411e9ee80c15
-  <link rel="stylesheet" href="research.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+  .sub-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+    overflow-x: auto;
+  }
+  .sub-nav a {
+    text-decoration: none;
+    font-size: 13px;
+    color: var(--muted);
+    padding: 10px 18px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sub-nav a:hover { color: var(--text); }
+  .sub-nav a.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
+
+  .highlight-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--green);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 8px;
+  }
+
+  .note { font-size: 12px; color: #999; margin-bottom: 20px; }
+
+  .research-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding-bottom: 48px;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.2s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .card img { width: 100%; display: block; object-fit: cover; max-height: 200px; }
+  .card p { font-size: 13px; color: var(--muted); padding: 14px 16px; line-height: 1.6; }
+  </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="left">
-    <h1 id="hdr_name">Dr Madan Kumar Das</h1>
-    <p id="hdr_sub">
+<header class="site-header">
+  <div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_title">
       Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
-    </p>
+    </div>
   </div>
-  <div class="divider-vertical"></div>
-  <nav class="nav">
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
     <a href="index.html">Home</a>
     <a href="research.html" class="active">Research</a>
     <a href="teaching.html">Teaching</a>
@@ -30,34 +76,34 @@
   </nav>
 </header>
 
-<div class="line"></div>
+<div class="page-wrap">
+  <div class="page-bar">Research</div>
 
-<!-- SUB NAV -->
-<div class="sub-nav">
-  <a href="research.html" class="active">Overview</a>
-  <a href="publications.html">Publications</a>
-  <a href="projects.html">Projects</a>
-  <a href="students.html">Students</a>
-  <a href="presentations.html">Presentations &amp; Videos</a>
-  <a href="positions.html">Open Positions</a>
+  <!-- SUB NAV -->
+  <div class="sub-nav">
+    <a href="research.html" class="active">Overview</a>
+    <a href="publications.html">Publications</a>
+    <a href="projects.html">Projects</a>
+    <a href="students.html">Students</a>
+    <a href="presentations.html">Presentations &amp; Videos</a>
+    <a href="positions.html">Open Positions</a>
+  </div>
+
+  <!-- HIGHLIGHT -->
+  <div class="highlight-box">
+    Research and Development Activities:
+  </div>
+
+  <p class="note">Click images to see full size.</p>
+
+  <!-- GRID (populated by JS) -->
+  <div class="research-grid" id="research_grid"></div>
+
 </div>
 
-<div class="line"></div>
-
-<!-- HIGHLIGHT -->
-<div class="highlight-box">
-  Research and Development Activities:
-</div>
-
-<p class="note">Click images to see full size.</p>
-
-<!-- GRID (populated by JS) -->
-<div class="research-grid" id="research_grid"></div>
-
-<!-- Admin link -->
-<div style="text-align:right;padding:20px 40px;font-size:12px;">
-  <a href="admin-login.html" style="color:#bbb;text-decoration:none;">⚙ Admin</a>
-</div>
+<footer class="site-footer">
+  <a href="admin-login.html">⚙ Admin</a>
+</footer>
 
 <script>
 // Apply profile header
@@ -67,7 +113,7 @@ const dept  = localStorage.getItem("admin_prof_dept");
 const inst  = localStorage.getItem("admin_prof_institute");
 if (name) document.getElementById("hdr_name").textContent = name;
 if (title || dept || inst) {
-  document.getElementById("hdr_sub").innerHTML =
+  document.getElementById("hdr_title").innerHTML =
     (title||"Assistant Professor (Grade-II)") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
     (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
 }
@@ -90,7 +136,6 @@ grid.innerHTML = "";
 cards.forEach(card => {
   const div = document.createElement("div");
   div.className = "card";
-  // Support both old {img} format and new {imgData} format
   const src = card.imgData || card.img || "";
   if (src) {
     div.innerHTML =
