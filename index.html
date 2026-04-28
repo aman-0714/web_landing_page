@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sandeep Anand</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -132,10 +133,10 @@ const DEFAULT_LINKS = [
   { label: "Google Scholar Profile", url: "#", isNew: false }
 ];
 const rawLinks = localStorage.getItem("admin_quicklinks");
-const links = rawLinks ? JSON.parse(rawLinks) : DEFAULT_LINKS;
+const quickLinks = rawLinks ? JSON.parse(rawLinks) : DEFAULT_LINKS;
 const ul = document.getElementById("quick_links_list");
 ul.innerHTML = "";
-links.forEach(lk => {
+quickLinks.forEach(lk => {
   const li = document.createElement("li");
   li.innerHTML = (lk.isNew ? '<span class="new">New:</span> ' : '') +
     '<a href="' + (lk.url||"#") + '">' + lk.label + '</a>';

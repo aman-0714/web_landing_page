@@ -1,20 +1,21 @@
 body {
   font-family: Arial, sans-serif;
-  
   background: #fff;
   color: #333;
   max-width: 900px;
   margin: auto;
-  body {
+  padding: 0 16px;
+  box-sizing: border-box;
   font-weight: normal;
-}
 }
 
 .header {
   display: flex;
   align-items: center;
-  padding: 30px 0px;
+  padding: 30px 0;
   max-width: 900px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .header-left h1 {
@@ -35,13 +36,15 @@ body {
   width: 1px;
   height: 60px;
   background: #ccc;
-  margin: 0 40px;
+  margin: 0 30px;
 }
 
 /* NAV */
 .nav {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .nav a {
@@ -83,11 +86,9 @@ body {
 }
 
 .container {
-  
-  padding: 40px;
-   display: grid;
+  display: grid;
   grid-template-columns: 280px 1fr 300px;
-   gap: 40px;
+  gap: 35px;
   padding-top: 20px;
 }
 .about {
@@ -231,4 +232,63 @@ p {
 /* HOVER EFFECT */
 .nav a:hover {
   color: #000;
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — TABLET (≤ 768px)
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 0;
+  }
+
+  .divider-vertical {
+    display: none;
+  }
+
+  .nav {
+    gap: 12px;
+  }
+
+  .nav a {
+    margin-right: 0;
+    font-size: 16px;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-top: 12px;
+  }
+
+  .left-section img {
+    max-width: 220px;
+  }
+
+  .about {
+    max-width: 100%;
+  }
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 480px)
+══════════════════════════════════════ */
+@media (max-width: 480px) {
+  .header-left h1 {
+    font-size: 22px;
+  }
+
+  .nav a {
+    font-size: 14px;
+  }
+
+  .home {
+    font-size: 16px;
+  }
+
+  p {
+    font-size: 13px;
+  }
 }

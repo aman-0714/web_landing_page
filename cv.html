@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CV - Sandeep Anand</title>
   <style>
     body {
@@ -13,16 +14,19 @@
 
     .container {
       width: 90%;
+      max-width: 1000px;
       margin: auto;
       padding: 20px;
       background: white;
+      box-sizing: border-box;
     }
 
    .header {
   display: flex;
   align-items: center;
   padding: 30px 0px;
-  max-width: 900px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .header-left h1 {
@@ -66,11 +70,30 @@
       padding-bottom: 5px;
     }
 
-    /* Layout */
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 0;
+      }
+      .divider-vertical { display: none; }
+      .nav a { margin: 0 8px; font-size: 14px; }
+      .grid { grid-template-columns: 1fr; }
+      .name { font-size: 22px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 12px; }
+      .name { font-size: 18px; }
+      .nav a { font-size: 13px; margin: 0 6px; }
+      li { font-size: 13px; }
+      p { font-size: 13px; }
     }
 
     .section {

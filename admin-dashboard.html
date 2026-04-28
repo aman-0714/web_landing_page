@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard – Sandeep Anand</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, sans-serif; background: #f0f3eb; color: #333; }
 
-    /* TOPBAR */
     .topbar {
       background: #3a7d1e; color: #fff; display: flex;
       align-items: center; justify-content: space-between;
@@ -25,10 +25,8 @@
     }
     .btn-logout:hover { background: rgba(255,255,255,0.25); }
 
-    /* LAYOUT */
     .layout { display: flex; min-height: calc(100vh - 50px); }
 
-    /* SIDEBAR */
     .sidebar {
       width: 220px; background: #fff; border-right: 1px solid #ddd;
       padding: 20px 0; flex-shrink: 0; position: sticky;
@@ -47,9 +45,7 @@
     .sidebar a.active { background: #eef5e8; color: #3a7d1e;
                         border-left-color: #3a7d1e; font-weight: bold; }
 
-    /* MAIN */
-    .main { flex: 1; padding: 30px; max-width: 900px; }
-
+    .main { flex: 1; padding: 30px; max-width: 900px; overflow-x: hidden; }
     .page { display: none; }
     .page.active { display: block; }
 
@@ -59,7 +55,6 @@
     }
     .page-desc { font-size: 13px; color: #888; margin-bottom: 24px; }
 
-    /* CARD */
     .form-card {
       background: #fff; border: 1px solid #ddd; border-radius: 6px;
       padding: 24px; margin-bottom: 20px;
@@ -70,20 +65,58 @@
 
     label { display: block; font-size: 12px; color: #666; font-weight: bold;
             letter-spacing: 0.3px; margin-bottom: 5px; }
-    input[type=text], input[type=email], input[type=tel], textarea, select {
+    input[type=text], input[type=email], input[type=tel], textarea {
       width: 100%; padding: 9px 12px; border: 1px solid #ccc;
       border-radius: 4px; font-size: 14px; font-family: Arial, sans-serif;
       transition: border-color .2s; background: #fafafa;
     }
-    input:focus, textarea:focus, select:focus {
-      outline: none; border-color: #3a7d1e; background: #fff;
-    }
+    input:focus, textarea:focus { outline: none; border-color: #3a7d1e; background: #fff; }
     textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
     .field { margin-bottom: 16px; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
-    /* BUTTONS */
+    /* ── Image Upload Widget ── */
+    .img-upload-box {
+      border: 2px dashed #c8d8b8; border-radius: 6px; padding: 0;
+      background: #f7faf3; overflow: hidden; position: relative;
+      transition: border-color .2s;
+    }
+    .img-upload-box:hover { border-color: #3a7d1e; }
+
+    .img-upload-area {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 24px 16px; cursor: pointer;
+      gap: 8px; min-height: 120px;
+    }
+    .img-upload-area .icon { font-size: 32px; line-height: 1; }
+    .img-upload-area .label-text { font-size: 13px; color: #3a7d1e; font-weight: bold; }
+    .img-upload-area .hint { font-size: 11px; color: #999; }
+
+    .img-upload-box input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer;
+      width: 100%; height: 100%; padding: 0; border: none; background: none;
+    }
+
+    .img-upload-preview {
+      width: 100%; max-height: 180px; object-fit: cover;
+      display: none; border-top: 1px solid #ddd;
+    }
+
+    .img-upload-footer {
+      display: none; align-items: center; justify-content: space-between;
+      padding: 6px 10px; background: #eef5e8; font-size: 12px; color: #555;
+      border-top: 1px solid #c8d8b8;
+    }
+    .img-upload-footer .fname { font-weight: bold; color: #3a7d1e;
+                                 max-width: 200px; overflow: hidden;
+                                 text-overflow: ellipsis; white-space: nowrap; }
+    .img-clear-btn {
+      background: none; border: none; color: #c0392b; cursor: pointer;
+      font-size: 12px; padding: 2px 6px; border-radius: 3px;
+    }
+    .img-clear-btn:hover { background: #fdf0f0; }
+
+    /* ── Buttons ── */
     .btn-save {
       background: #3a7d1e; color: #fff; border: none; padding: 10px 24px;
       border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold;
@@ -103,7 +136,7 @@
     }
     .btn-del:hover { background: #fdf0f0; }
 
-    /* SUCCESS TOAST */
+    /* ── Toast ── */
     .toast {
       position: fixed; bottom: 30px; right: 30px; background: #3a7d1e;
       color: #fff; padding: 12px 24px; border-radius: 6px;
@@ -113,41 +146,48 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
 
-    /* RESEARCH CARD ROW */
+    /* ── Research card row ── */
     .research-item {
       border: 1px solid #ddd; border-radius: 5px; padding: 16px;
       margin-bottom: 14px; background: #fafafa; position: relative;
     }
-    .research-item .del-btn {
-      position: absolute; top: 12px; right: 12px;
+    .research-item .del-btn { position: absolute; top: 12px; right: 12px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .layout { flex-direction: column; }
+      .sidebar {
+        width: 100%; height: auto; position: static;
+        display: flex; flex-wrap: wrap; padding: 10px 16px;
+        border-right: none; border-bottom: 1px solid #ddd;
+      }
+      .sidebar .section-label { width: 100%; }
+      .sidebar a { padding: 8px 12px; font-size: 13px; border-left: none;
+                   border-bottom: 3px solid transparent; }
+      .sidebar a.active { border-bottom-color: #3a7d1e; border-left: none; }
+      .main { padding: 16px; }
+      .row { grid-template-columns: 1fr; }
+      .research-item .del-btn { position: static; margin-bottom: 10px; }
+      .research-item .row { margin-right: 0 !important; }
+      .topbar h1 { font-size: 14px; }
+    }
+    @media (max-width: 480px) {
+      .topbar { padding: 10px 16px; }
+      .topbar h1 { font-size: 13px; }
+      .btn-save, .btn-add { width: 100%; text-align: center; }
     }
 
-    /* IMAGE PREVIEW */
-    .img-preview {
-      width: 100%; max-height: 160px; object-fit: cover;
-      border: 1px solid #ddd; border-radius: 4px; margin-top: 8px; display: none;
-    }
-
-    /* QUICK LINKS LIST */
+    /* ── Quick links ── */
     .link-item {
       display: flex; align-items: center; gap: 10px;
       margin-bottom: 10px; padding: 10px; background: #fafafa;
       border: 1px solid #eee; border-radius: 4px;
     }
     .link-item input { margin: 0; }
-    .link-item .is-new { width: 60px; flex-shrink: 0; }
-
-    /* PREVIEW BADGE */
-    .badge {
-      display: inline-block; background: #eef5e8; color: #3a7d1e;
-      font-size: 11px; padding: 2px 8px; border-radius: 12px;
-      font-weight: bold; margin-left: 8px; vertical-align: middle;
-    }
   </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <div class="topbar">
   <h1>🛠 Admin Dashboard <span style="font-weight:normal;font-size:14px;opacity:.8">– Sandeep Anand, IIT Bombay</span></h1>
   <div class="right">
@@ -158,165 +198,140 @@
 
 <div class="layout">
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="section-label">Home Page</div>
     <a href="#" class="active" onclick="show('profile',this)">👤 Profile & Contact</a>
     <a href="#" onclick="show('about',this)">📝 About Me</a>
     <a href="#" onclick="show('quicklinks',this)">🔗 Quick Links</a>
-
     <div class="section-label">Research</div>
     <a href="#" onclick="show('research',this)">🔬 Research Cards</a>
-
     <div class="section-label">Other</div>
     <a href="#" onclick="show('password',this)">🔒 Change Password</a>
   </div>
 
-  <!-- MAIN CONTENT -->
   <div class="main">
 
-    <!-- ========== PROFILE ========== -->
+    <!-- ===== PROFILE ===== -->
     <div class="page active" id="page-profile">
       <h2 class="page-title">Profile & Contact</h2>
-      <p class="page-desc">Edit the professor's name, title, contact details, and profile image shown on the Home page.</p>
+      <p class="page-desc">Edit the professor's name, title, contact details, and profile photo.</p>
 
       <div class="form-card">
         <h3>Basic Info</h3>
         <div class="row">
-          <div class="field">
-            <label>Full Name</label>
-            <input type="text" id="prof_name" placeholder="e.g. Sandeep Anand">
-          </div>
-          <div class="field">
-            <label>Title / Designation</label>
-            <input type="text" id="prof_title" placeholder="e.g. Professor">
-          </div>
+          <div class="field"><label>Full Name</label>
+            <input type="text" id="prof_name" placeholder="Sandeep Anand"></div>
+          <div class="field"><label>Title / Designation</label>
+            <input type="text" id="prof_title" placeholder="Professor"></div>
         </div>
         <div class="row">
-          <div class="field">
-            <label>Department</label>
-            <input type="text" id="prof_dept" placeholder="e.g. Dept. of Electrical Engineering">
-          </div>
-          <div class="field">
-            <label>Institute</label>
-            <input type="text" id="prof_institute" placeholder="e.g. Indian Institute of Technology Bombay">
-          </div>
+          <div class="field"><label>Department</label>
+            <input type="text" id="prof_dept" placeholder="Dept. of Electrical Engineering"></div>
+          <div class="field"><label>Institute</label>
+            <input type="text" id="prof_institute" placeholder="Indian Institute of Technology Bombay"></div>
         </div>
       </div>
 
       <div class="form-card">
         <h3>Contact Details</h3>
-        <div class="field">
-          <label>Office Address</label>
-          <textarea id="prof_address" rows="2" placeholder="Ground Floor, Dept. of Elec. Engg., IIT Bombay, Mumbai - 400076"></textarea>
-        </div>
+        <div class="field"><label>Office Address</label>
+          <textarea id="prof_address" rows="2" placeholder="Ground Floor, Dept. of Elec. Engg., IIT Bombay"></textarea></div>
         <div class="row">
-          <div class="field">
-            <label>Phone</label>
-            <input type="tel" id="prof_phone" placeholder="(91) 22 2576 7409">
-          </div>
-          <div class="field">
-            <label>Email</label>
-            <input type="email" id="prof_email" placeholder="example@iitb.ac.in">
-          </div>
+          <div class="field"><label>Phone</label>
+            <input type="tel" id="prof_phone" placeholder="(91) 22 2576 7409"></div>
+          <div class="field"><label>Email</label>
+            <input type="email" id="prof_email" placeholder="example@iitb.ac.in"></div>
         </div>
-        <div class="field">
-          <label>Google Calendar URL</label>
-          <input type="text" id="prof_cal" placeholder="https://calendar.google.com/...">
-        </div>
+        <div class="field"><label>Google Calendar URL</label>
+          <input type="text" id="prof_cal" placeholder="https://calendar.google.com/..."></div>
       </div>
 
       <div class="form-card">
-        <h3>Profile Picture</h3>
+        <h3>Profile Photo</h3>
         <div class="field">
-          <label>Image filename (must be in the same folder)</label>
-          <input type="text" id="prof_img" placeholder="profile.jpg" oninput="previewImg('prof_img','prof_img_preview')">
-          <img id="prof_img_preview" class="img-preview">
+          <label>Upload Photo</label>
+          <div class="img-upload-box" id="profile_box">
+            <div class="img-upload-area">
+              <div class="icon">🖼️</div>
+              <div class="label-text">Click to browse photo</div>
+              <div class="hint">JPG, PNG, WEBP · any size</div>
+            </div>
+            <input type="file" accept="image/*" onchange="handleImgUpload(this,'profile_box','prof_photo_data')">
+            <img class="img-upload-preview" id="profile_box_prev">
+            <div class="img-upload-footer" id="profile_box_footer">
+              <span class="fname" id="profile_box_name"></span>
+              <button class="img-clear-btn" onclick="clearImg('profile_box','prof_photo_data')">✕ Remove</button>
+            </div>
+          </div>
+          <!-- hidden storage for base64 -->
+          <input type="hidden" id="prof_photo_data">
         </div>
       </div>
 
       <button class="btn-save" onclick="save('profile')">💾 Save Profile</button>
     </div>
 
-    <!-- ========== ABOUT ========== -->
+    <!-- ===== ABOUT ===== -->
     <div class="page" id="page-about">
       <h2 class="page-title">About Me</h2>
-      <p class="page-desc">Edit the bio paragraphs displayed in the About Me section on the Home page.</p>
-
+      <p class="page-desc">Edit the bio paragraphs on the Home page.</p>
       <div class="form-card">
         <h3>Paragraph 1</h3>
-        <div class="field">
-          <textarea id="about_p1" rows="5" placeholder="I am a faculty member in the Department..."></textarea>
-        </div>
+        <div class="field"><textarea id="about_p1" rows="5"></textarea></div>
       </div>
-
       <div class="form-card">
         <h3>Paragraph 2</h3>
-        <div class="field">
-          <textarea id="about_p2" rows="4" placeholder="I received Ph.D. and B.Tech degrees..."></textarea>
-        </div>
+        <div class="field"><textarea id="about_p2" rows="4"></textarea></div>
       </div>
-
       <button class="btn-save" onclick="save('about')">💾 Save About Me</button>
     </div>
 
-    <!-- ========== QUICK LINKS ========== -->
+    <!-- ===== QUICK LINKS ===== -->
     <div class="page" id="page-quicklinks">
       <h2 class="page-title">Quick Links</h2>
-      <p class="page-desc">Manage the Quick Links list shown on the right of the Home page. Toggle "New" badge per link.</p>
-
+      <p class="page-desc">Manage the Quick Links list on the Home page.</p>
       <div class="form-card">
         <h3>Links List</h3>
         <div id="links_container"></div>
         <button class="btn-add" onclick="addLink()">+ Add Link</button>
       </div>
-
       <button class="btn-save" onclick="save('quicklinks')">💾 Save Quick Links</button>
     </div>
 
-    <!-- ========== RESEARCH ========== -->
+    <!-- ===== RESEARCH ===== -->
     <div class="page" id="page-research">
       <h2 class="page-title">Research Cards</h2>
-      <p class="page-desc">Add, edit, or remove research project cards displayed on the Research page.</p>
-
+      <p class="page-desc">Browse and upload images directly — they are stored in the browser and shown on the Research page automatically.</p>
       <div class="form-card">
         <div id="research_container"></div>
         <button class="btn-add" onclick="addResearchCard()">+ Add Research Card</button>
       </div>
-
       <button class="btn-save" onclick="save('research')">💾 Save Research Cards</button>
     </div>
 
-    <!-- ========== PASSWORD ========== -->
+    <!-- ===== PASSWORD ===== -->
     <div class="page" id="page-password">
       <h2 class="page-title">Change Password</h2>
-      <p class="page-desc">Update the admin login credentials. Changes take effect immediately.</p>
-
+      <p class="page-desc">Update admin login credentials.</p>
       <div class="form-card">
         <h3>Update Credentials</h3>
-        <div class="field">
-          <label>New Username</label>
-          <input type="text" id="new_user" placeholder="admin">
-        </div>
-        <div class="field">
-          <label>New Password</label>
-          <input type="password" id="new_pass" placeholder="New password">
-        </div>
-        <div class="field">
-          <label>Confirm Password</label>
-          <input type="password" id="conf_pass" placeholder="Repeat password">
-        </div>
+        <div class="field"><label>New Username</label>
+          <input type="text" id="new_user" placeholder="admin"></div>
+        <div class="field"><label>New Password</label>
+          <input type="password" id="new_pass" placeholder="New password"></div>
+        <div class="field"><label>Confirm Password</label>
+          <input type="password" id="conf_pass" placeholder="Repeat password"></div>
       </div>
       <button class="btn-save" onclick="changePassword()">🔒 Update Credentials</button>
     </div>
 
-  </div><!-- /main -->
-</div><!-- /layout -->
+  </div>
+</div>
 
-<div class="toast" id="toast">✓ Saved successfully!</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// ─── Auth guard ───────────────────────────────────────────────
+// ── Auth ──────────────────────────────────────────────────────
 if (sessionStorage.getItem("adminLoggedIn") !== "true") {
   window.location.href = "admin-login.html";
 }
@@ -325,7 +340,7 @@ function logout() {
   window.location.href = "admin-login.html";
 }
 
-// ─── Page switching ───────────────────────────────────────────
+// ── Nav ───────────────────────────────────────────────────────
 function show(id, el) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
@@ -334,7 +349,7 @@ function show(id, el) {
   return false;
 }
 
-// ─── Toast ────────────────────────────────────────────────────
+// ── Toast ─────────────────────────────────────────────────────
 function toast(msg) {
   const t = document.getElementById("toast");
   t.textContent = "✓ " + msg;
@@ -342,58 +357,121 @@ function toast(msg) {
   setTimeout(() => t.classList.remove("show"), 2800);
 }
 
-// ─── Image preview ────────────────────────────────────────────
-function previewImg(inputId, imgId) {
-  const val = document.getElementById(inputId).value.trim();
-  const el = document.getElementById(imgId);
-  if (val) { el.src = val; el.style.display = "block"; }
-  else { el.style.display = "none"; }
+// ── Escape ────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 
-// ─── Defaults ─────────────────────────────────────────────────
-const DEFAULTS = {
-  profile: {
-    prof_name: "Sandeep Anand",
-    prof_title: "Professor",
-    prof_dept: "Dept. of Electrical Engineering",
-    prof_institute: "Indian Institute of Technology Bombay",
-    prof_address: "Ground Floor, Dept. of Elec. Engg.,\nIIT Bombay, Mumbai - 400076",
-    prof_phone: "(91) 22 2576 7409",
-    prof_email: "example@iitb.ac.in",
-    prof_cal: "https://calendar.google.com",
-    prof_img: "profile.jpg"
-  },
-  about: {
-    about_p1: "I am a faculty member in the Department of Electrical Engineering, IITB, India. Before this, I was at IITK, during 2013-2020. I was also a visiting scholar at WSU, Pullman, US, and Queen's University, Kingston, CA during Summer 2018 and Winter 2018, respectively. During 2012-13, I was a postdoctoral research associate at WSU, Pullman, US.",
-    about_p2: "I received Ph.D. and B.Tech degrees in EE from IITB. I have worked on solar PV systems, UPS systems, and digital controllers."
-  }
+// ══════════════════════════════════════════════════════════════
+// IMAGE UPLOAD — base64 approach (no server needed)
+// ══════════════════════════════════════════════════════════════
+function handleImgUpload(input, boxId, storageKey) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const b64 = e.target.result; // data:image/...;base64,...
+    // Show preview inside box
+    const box = document.getElementById(boxId);
+    const prev = box.querySelector(".img-upload-preview");
+    const footer = box.querySelector(".img-upload-footer");
+    const fname  = box.querySelector(".fname");
+    const area   = box.querySelector(".img-upload-area");
+    prev.src = b64;
+    prev.style.display = "block";
+    footer.style.display = "flex";
+    fname.textContent = file.name;
+    area.style.display = "none";
+    // Store b64 in hidden field
+    if (storageKey) document.getElementById(storageKey).value = b64;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImg(boxId, storageKey) {
+  const box = document.getElementById(boxId);
+  const prev   = box.querySelector(".img-upload-preview");
+  const footer = box.querySelector(".img-upload-footer");
+  const area   = box.querySelector(".img-upload-area");
+  const fileIn = box.querySelector("input[type=file]");
+  prev.src = ""; prev.style.display = "none";
+  footer.style.display = "none";
+  area.style.display = "flex";
+  fileIn.value = "";
+  if (storageKey) document.getElementById(storageKey).value = "";
+}
+
+// Restore a saved base64 into an upload box
+function restoreImgBox(boxId, b64, fname) {
+  if (!b64) return;
+  const box = document.getElementById(boxId);
+  if (!box) return;
+  const prev   = box.querySelector(".img-upload-preview");
+  const footer = box.querySelector(".img-upload-footer");
+  const fnameEl= box.querySelector(".fname");
+  const area   = box.querySelector(".img-upload-area");
+  prev.src = b64; prev.style.display = "block";
+  footer.style.display = "flex";
+  fnameEl.textContent = fname || "saved image";
+  area.style.display = "none";
+}
+
+// ── Defaults ──────────────────────────────────────────────────
+const DEF_PROFILE = {
+  prof_name: "Sandeep Anand", prof_title: "Professor",
+  prof_dept: "Dept. of Electrical Engineering",
+  prof_institute: "Indian Institute of Technology Bombay",
+  prof_address: "Ground Floor, Dept. of Elec. Engg.,\nIIT Bombay, Mumbai - 400076",
+  prof_phone: "(91) 22 2576 7409", prof_email: "example@iitb.ac.in",
+  prof_cal: "https://calendar.google.com"
+};
+const DEF_ABOUT = {
+  about_p1: "I am a faculty member in the Department of Electrical Engineering, IITB, India. Before this, I was at IITK, during 2013-2020. I was also a visiting scholar at WSU, Pullman, US, and Queen's University, Kingston, CA during Summer 2018 and Winter 2018, respectively. During 2012-13, I was a postdoctoral research associate at WSU, Pullman, US.",
+  about_p2: "I received Ph.D. and B.Tech degrees in EE from IITB. I have worked on solar PV systems, UPS systems, and digital controllers."
 };
 
-// ─── Load / Save helpers ──────────────────────────────────────
-function loadFields(keys) {
-  keys.forEach(k => {
-    const el = document.getElementById(k);
-    if (!el) return;
-    const stored = localStorage.getItem("admin_" + k);
-    el.value = stored !== null ? stored : (DEFAULTS.profile[k] || DEFAULTS.about[k] || "");
-  });
+function lget(k) { return localStorage.getItem("admin_" + k); }
+function lset(k, v) { localStorage.setItem("admin_" + k, v); }
+
+function loadField(id, def) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const v = lget(id);
+  el.value = v !== null ? v : (def || "");
+}
+function saveField(id) {
+  const el = document.getElementById(id);
+  if (el) lset(id, el.value);
 }
 
-function saveFields(keys) {
-  keys.forEach(k => {
-    const el = document.getElementById(k);
-    if (el) localStorage.setItem("admin_" + k, el.value);
-  });
+// ── Init profile ──────────────────────────────────────────────
+Object.keys(DEF_PROFILE).forEach(k => loadField(k, DEF_PROFILE[k]));
+// restore profile photo
+const savedPhoto = lget("prof_photo_data");
+if (savedPhoto) {
+  document.getElementById("prof_photo_data").value = savedPhoto;
+  restoreImgBox("profile_box", savedPhoto, lget("prof_photo_name") || "profile photo");
 }
 
-// ─── Save dispatcher ─────────────────────────────────────────
+// ── Init about ────────────────────────────────────────────────
+Object.keys(DEF_ABOUT).forEach(k => loadField(k, DEF_ABOUT[k]));
+
+// ── Save dispatcher ───────────────────────────────────────────
 function save(section) {
   if (section === "profile") {
-    saveFields(["prof_name","prof_title","prof_dept","prof_institute",
-                "prof_address","prof_phone","prof_email","prof_cal","prof_img"]);
+    Object.keys(DEF_PROFILE).forEach(saveField);
+    const photoB64 = document.getElementById("prof_photo_data").value;
+    if (photoB64) {
+      lset("prof_photo_data", photoB64);
+      // save filename from footer if present
+      const fn = document.querySelector("#profile_box .fname");
+      if (fn) lset("prof_photo_name", fn.textContent);
+    } else {
+      localStorage.removeItem("admin_prof_photo_data");
+    }
     toast("Profile saved!");
   } else if (section === "about") {
-    saveFields(["about_p1","about_p2"]);
+    Object.keys(DEF_ABOUT).forEach(saveField);
     toast("About Me saved!");
   } else if (section === "quicklinks") {
     saveQuickLinks();
@@ -402,12 +480,7 @@ function save(section) {
   }
 }
 
-// ─── Init profile & about ─────────────────────────────────────
-loadFields(["prof_name","prof_title","prof_dept","prof_institute",
-            "prof_address","prof_phone","prof_email","prof_cal","prof_img"]);
-loadFields(["about_p1","about_p2"]);
-
-// ─── Quick Links ──────────────────────────────────────────────
+// ── Quick Links ───────────────────────────────────────────────
 const DEFAULT_LINKS = [
   { label: "Conference presentations and videos by students", url: "#", isNew: true },
   { label: "Video Lectures on Power Electronic Converters for Solar Integration", url: "#", isNew: false },
@@ -420,17 +493,16 @@ const DEFAULT_LINKS = [
 ];
 
 function getLinks() {
-  const raw = localStorage.getItem("admin_quicklinks");
-  return raw ? JSON.parse(raw) : DEFAULT_LINKS;
+  const r = localStorage.getItem("admin_quicklinks");
+  return r ? JSON.parse(r) : DEFAULT_LINKS;
 }
-
 function renderLinks() {
   const links = getLinks();
   const c = document.getElementById("links_container");
   c.innerHTML = "";
   links.forEach((lk, i) => {
     c.innerHTML += `
-      <div class="link-item" id="lk_${i}">
+      <div class="link-item">
         <input type="text" style="flex:2" id="lk_label_${i}" value="${esc(lk.label)}" placeholder="Link label">
         <input type="text" style="flex:1" id="lk_url_${i}" value="${esc(lk.url)}" placeholder="URL">
         <label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0">
@@ -440,24 +512,21 @@ function renderLinks() {
       </div>`;
   });
 }
-
 function addLink() {
   const links = getLinks();
   links.push({ label: "New Link", url: "#", isNew: false });
   localStorage.setItem("admin_quicklinks", JSON.stringify(links));
   renderLinks();
 }
-
 function removeLink(i) {
   const links = getLinks();
   links.splice(i, 1);
   localStorage.setItem("admin_quicklinks", JSON.stringify(links));
   renderLinks();
 }
-
 function saveQuickLinks() {
-  const links = getLinks();
-  const updated = links.map((_, i) => ({
+  const n = getLinks().length;
+  const updated = Array.from({length:n}, (_,i) => ({
     label: document.getElementById("lk_label_"+i)?.value || "",
     url:   document.getElementById("lk_url_"+i)?.value || "#",
     isNew: document.getElementById("lk_new_"+i)?.checked || false
@@ -465,22 +534,23 @@ function saveQuickLinks() {
   localStorage.setItem("admin_quicklinks", JSON.stringify(updated));
   toast("Quick Links saved!");
 }
-
 renderLinks();
 
-// ─── Research Cards ───────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// RESEARCH CARDS — with image upload per card
+// ══════════════════════════════════════════════════════════════
 const DEFAULT_RESEARCH = [
-  { img: "img1.jpg", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
-  { img: "img2.jpg", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
-  { img: "img3.jpg", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
-  { img: "img4.jpg", desc: "Additional research content." },
-  { img: "img5.jpg", desc: "Additional research content." },
-  { img: "img6.jpg", desc: "Additional research content." }
+  { imgData: "", imgName: "", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
+  { imgData: "", imgName: "", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
+  { imgData: "", imgName: "", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
+  { imgData: "", imgName: "", desc: "Additional research content." },
+  { imgData: "", imgName: "", desc: "Additional research content." },
+  { imgData: "", imgName: "", desc: "Additional research content." }
 ];
 
 function getResearch() {
-  const raw = localStorage.getItem("admin_research");
-  return raw ? JSON.parse(raw) : DEFAULT_RESEARCH;
+  const r = localStorage.getItem("admin_research");
+  return r ? JSON.parse(r) : DEFAULT_RESEARCH;
 }
 
 function renderResearch() {
@@ -488,19 +558,37 @@ function renderResearch() {
   const c = document.getElementById("research_container");
   c.innerHTML = "";
   cards.forEach((card, i) => {
+    const boxId = `rc_box_${i}`;
+    const dataId = `rc_data_${i}`;
     c.innerHTML += `
       <div class="research-item">
         <button class="btn-del del-btn" onclick="removeResearch(${i})">✕ Remove</button>
-        <div class="row" style="margin-right:90px">
+        <div class="row" style="margin-right:100px">
           <div class="field">
-            <label>Image Filename</label>
-            <input type="text" id="rc_img_${i}" value="${esc(card.img)}" placeholder="img1.jpg"
-                   oninput="previewImg('rc_img_${i}','rc_prev_${i}')">
-            <img id="rc_prev_${i}" class="img-preview" ${card.img ? `src="${esc(card.img)}" style="display:block"` : ""}>
+            <label>Image</label>
+            <div class="img-upload-box" id="${boxId}">
+              <div class="img-upload-area" style="${card.imgData?'display:none':''}">
+                <div class="icon">📷</div>
+                <div class="label-text">Browse image</div>
+                <div class="hint">JPG, PNG, WEBP</div>
+              </div>
+              <input type="file" accept="image/*"
+                onchange="handleImgUpload(this,'${boxId}','${dataId}')">
+              <img class="img-upload-preview"
+                   id="${boxId}_prev"
+                   ${card.imgData ? `src="${card.imgData}" style="display:block"` : ""}>
+              <div class="img-upload-footer"
+                   id="${boxId}_footer"
+                   style="${card.imgData?'display:flex':''}">
+                <span class="fname" id="${boxId}_name">${esc(card.imgName||'')}</span>
+                <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
+              </div>
+            </div>
+            <input type="hidden" id="${dataId}" value="${card.imgData ? esc(card.imgData) : ''}">
           </div>
           <div class="field">
             <label>Description</label>
-            <textarea id="rc_desc_${i}" rows="4">${esc(card.desc)}</textarea>
+            <textarea id="rc_desc_${i}" rows="6">${esc(card.desc)}</textarea>
           </div>
         </div>
       </div>`;
@@ -509,7 +597,7 @@ function renderResearch() {
 
 function addResearchCard() {
   const cards = getResearch();
-  cards.push({ img: "", desc: "New research description." });
+  cards.push({ imgData: "", imgName: "", desc: "New research description." });
   localStorage.setItem("admin_research", JSON.stringify(cards));
   renderResearch();
 }
@@ -522,31 +610,32 @@ function removeResearch(i) {
 }
 
 function saveResearch() {
-  const cards = getResearch();
-  const updated = cards.map((_, i) => ({
-    img:  document.getElementById("rc_img_"+i)?.value || "",
-    desc: document.getElementById("rc_desc_"+i)?.value || ""
-  }));
+  const n = getResearch().length;
+  const updated = Array.from({length:n}, (_,i) => {
+    const boxId = `rc_box_${i}`;
+    const dataEl = document.getElementById(`rc_data_${i}`);
+    const nameEl = document.getElementById(`${boxId}_name`);
+    return {
+      imgData: dataEl?.value || "",
+      imgName: nameEl?.textContent || "",
+      desc: document.getElementById(`rc_desc_${i}`)?.value || ""
+    };
+  });
   localStorage.setItem("admin_research", JSON.stringify(updated));
   toast("Research Cards saved!");
 }
 
 renderResearch();
 
-// ─── Password change ──────────────────────────────────────────
+// ── Password ──────────────────────────────────────────────────
 function changePassword() {
   const u = document.getElementById("new_user").value.trim();
   const p = document.getElementById("new_pass").value;
   const c = document.getElementById("conf_pass").value;
   if (!u || !p) { alert("Username and password cannot be empty."); return; }
-  if (p !== c) { alert("Passwords do not match."); return; }
+  if (p !== c)  { alert("Passwords do not match."); return; }
   localStorage.setItem("admin_creds", JSON.stringify({ user: u, pass: p }));
   toast("Credentials updated!");
-}
-
-// ─── Escape HTML ─────────────────────────────────────────────
-function esc(s) {
-  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 </script>
 </body>

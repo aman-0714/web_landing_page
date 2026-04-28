@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Research - Sandeep Anand</title>
   <link rel="stylesheet" href="research.css">
 </head>
@@ -69,12 +70,12 @@ if (title || dept || inst) {
 
 // Research cards
 const DEFAULT_RESEARCH = [
-  { img: "img1.jpg", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
-  { img: "img2.jpg", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
-  { img: "img3.jpg", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
-  { img: "img4.jpg", desc: "Additional research content." },
-  { img: "img5.jpg", desc: "Additional research content." },
-  { img: "img6.jpg", desc: "Additional research content." }
+  { imgData: "", imgName: "", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
+  { imgData: "", imgName: "", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
+  { imgData: "", imgName: "", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
+  { imgData: "", imgName: "", desc: "Additional research content." },
+  { imgData: "", imgName: "", desc: "Additional research content." },
+  { imgData: "", imgName: "", desc: "Additional research content." }
 ];
 
 const raw = localStorage.getItem("admin_research");
@@ -85,9 +86,17 @@ grid.innerHTML = "";
 cards.forEach(card => {
   const div = document.createElement("div");
   div.className = "card";
-  div.innerHTML =
-    '<img src="' + card.img + '" onclick="window.open(this.src)" style="cursor:zoom-in" title="Click to view full size">' +
-    '<p>' + card.desc + '</p>';
+  // Support both old {img} format and new {imgData} format
+  const src = card.imgData || card.img || "";
+  if (src) {
+    div.innerHTML =
+      '<img src="' + src + '" onclick="window.open(this.src)" style="cursor:zoom-in" title="Click to view full size">' +
+      '<p>' + card.desc + '</p>';
+  } else {
+    div.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:center;height:200px;background:#f5f5f5;color:#aaa;font-size:13px;">No image uploaded</div>' +
+      '<p>' + card.desc + '</p>';
+  }
   grid.appendChild(div);
 });
 </script>
