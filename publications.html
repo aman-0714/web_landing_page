@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Publications – Dr. Madan Kumar Das</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="research.css">
   <style>
     /* ── Publications Page Specific Styles ── */
     .pub-section {
@@ -207,17 +208,16 @@
 </head>
 <body>
 
-<!-- HEADER (same as index.html) -->
-<header class="header">
-  <div class="header-left">
-    <h1 id="hdr_name">Dr Madan Kumar Das</h1>
-    <p id="hdr_title">
+<header class="site-header">
+  <div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_title">
       Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
-    </p>
+    </div>
   </div>
-  <div class="divider-vertical"></div>
-  <nav class="nav">
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
     <a href="index.html">Home</a>
     <a href="research.html">Research</a>
     <a href="publications.html" class="active">Publications</a>
@@ -226,12 +226,20 @@
   </nav>
 </header>
 
-<div class="line"></div>
-<div class="home">Publications</div>
-<div class="line"></div>
-<hr>
+<div class="page-wrap">
+  <div class="page-bar">Publications</div>
 
-<div class="pub-page-wrapper">
+  <!-- Sub-navigation (match Research page) -->
+  <div class="sub-nav">
+    <a href="research.html">Overview</a>
+    <a href="publications.html" class="active">Publications</a>
+    <a href="projects.html">Projects</a>
+    <a href="students.html">Students</a>
+    <a href="presentations.html">Presentations &amp; Videos</a>
+    <a href="positions.html">Open Positions</a>
+  </div>
+
+  <div class="pub-page-wrapper">
 
   <!-- Google Scholar Banner -->
   <div class="scholar-banner">
@@ -249,10 +257,18 @@
 
   <!-- TABS -->
   <div class="pub-tabs">
-    <div class="pub-tab active" onclick="switchTab('journal', this)">📄 Journal Papers</div>
-    <div class="pub-tab" onclick="switchTab('conference', this)">🎤 Conference Papers</div>
-    <div class="pub-tab" onclick="switchTab('book', this)">📖 Book Chapters</div>
+    <div class="pub-tab active" onclick="switchTab('journal', this)"><span class="tab-icon tab-icon-doc"></span>Journal Papers</div>
+    <div class="pub-tab" onclick="switchTab('conference', this)"><span class="tab-icon tab-icon-mic"></span>Conference Papers</div>
+    <div class="pub-tab" onclick="switchTab('book', this)"><span class="tab-icon tab-icon-book"></span>Book Chapters</div>
   </div>
+
+  <style>
+    .pub-tab { display: inline-flex; align-items: center; gap: 8px; }
+    .tab-icon { width: 18px; height: 18px; display:inline-block; background-size: contain; background-repeat:no-repeat; opacity:0.9 }
+    .tab-icon-doc { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M6 2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM13 3.5V9h5.5L13 3.5z'/></svg>"); }
+    .tab-icon-mic { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2z'/></svg>"); }
+    .tab-icon-book { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M18 2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10V2zM6 4H4v16a2 2 0 0 0 2-2V4z'/></svg>"); }
+  </style>
 
   <!-- ========== JOURNAL ========== -->
   <div class="tab-panel active" id="panel-journal">
