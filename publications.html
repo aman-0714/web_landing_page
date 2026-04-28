@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publications – Dr. Madan Kumar Das</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ── Publications Page Specific Styles ── */
+    .pub-section {
+      margin: 30px 0;
+    }
+    .pub-section h2 {
+      display: flex;
+      align-items: center;
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #ddd;
+    }
+    .pub-section h2 .bar {
+      width: 5px;
+      height: 20px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .pub-section h2 .count-badge {
+      margin-left: 10px;
+      background: #e8f5e9;
+      color: #2e7d32;
+      font-size: 13px;
+      font-weight: normal;
+      padding: 2px 10px;
+      border-radius: 12px;
+      border: 1px solid #c8e6c9;
+    }
+
+    .pub-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .pub-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+      align-items: flex-start;
+    }
+    .pub-item:last-child {
+      border-bottom: none;
+    }
+    .pub-number {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: #888;
+      margin-top: 2px;
+    }
+    .pub-content {
+      flex: 1;
+    }
+    .pub-title {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .pub-title a {
+      color: #1a6b1a;
+      text-decoration: none;
+    }
+    .pub-title a:hover {
+      text-decoration: underline;
+    }
+    .pub-meta {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .pub-journal {
+      font-style: italic;
+    }
+    .pub-year {
+      display: inline-block;
+      background: #fff8e1;
+      color: #f57f17;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 1px 7px;
+      border-radius: 3px;
+      border: 1px solid #ffe082;
+      margin-left: 6px;
+      font-style: normal;
+    }
+    .pub-link {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 12px;
+      color: #1a6b1a;
+      text-decoration: none;
+      border: 1px solid #c8e6c9;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: #f9fbe7;
+      transition: background 0.2s;
+    }
+    .pub-link:hover {
+      background: #e8f5e9;
+    }
+
+    .pub-page-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 16px 40px;
+    }
+
+    .scholar-banner {
+      background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%);
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .scholar-banner .scholar-info {
+      font-size: 14px;
+      color: #555;
+    }
+    .scholar-banner .scholar-info strong {
+      color: #2e7d32;
+    }
+    .scholar-banner a.btn-scholar {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #2e7d32;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .scholar-banner a.btn-scholar:hover {
+      background: #1b5e20;
+    }
+
+    .no-pubs-msg {
+      color: #aaa;
+      font-size: 14px;
+      font-style: italic;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    /* Tabs */
+    .pub-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .pub-tab {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #888;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .pub-tab:hover { color: #2e7d32; }
+    .pub-tab.active {
+      color: #2e7d32;
+      border-bottom-color: #2e7d32;
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    @media (max-width: 600px) {
+      .pub-item { flex-direction: column; gap: 8px; }
+      .pub-number { display: none; }
+      .scholar-banner { flex-direction: column; align-items: flex-start; }
+      .pub-tab { padding: 8px 12px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER (same as index.html) -->
+<header class="header">
+  <div class="header-left">
+    <h1 id="hdr_name">Dr Madan Kumar Das</h1>
+    <p id="hdr_title">
+      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
+      Dr B R Ambedkar National Institute of Technology, Jalandhar
+    </p>
+  </div>
+  <div class="divider-vertical"></div>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="research.html">Research</a>
+    <a href="publications.html" class="active">Publications</a>
+    <a href="teaching.html">Teaching</a>
+    <a href="cv.html">CV</a>
+  </nav>
+</header>
+
+<div class="line"></div>
+<div class="home">Publications</div>
+<div class="line"></div>
+<hr>
+
+<div class="pub-page-wrapper">
+
+  <!-- Google Scholar Banner -->
+  <div class="scholar-banner">
+    <div class="scholar-info">
+      View complete profile &amp; citation metrics on
+      <strong>Google Scholar</strong>
+    </div>
+    <a class="btn-scholar"
+       id="scholar_link"
+       href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ&hl=en"
+       target="_blank">
+      📚 Google Scholar Profile ↗
+    </a>
+  </div>
+
+  <!-- TABS -->
+  <div class="pub-tabs">
+    <div class="pub-tab active" onclick="switchTab('journal', this)">📄 Journal Papers</div>
+    <div class="pub-tab" onclick="switchTab('conference', this)">🎤 Conference Papers</div>
+    <div class="pub-tab" onclick="switchTab('book', this)">📖 Book Chapters</div>
+  </div>
+
+  <!-- ========== JOURNAL ========== -->
+  <div class="tab-panel active" id="panel-journal">
+    <div class="pub-section">
+      <h2>
+        <span class="bar" style="background:green;"></span>
+        Journal Publications
+        <span class="count-badge" id="journal-count">0</span>
+      </h2>
+      <ul class="pub-list" id="journal-list">
+        <li class="no-pubs-msg">Loading publications…</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== CONFERENCE ========== -->
+  <div class="tab-panel" id="panel-conference">
+    <div class="pub-section">
+      <h2>
+        <span class="bar" style="background:orange;"></span>
+        Conference Publications
+        <span class="count-badge" id="conference-count">0</span>
+      </h2>
+      <ul class="pub-list" id="conference-list">
+        <li class="no-pubs-msg">Loading publications…</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== BOOK ========== -->
+  <div class="tab-panel" id="panel-book">
+    <div class="pub-section">
+      <h2>
+        <span class="bar" style="background:blue;"></span>
+        Book / Chapter Publications
+        <span class="count-badge" id="book-count">0</span>
+      </h2>
+      <ul class="pub-list" id="book-list">
+        <li class="no-pubs-msg">Loading publications…</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Admin link -->
+<div style="text-align:right;padding:10px 40px;font-size:12px;">
+  <a href="admin-login.html" style="color:#bbb;text-decoration:none;">⚙ Admin</a>
+</div>
+
+<script src="script.js"></script>
+<script>
+// ── Header from admin ──────────────────────────────────────────
+function get(key) { return localStorage.getItem("admin_" + key); }
+const name = get("prof_name");
+const title = get("prof_title");
+const dept  = get("prof_dept");
+const inst  = get("prof_institute");
+if (name) document.getElementById("hdr_name").textContent = name;
+if (title || dept || inst) {
+  document.getElementById("hdr_title").innerHTML =
+    (title||"Assistant Professor (Grade-II)") + ", " +
+    (dept||"Dept. of Electrical Engineering") + ",<br>" +
+    (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
+}
+
+// ── Tab switching ──────────────────────────────────────────────
+function switchTab(type, el) {
+  document.querySelectorAll('.pub-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + type).classList.add('active');
+}
+
+// ── Default publications (pre-loaded) ─────────────────────────
+const DEFAULT_PUBLICATIONS = {
+  journal: [
+    {
+      title: "Performance evaluation of an asymmetrical reduced switched multilevel inverter for a grid-connected PV system",
+      authors: "M. K. Das, K. C. Jana, A. Sinha",
+      journal: "IET Renewable Power Generation",
+      details: "vol. 12, no. 2, pp. 252–263",
+      year: "2018",
+      url: "https://doi.org/10.1049/iet-rpg.2017.0357"
+    },
+    {
+      title: "An inclusive review on different multi-level inverter topologies, their modulation and control strategies for a grid connected photo-voltaic system",
+      authors: "A. Sinha, K. Chandra Jana, M. Kumar Das",
+      journal: "Solar Energy",
+      details: "vol. 170, pp. 633–657",
+      year: "2018",
+      url: "https://doi.org/10.1016/j.solener.2018.06.001"
+    },
+    {
+      title: "A New Half-Cascaded Multilevel Inverter Topology to Improve System Performance Parameters",
+      authors: "M. K. Das, K. C. Jana, A. Sinha",
+      journal: "Journal of Circuits, Systems and Computers (World Scientific)",
+      details: "vol. 29, no. 8",
+      year: "2019",
+      url: "https://doi.org/10.1142/S0218126620500073"
+    }
+  ],
+  conference: [
+    {
+      title: "Novel 21-level Reduced Switches Inverter",
+      authors: "M. K. Das et al.",
+      journal: "2022 IEEE International Conference on Power Electronics, Drives and Energy Systems (PEDES)",
+      details: "DOI: 10.1109/PEDES56012.2022.10080285",
+      year: "2022",
+      url: "https://doi.org/10.1109/PEDES56012.2022.10080285"
+    }
+  ],
+  book: []
+};
+
+// ── Render functions ───────────────────────────────────────────
+function renderPubs(type, pubs) {
+  const list = document.getElementById(type + '-list');
+  const badge = document.getElementById(type + '-count');
+  if (!pubs || pubs.length === 0) {
+    list.innerHTML = '<li class="no-pubs-msg">No publications added yet.</li>';
+    badge.textContent = '0';
+    return;
+  }
+  badge.textContent = pubs.length;
+  list.innerHTML = pubs.map((p, i) => `
+    <li class="pub-item">
+      <div class="pub-number">${i + 1}</div>
+      <div class="pub-content">
+        <div class="pub-title">
+          ${p.url
+            ? `<a href="${p.url}" target="_blank">${escHtml(p.title)}</a>`
+            : escHtml(p.title)}
+          <span class="pub-year">${escHtml(p.year || '')}</span>
+        </div>
+        <div class="pub-meta">
+          <span>${escHtml(p.authors || '')}</span><br>
+          <span class="pub-journal">${escHtml(p.journal || '')}</span>
+          ${p.details ? ' — ' + escHtml(p.details) : ''}
+        </div>
+        ${p.url ? `<a class="pub-link" href="${p.url}" target="_blank">🔗 View Paper ↗</a>` : ''}
+      </div>
+    </li>
+  `).join('');
+}
+
+function escHtml(s) {
+  return String(s||'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Load from localStorage or fall back to defaults ────────────
+function loadAllPubs() {
+  ['journal','conference','book'].forEach(type => {
+    const stored = localStorage.getItem('admin_pubs_' + type);
+    const pubs = stored ? JSON.parse(stored) : DEFAULT_PUBLICATIONS[type] || [];
+    renderPubs(type, pubs);
+  });
+}
+
+loadAllPubs();
+</script>
+</body>
+</html>

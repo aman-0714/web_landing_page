@@ -2,12 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-<<<<<<< HEAD
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sandeep Anand</title>
-=======
-  <title>Dr Madan Kumar Das</title>
->>>>>>> b0d7fd9e02cd7f9b281fae7ab76a411e9ee80c15
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -89,6 +85,15 @@
 </section>
 
 <!-- Admin link (subtle, in footer) -->
+<section class="pub-home-section">
+  <div class="pub-home-inner">
+    <h2><span class="bar green"></span> Recent Publications</h2>
+    <ul id="home_pub_list" class="home-pub-list"></ul>
+    <a href="publications.html" class="view-all-btn">View All Publications →</a>
+  </div>
+</section>
+
+<!-- Admin link (subtle, in footer) -->
 <div style="text-align:right;padding:20px 40px;font-size:12px;">
   <a href="admin-login.html" style="color:#bbb;text-decoration:none;">⚙ Admin</a>
 </div>
@@ -136,8 +141,8 @@ if (p3) { const el = document.getElementById("about_p3"); if (el) el.textContent
 
 // Quick Links
 const DEFAULT_LINKS = [
-  { label: "Journal Publications", url: "#", isNew: true },
-  { label: "Conference Publications", url: "#", isNew: false },
+  { label: "Journal Publications", url: "publications.html", isNew: true },
+  { label: "Conference Publications", url: "publications.html", isNew: false },
   { label: "Book/Chapter Publications", url: "#", isNew: false },
   { label: "Google Scholar Profile", url: "https://scholar.google.co.in/citations?user=sRbONFIAAAAJ", isNew: false },
   { label: "Research on Multilevel Inverters & Renewable Energy", url: "#", isNew: false },
@@ -155,6 +160,30 @@ quickLinks.forEach(lk => {
     '<a href="' + (lk.url||"#") + '">' + lk.label + '</a>';
   ul.appendChild(li);
 });
+
+// Recent Publications on Home
+const PUB_HOME_DEFAULTS = [
+  { title: "Performance evaluation of an asymmetrical reduced switched multilevel inverter for a grid-connected PV system", authors: "M. K. Das, K. C. Jana, A. Sinha", journal: "IET Renewable Power Generation", year: "2018", url: "https://doi.org/10.1049/iet-rpg.2017.0357" },
+  { title: "An inclusive review on different multi-level inverter topologies, their modulation and control strategies for a grid connected photo-voltaic system", authors: "A. Sinha, K. Chandra Jana, M. Kumar Das", journal: "Solar Energy", year: "2018", url: "https://doi.org/10.1016/j.solener.2018.06.001" },
+  { title: "A New Half-Cascaded Multilevel Inverter Topology to Improve System Performance Parameters", authors: "M. K. Das, K. C. Jana, A. Sinha", journal: "Journal of Circuits, Systems and Computers", year: "2019", url: "https://doi.org/10.1142/S0218126620500073" }
+];
+
+(function() {
+  const stored = localStorage.getItem('admin_pubs_journal');
+  const pubs = stored ? JSON.parse(stored) : PUB_HOME_DEFAULTS;
+  const ul = document.getElementById('home_pub_list');
+  if (!ul) return;
+  const recent = pubs.slice(0, 5); // show up to 5 most recent
+  if (recent.length === 0) { ul.innerHTML = '<li style="color:#aaa;font-style:italic;">No publications yet.</li>'; return; }
+  ul.innerHTML = recent.map(p => `
+    <li class="home-pub-item">
+      <span class="home-pub-year">${p.year || ''}</span>
+      <div class="home-pub-body">
+        <div class="home-pub-title">${p.url ? `<a href="${p.url}" target="_blank">${p.title}</a>` : p.title}</div>
+        <div class="home-pub-meta">${p.authors || ''} &mdash; <em>${p.journal || ''}</em></div>
+      </div>
+    </li>`).join('');
+})();
 </script>
 
 </body>

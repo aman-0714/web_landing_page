@@ -205,6 +205,8 @@
     <a href="#" onclick="show('quicklinks',this)">🔗 Quick Links</a>
     <div class="section-label">Research</div>
     <a href="#" onclick="show('research',this)">🔬 Research Cards</a>
+    <div class="section-label">Publications</div>
+    <a href="#" onclick="show('publications',this)">📚 Publications</a>
     <div class="section-label">Other</div>
     <a href="#" onclick="show('password',this)">🔒 Change Password</a>
   </div>
@@ -307,6 +309,49 @@
         <button class="btn-add" onclick="addResearchCard()">+ Add Research Card</button>
       </div>
       <button class="btn-save" onclick="save('research')">💾 Save Research Cards</button>
+    </div>
+
+    <!-- ===== PUBLICATIONS ===== -->
+    <div class="page" id="page-publications">
+      <h2 class="page-title">Publications</h2>
+      <p class="page-desc">Add or remove publications. They appear instantly on the Publications page.</p>
+
+      <!-- Sub-tabs -->
+      <div style="display:flex;gap:0;border-bottom:2px solid #dde8d0;margin-bottom:20px;">
+        <button id="ptab-journal" onclick="showPubTab('journal')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid #3a7d1e;color:#3a7d1e;">📄 Journal Papers</button>
+        <button id="ptab-conference" onclick="showPubTab('conference')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">🎤 Conference Papers</button>
+        <button id="ptab-book" onclick="showPubTab('book')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">📖 Book Chapters</button>
+      </div>
+
+      <!-- Journal -->
+      <div id="ppanel-journal">
+        <div class="form-card">
+          <h3>Journal Papers</h3>
+          <div id="pubs_journal_container"></div>
+          <button class="btn-add" onclick="addPub('journal')">+ Add Journal Paper</button>
+        </div>
+        <button class="btn-save" onclick="savePubs('journal')">💾 Save Journal Papers</button>
+      </div>
+
+      <!-- Conference -->
+      <div id="ppanel-conference" style="display:none">
+        <div class="form-card">
+          <h3>Conference Papers</h3>
+          <div id="pubs_conference_container"></div>
+          <button class="btn-add" onclick="addPub('conference')">+ Add Conference Paper</button>
+        </div>
+        <button class="btn-save" onclick="savePubs('conference')">💾 Save Conference Papers</button>
+      </div>
+
+      <!-- Book -->
+      <div id="ppanel-book" style="display:none">
+        <div class="form-card">
+          <h3>Book Chapters</h3>
+          <div id="pubs_book_container"></div>
+          <button class="btn-add" onclick="addPub('book')">+ Add Book Chapter</button>
+        </div>
+        <button class="btn-save" onclick="savePubs('book')">💾 Save Book Chapters</button>
+      </div>
     </div>
 
     <!-- ===== PASSWORD ===== -->
@@ -626,6 +671,94 @@ function saveResearch() {
 }
 
 renderResearch();
+
+// ══════════════════════════════════════════════════════════════
+// PUBLICATIONS
+// ══════════════════════════════════════════════════════════════
+const PUB_DEFAULTS = {
+  journal: [
+    { title: "Performance evaluation of an asymmetrical reduced switched multilevel inverter for a grid-connected PV system", authors: "M. K. Das, K. C. Jana, A. Sinha", journal: "IET Renewable Power Generation", details: "vol. 12, no. 2, pp. 252–263", year: "2018", url: "https://doi.org/10.1049/iet-rpg.2017.0357" },
+    { title: "An inclusive review on different multi-level inverter topologies, their modulation and control strategies for a grid connected photo-voltaic system", authors: "A. Sinha, K. Chandra Jana, M. Kumar Das", journal: "Solar Energy", details: "vol. 170, pp. 633–657", year: "2018", url: "https://doi.org/10.1016/j.solener.2018.06.001" },
+    { title: "A New Half-Cascaded Multilevel Inverter Topology to Improve System Performance Parameters", authors: "M. K. Das, K. C. Jana, A. Sinha", journal: "Journal of Circuits, Systems and Computers (World Scientific)", details: "vol. 29, no. 8", year: "2019", url: "https://doi.org/10.1142/S0218126620500073" }
+  ],
+  conference: [
+    { title: "Novel 21-level Reduced Switches Inverter", authors: "M. K. Das et al.", journal: "2022 IEEE International Conference on Power Electronics, Drives and Energy Systems (PEDES)", details: "DOI: 10.1109/PEDES56012.2022.10080285", year: "2022", url: "https://doi.org/10.1109/PEDES56012.2022.10080285" }
+  ],
+  book: []
+};
+
+function getPubs(type) {
+  const r = localStorage.getItem('admin_pubs_' + type);
+  return r ? JSON.parse(r) : (PUB_DEFAULTS[type] || []);
+}
+
+function showPubTab(type) {
+  ['journal','conference','book'].forEach(t => {
+    document.getElementById('ppanel-' + t).style.display = (t === type) ? '' : 'none';
+    const btn = document.getElementById('ptab-' + t);
+    btn.style.borderBottom = (t === type) ? '3px solid #3a7d1e' : '3px solid transparent';
+    btn.style.color = (t === type) ? '#3a7d1e' : '#888';
+  });
+}
+
+function renderPubs(type) {
+  const pubs = getPubs(type);
+  const c = document.getElementById('pubs_' + type + '_container');
+  c.innerHTML = '';
+  if (pubs.length === 0) {
+    c.innerHTML = '<p style="color:#aaa;font-size:13px;font-style:italic;">No entries yet. Click "+ Add" below.</p>';
+    return;
+  }
+  pubs.forEach((p, i) => {
+    c.innerHTML += `
+      <div class="research-item" style="position:relative;">
+        <button class="btn-del del-btn" onclick="removePub('${type}',${i})">✕ Remove</button>
+        <div style="margin-right:100px">
+          <div class="row">
+            <div class="field"><label>Title</label><input type="text" id="pub_title_${type}_${i}" value="${esc(p.title||'')}"></div>
+            <div class="field"><label>Year</label><input type="text" id="pub_year_${type}_${i}" value="${esc(p.year||'')}" placeholder="2024"></div>
+          </div>
+          <div class="field"><label>Authors</label><input type="text" id="pub_authors_${type}_${i}" value="${esc(p.authors||'')}"></div>
+          <div class="row">
+            <div class="field"><label>Journal / Conference / Book</label><input type="text" id="pub_journal_${type}_${i}" value="${esc(p.journal||'')}"></div>
+            <div class="field"><label>Volume / Page Details</label><input type="text" id="pub_details_${type}_${i}" value="${esc(p.details||'')}" placeholder="vol. 12, pp. 1–10"></div>
+          </div>
+          <div class="field"><label>DOI / URL (optional)</label><input type="text" id="pub_url_${type}_${i}" value="${esc(p.url||'')}" placeholder="https://doi.org/..."></div>
+        </div>
+      </div>`;
+  });
+}
+
+function addPub(type) {
+  const pubs = getPubs(type);
+  pubs.push({ title: '', authors: '', journal: '', details: '', year: '', url: '' });
+  localStorage.setItem('admin_pubs_' + type, JSON.stringify(pubs));
+  renderPubs(type);
+}
+
+function removePub(type, i) {
+  const pubs = getPubs(type);
+  pubs.splice(i, 1);
+  localStorage.setItem('admin_pubs_' + type, JSON.stringify(pubs));
+  renderPubs(type);
+}
+
+function savePubs(type) {
+  const pubs = getPubs(type);
+  const updated = pubs.map((_, i) => ({
+    title:   document.getElementById(`pub_title_${type}_${i}`)?.value || '',
+    authors: document.getElementById(`pub_authors_${type}_${i}`)?.value || '',
+    journal: document.getElementById(`pub_journal_${type}_${i}`)?.value || '',
+    details: document.getElementById(`pub_details_${type}_${i}`)?.value || '',
+    year:    document.getElementById(`pub_year_${type}_${i}`)?.value || '',
+    url:     document.getElementById(`pub_url_${type}_${i}`)?.value || ''
+  }));
+  localStorage.setItem('admin_pubs_' + type, JSON.stringify(updated));
+  toast(type.charAt(0).toUpperCase() + type.slice(1) + ' papers saved!');
+}
+
+// init
+['journal','conference','book'].forEach(renderPubs);
 
 // ── Password ──────────────────────────────────────────────────
 function changePassword() {
