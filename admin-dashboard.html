@@ -427,8 +427,10 @@ function handleImgUpload(input, boxId, storageKey) {
     footer.style.display = "flex";
     fname.textContent = file.name;
     area.style.display = "none";
-    // Store b64 in hidden field
-    if (storageKey) document.getElementById(storageKey).value = b64;
+  // Store b64 in hidden field
+  if (storageKey) document.getElementById(storageKey).value = b64;
+  // Auto-save profile so the public site picks up the image immediately
+  try { save('profile'); } catch (err) { console.warn('Auto-save failed', err); }
   };
   reader.readAsDataURL(file);
 }
@@ -444,6 +446,8 @@ function clearImg(boxId, storageKey) {
   area.style.display = "flex";
   fileIn.value = "";
   if (storageKey) document.getElementById(storageKey).value = "";
+  // also remove public image key so the site header no longer shows the image
+  try { localStorage.removeItem('admin_prof_img'); } catch(e) {}
 }
 
 // Restore a saved base64 into an upload box
@@ -507,12 +511,17 @@ function save(section) {
     Object.keys(DEF_PROFILE).forEach(saveField);
     const photoB64 = document.getElementById("prof_photo_data").value;
     if (photoB64) {
+      // store both the admin internal field and the public img key used by the site
       lset("prof_photo_data", photoB64);
+      lset("prof_img", photoB64);
       // save filename from footer if present
       const fn = document.querySelector("#profile_box .fname");
       if (fn) lset("prof_photo_name", fn.textContent);
     } else {
+      // remove both keys so public pages don't pick up a stale image
       localStorage.removeItem("admin_prof_photo_data");
+      localStorage.removeItem("admin_prof_img");
+      localStorage.removeItem("admin_prof_photo_name");
     }
     toast("Profile saved!");
   } else if (section === "about") {
