@@ -129,6 +129,14 @@
       cursor: pointer; margin-top: 8px; transition: all .2s;
     }
     .btn-add:hover { background: #eef5e8; }
+    .browse-btn {
+      min-width: 180px;
+      margin-top: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
     .btn-del {
       background: #fff; color: #c0392b; border: 1px solid #e0a0a0;
       padding: 5px 12px; border-radius: 4px; font-size: 12px;
@@ -205,6 +213,7 @@
     <a href="#" onclick="show('quicklinks',this)">🔗 Quick Links</a>
     <div class="section-label">Research</div>
     <a href="#" onclick="show('research',this)">🔬 Research Cards</a>
+    <a href="#" onclick="show('students',this)">🧑‍🎓 Student Gallery</a>
     <div class="section-label">Publications</div>
     <a href="#" onclick="show('publications',this)">📚 Publications</a>
     <div class="section-label">Other</div>
@@ -258,7 +267,7 @@
               <div class="label-text">Click to browse photo</div>
               <div class="hint">JPG, PNG, WEBP · any size</div>
             </div>
-            <input type="file" accept="image/*" onchange="handleImgUpload(this,'profile_box','prof_photo_data')">
+            <input type="file" accept="image/*" onchange="handleImgUpload(this,'profile_box','prof_photo_data','profile')">
             <img class="img-upload-preview" id="profile_box_prev">
             <div class="img-upload-footer" id="profile_box_footer">
               <span class="fname" id="profile_box_name"></span>
@@ -309,6 +318,16 @@
         <button class="btn-add" onclick="addResearchCard()">+ Add Research Card</button>
       </div>
       <button class="btn-save" onclick="save('research')">💾 Save Research Cards</button>
+    </div>
+
+    <div class="page" id="page-students">
+      <h2 class="page-title">Student Gallery</h2>
+      <p class="page-desc">Upload student event photos and add the event name shown above each image.</p>
+      <div class="form-card">
+        <div id="students_container"></div>
+        <button class="btn-add" onclick="addStudentCard()">+ Add Student Photo</button>
+      </div>
+      <button class="btn-save" onclick="save('students')">💾 Save Student Gallery</button>
     </div>
 
     <!-- ===== PUBLICATIONS ===== -->
@@ -410,7 +429,7 @@ function esc(s) {
 // ══════════════════════════════════════════════════════════════
 // IMAGE UPLOAD — base64 approach (no server needed)
 // ══════════════════════════════════════════════════════════════
-function handleImgUpload(input, boxId, storageKey) {
+function handleImgUpload(input, boxId, storageKey, saveSection) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
@@ -427,10 +446,12 @@ function handleImgUpload(input, boxId, storageKey) {
     footer.style.display = "flex";
     fname.textContent = file.name;
     area.style.display = "none";
-  // Store b64 in hidden field
-  if (storageKey) document.getElementById(storageKey).value = b64;
-  // Auto-save profile so the public site picks up the image immediately
-  try { save('profile'); } catch (err) { console.warn('Auto-save failed', err); }
+    // Store b64 in hidden field
+    if (storageKey) document.getElementById(storageKey).value = b64;
+    // Auto-save section if provided
+    if (saveSection) {
+      try { save(saveSection); } catch (err) { console.warn('Auto-save failed', err); }
+    }
   };
   reader.readAsDataURL(file);
 }
@@ -446,8 +467,11 @@ function clearImg(boxId, storageKey) {
   area.style.display = "flex";
   fileIn.value = "";
   if (storageKey) document.getElementById(storageKey).value = "";
-  // also remove public image key so the site header no longer shows the image
-  try { localStorage.removeItem('admin_prof_img'); } catch(e) {}
+  if (storageKey === "prof_photo_data") {
+    try { localStorage.removeItem('admin_prof_photo_data'); } catch(e) {}
+    try { localStorage.removeItem('admin_prof_img'); } catch(e) {}
+    try { localStorage.removeItem('admin_prof_photo_name'); } catch(e) {}
+  }
 }
 
 // Restore a saved base64 into an upload box
@@ -531,6 +555,8 @@ function save(section) {
     saveQuickLinks();
   } else if (section === "research") {
     saveResearch();
+  } else if (section === "students") {
+    saveStudents();
   }
 }
 
@@ -627,7 +653,7 @@ function renderResearch() {
                 <div class="hint">JPG, PNG, WEBP</div>
               </div>
               <input type="file" accept="image/*"
-                onchange="handleImgUpload(this,'${boxId}','${dataId}')">
+                onchange="handleImgUpload(this,'${boxId}','${dataId}','research')">
               <img class="img-upload-preview"
                    id="${boxId}_prev"
                    ${card.imgData ? `src="${card.imgData}" style="display:block"` : ""}>
@@ -680,6 +706,91 @@ function saveResearch() {
 }
 
 renderResearch();
+
+// ══════════════════════════════════════════════════════════════
+// STUDENT GALLERY — upload student event photos and event name
+// ══════════════════════════════════════════════════════════════
+const DEFAULT_STUDENTS = [
+  { imgData: "", imgName: "", eventName: "Group Outing, May 2024" },
+  { imgData: "", imgName: "", eventName: "Sondai Trek, Oct 2023" },
+  { imgData: "", imgName: "", eventName: "Matheran, Aug 2022" }
+];
+
+function getStudents() {
+  const r = localStorage.getItem("admin_students");
+  return r ? JSON.parse(r) : DEFAULT_STUDENTS;
+}
+
+function renderStudents() {
+  const cards = getStudents();
+  const c = document.getElementById("students_container");
+  if (!c) return;
+  c.innerHTML = "";
+  cards.forEach((card, i) => {
+    const boxId = `st_box_${i}`;
+    const dataId = `st_data_${i}`;
+    c.innerHTML += `
+      <div class="research-item">
+        <button class="btn-del del-btn" onclick="removeStudentCard(${i})">✕ Remove</button>
+        <div class="row" style="margin-right:100px">
+          <div class="field">
+            <label>Event name</label>
+            <input type="text" id="st_event_${i}" value="${esc(card.eventName||'')}" placeholder="Group Outing, May 2024">
+          </div>
+          <div class="field">
+            <label>Photo</label>
+            <button type="button" class="btn-add browse-btn" onclick="document.getElementById('${dataId}_input').click()">${card.imgData ? 'Change photo' : 'Choose photo from laptop'}</button>
+            <input id="${dataId}_input" type="file" accept="image/*" style="display:none" onchange="handleImgUpload(this,'${boxId}','${dataId}','students')">
+            <div class="img-upload-box" id="${boxId}">
+              <div class="img-upload-area">
+                <div class="icon">📷</div>
+                <div class="label-text">${card.imgData ? 'Photo ready' : 'Browse photo'}</div>
+                <div class="hint">JPG, PNG, WEBP</div>
+              </div>
+              <img class="img-upload-preview" id="${boxId}_prev" ${card.imgData ? `src="${card.imgData}" style="display:block"` : ""}>
+              <div class="img-upload-footer" id="${boxId}_footer" style="${card.imgData?'display:flex':''}">
+                <span class="fname" id="${boxId}_name">${esc(card.imgName||'')}</span>
+                <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
+              </div>
+            </div>
+            <input type="hidden" id="${dataId}" value="${card.imgData ? esc(card.imgData) : ''}">
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function addStudentCard() {
+  const cards = getStudents();
+  cards.push({ imgData: "", imgName: "", eventName: "New event name" });
+  localStorage.setItem("admin_students", JSON.stringify(cards));
+  renderStudents();
+}
+
+function removeStudentCard(i) {
+  const cards = getStudents();
+  cards.splice(i, 1);
+  localStorage.setItem("admin_students", JSON.stringify(cards));
+  renderStudents();
+}
+
+function saveStudents() {
+  const n = getStudents().length;
+  const updated = Array.from({ length: n }, (_, i) => {
+    const boxId = `st_box_${i}`;
+    const dataEl = document.getElementById(`st_data_${i}`);
+    const nameEl = document.getElementById(`${boxId}_name`);
+    return {
+      imgData: dataEl?.value || "",
+      imgName: nameEl?.textContent || "",
+      eventName: document.getElementById(`st_event_${i}`)?.value || ""
+    };
+  });
+  localStorage.setItem("admin_students", JSON.stringify(updated));
+  toast("Student Gallery saved!");
+}
+
+renderStudents();
 
 // ══════════════════════════════════════════════════════════════
 // PUBLICATIONS

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Students – Dr Madan Kumar Das</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      padding-bottom: 48px;
+    }
+    .student-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .student-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .student-card h3 {
+      font-size: 15px;
+      color: var(--green);
+      margin: 0;
+      padding: 14px 16px 6px;
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 52px;
+    }
+    .student-card img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      max-height: 260px;
+      cursor: zoom-in;
+    }
+    .student-card .placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 260px;
+      background: #f5f5f5;
+      color: #aaa;
+      font-size: 13px;
+      text-align: center;
+      padding: 24px;
+    }
+    .student-card p {
+      margin: 0;
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .student-upload-box {
+      border: 1px solid #ddd;
+      padding: 16px;
+      border-radius: 8px;
+      background: #fafafa;
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .student-upload-box input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--text);
+      background: #fff;
+    }
+    .upload-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-upload {
+      border: 1px solid #3a7d1e;
+      background: #fff;
+      color: #3a7d1e;
+      border-radius: 6px;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background .2s;
+    }
+    .btn-upload:hover {
+      background: #eef5e8;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_title">
+      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
+      Dr B R Ambedkar National Institute of Technology, Jalandhar
+    </div>
+  </div>
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
+    <a href="index.html">Home</a>
+    <a href="research.html">Research</a>
+    <a href="teaching.html">Teaching</a>
+    <a href="cv.html">CV</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+  <div class="page-bar">Students</div>
+
+  <!-- SUB NAV -->
+  <div class="sub-nav">
+    <a href="research.html">Overview</a>
+    <a href="publications.html">Publications</a>
+    <a href="projects.html">Projects</a>
+    <a href="students.html" class="active">Students</a>
+    <a href="perl.html">Power Electronics Research Lab (PERL)</a>
+    <a href="positions.html">Open Positions</a>
+  </div>
+
+  <div class="highlight-box">
+    Student event photo gallery
+  </div>
+
+  <p class="note">Click any photo to open it full size.</p>
+
+  <div class="student-upload-box">
+    <div class="upload-row">
+      <input id="student_event_input" type="text" placeholder="Event name (e.g. Group Outing, May 2024)">
+      <button type="button" id="student_photo_button" class="btn-upload">Choose photo from laptop</button>
+    </div>
+    <div class="upload-row" style="margin-top:12px; gap:12px; align-items:center;">
+      <span id="student_selected_file" style="color:#555;font-size:14px;">No file selected</span>
+      <button type="button" id="student_add_button" class="btn-save" style="padding:10px 18px;">Add photo</button>
+    </div>
+    <input id="student_photo_input" type="file" accept="image/*" style="display:none">
+  </div>
+
+  <div class="student-grid" id="student_grid"></div>
+
+</div>
+
+<footer class="site-footer">
+  <a href="admin-login.html" style="color:#3a7d1e;">⚙ Admin</a>
+</footer>
+
+<script>
+const name = localStorage.getItem("admin_prof_name");
+const title = localStorage.getItem("admin_prof_title");
+const dept  = localStorage.getItem("admin_prof_dept");
+const inst  = localStorage.getItem("admin_prof_institute");
+if (name) document.getElementById("hdr_name").textContent = name;
+if (title || dept || inst) {
+  document.getElementById("hdr_title").innerHTML =
+    (title||"Assistant Professor (Grade-II)") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
+    (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
+}
+
+const DEFAULT_STUDENTS = [
+  { imgData: "", eventName: "Group Outing, May 2024" },
+  { imgData: "", eventName: "Sondai Trek, Oct 2023" },
+  { imgData: "", eventName: "Matheran, Aug 2022" }
+];
+
+function getStudents() {
+  const raw = localStorage.getItem("admin_students");
+  return raw ? JSON.parse(raw) : DEFAULT_STUDENTS;
+}
+
+function renderStudents() {
+  const students = getStudents();
+  const grid = document.getElementById("student_grid");
+  grid.innerHTML = "";
+  if (students.length === 0) {
+    grid.innerHTML = '<div style="color:#777;font-size:14px;">No student photos uploaded yet. Use the upload box above to add event pictures.</div>';
+    return;
+  }
+  students.forEach((card, idx) => {
+    const div = document.createElement("div");
+    div.className = "student-card";
+    const titleHtml = `<h3>${card.eventName ? card.eventName : 'Event name'}</h3>`;
+    const hasImg = card.imgData && card.imgData.length > 100;
+    const imageHtml = hasImg
+      ? `<img src="${card.imgData}" onclick="window.open(this.src)" title="Click to view full size" style="cursor:zoom-in">`
+      : `<div class="placeholder">No photo uploaded yet for this event.</div>`;
+    div.innerHTML = titleHtml + imageHtml;
+    grid.appendChild(div);
+  });
+}
+
+const grid = document.getElementById("student_grid");
+renderStudents();
+
+let studentSelectedData = "";
+let studentSelectedName = "";
+
+const photoInput = document.getElementById("student_photo_input");
+const photoButton = document.getElementById("student_photo_button");
+const selectedFileLabel = document.getElementById("student_selected_file");
+const addButton = document.getElementById("student_add_button");
+
+photoButton.addEventListener("click", () => photoInput.click());
+photoInput.addEventListener("change", event => {
+  const file = event.target.files[0];
+  if (!file) {
+    studentSelectedData = "";
+    studentSelectedName = "";
+    selectedFileLabel.textContent = "No file selected";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    studentSelectedData = e.target.result;
+    studentSelectedName = file.name;
+    selectedFileLabel.textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+});
+
+addButton.addEventListener("click", () => {
+  const eventName = document.getElementById("student_event_input").value.trim() || "Student event";
+  if (!studentSelectedData) {
+    alert("Please wait for the photo to load, then try again. Or choose a photo from your laptop.");
+    return;
+  }
+  try {
+    const students = getStudents();
+    students.push({ imgData: studentSelectedData, imgName: studentSelectedName, eventName });
+    localStorage.setItem("admin_students", JSON.stringify(students));
+    document.getElementById("student_event_input").value = "";
+    studentSelectedData = "";
+    studentSelectedName = "";
+    selectedFileLabel.textContent = "No file selected";
+    photoInput.value = "";
+    renderStudents();
+  } catch (e) {
+    console.error("Error saving photo:", e);
+    alert("Error saving photo. File might be too large.");
+  }
+});
+</script>
+
+</body>
+</html>
