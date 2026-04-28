@@ -62,45 +62,22 @@
   <div class="page-bar">Teaching</div>
 
   <div class="course-list">
+  <div class="course-year">Current Semester</div>
+  <div id="current_courses_area"></div>
 
-    <div class="course-year">Current Semester</div>
-
-    <div class="course-row">
-      <span class="course-name">
-        Power Electronics
-        <span class="course-tag">UG</span>
-      </span>
-      <span class="course-meta">EE 301</span>
-    </div>
-
-    <div class="course-row">
-      <span class="course-name">
-        DC-DC Converters for Renewable Energy
-        <span class="course-tag">PG</span>
-      </span>
-      <span class="course-meta">EE 601</span>
-    </div>
-
-    <div class="course-year">Previous Courses</div>
-
-    <div class="course-row">
-      <span class="course-name">Multilevel Inverters</span>
-      <span class="course-meta">EE 502</span>
-    </div>
-
-    <div class="course-row">
-      <span class="course-name">Circuit Theory</span>
-      <span class="course-meta">EE 101</span>
-    </div>
-
-    <div class="course-row">
-      <span class="course-name">Electrical Machines</span>
-      <span class="course-meta">EE 201</span>
-    </div>
+  <div class="course-year">Previous Courses</div>
+  <div id="previous_courses_area"></div>
 
   </div>
 </div>
 
 <footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
+<script>
+function get(k){return localStorage.getItem(k);} 
+const cur = get('teaching_current_html');
+const prev = get('teaching_prev_html');
+document.getElementById('current_courses_area').innerHTML = cur || '<p style="color:#777;font-style:italic">No current semester courses listed.</p>';
+document.getElementById('previous_courses_area').innerHTML = prev || '<p style="color:#777;font-style:italic">No previous courses listed.</p>';
+</script>
 </body>
 </html>

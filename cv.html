@@ -50,6 +50,63 @@
     <div class="hdr-name">Dr Madan Kumar Das</div>
     <div class="hdr-sub">
       Assistant Professor , Dept. of Electrical Engineering,<br>
+<script>
+// read CV pieces published by admin (stored under admin_ keys)
+function adminGet(k){return localStorage.getItem('admin_'+k);} 
+function renderList(key, containerSelector, defaultList){
+  const raw = adminGet(key);
+  const container = document.querySelector(containerSelector);
+  let items = raw ? raw.split('\n').filter(Boolean) : defaultList;
+  if (!container) return;
+  container.innerHTML = items.map(it => `<li>${it}</li>`).join('');
+}
+// Awards
+const awardsRaw = adminGet('cv_awards');
+const awardsList = awardsRaw ? awardsRaw.split('\n').filter(Boolean) : ['Cited 437+ times on Google Scholar','Post-Doctoral Fellow, IIT Delhi','Research on Multilevel Inverters & Grid-Connected Renewable Energy','Active Power Factor Correction (PFC) Systems'];
+const awardsEl = document.querySelector('.cv-grid .cv-section:nth-of-type(1) ul');
+if (awardsEl) awardsEl.innerHTML = awardsList.map(a => `<li>${a}</li>`).join('');
+
+// Experience and Education
+const expRaw = adminGet('cv_experience');
+const expList = expRaw ? expRaw.split('\n').filter(Boolean) : ['Assistant Professor (Grade-II) | Dr B R Ambedkar NIT, Jalandhar | Present','Post-Doctoral Fellow | IIT Delhi | 2020–2021'];
+const expEl = document.querySelector('.cv-grid .cv-section:nth-of-type(2)');
+if (expEl) {
+  // build experience entries and keep education below
+  const parts = expList.map(e => {
+    const [role, inst, dur] = e.split('|').map(s=>s? s.trim() : '');
+    return `<div class="cv-entry"><strong>${role||''}</strong>${inst? `<small>${inst}${dur? ' — '+dur : ''}</small>` : ''}</div>`;
+  }).join('');
+  // education
+  const eduRaw = adminGet('cv_education');
+  const eduList = eduRaw ? eduRaw.split('\n').filter(Boolean) : ['PhD — Electrical Engineering | IIT (ISM) Dhanbad | 2019','B.Tech — Electrical & Electronics | Vinoba Bhave University'];
+  const eduHtml = `<h3>Education</h3>` + eduList.map(ed=>{
+    const [deg, inst, year] = ed.split('|').map(s=>s? s.trim():'');
+    return `<div class="cv-entry"><strong>${deg||''}</strong>${inst? `<small>${inst}${year? ', '+year : ''}</small>` : ''}</div>`;
+  }).join('');
+  expEl.innerHTML = parts + eduHtml;
+}
+
+// Links & contact
+const linksEl = document.querySelector('.cv-links');
+if (linksEl) {
+  const ln = (adminGet('cv_linkedin') ? `<a href="${adminGet('cv_linkedin')}">LinkedIn Profile</a>` : '') +
+             (adminGet('cv_scholar') ? `<a href="${adminGet('cv_scholar')}">Google Scholar</a>` : '') +
+             (adminGet('cv_nitj') ? `<a href="${adminGet('cv_nitj')}">NITJ Faculty Profile</a>` : '') +
+             (adminGet('cv_other') ? `<a href="${adminGet('cv_other')}">Other Link</a>` : '');
+  if (ln) linksEl.innerHTML = ln; // otherwise keep defaults
+}
+
+// Contact block: override contact if admin saved address/phone/email
+const contactEl = document.querySelector('.cv-grid .cv-section:nth-of-type(3) p');
+if (contactEl) {
+  const addr = adminGet('prof_address');
+  const phone = adminGet('prof_phone');
+  const email = adminGet('prof_email');
+  if (addr || phone || email) {
+    contactEl.innerHTML = (addr? addr.replace(/\n/g,'<br>') + '<br>' : '') + (phone? 'Tel: '+phone + ' | ' : '') + (email? 'Email: '+email : '');
+  }
+}
+</script>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
     </div>
   </div>

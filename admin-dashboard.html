@@ -200,13 +200,19 @@
 
   <div class="sidebar">
     <div class="section-label">Home Page</div>
-    <a href="#" class="active" onclick="show('profile',this)">👤 Profile & Contact</a>
+    <a href="#" class="active" onclick="show('profile',this)">👤 Profile &amp; Contact</a>
     <a href="#" onclick="show('about',this)">📝 About Me</a>
     <a href="#" onclick="show('quicklinks',this)">🔗 Quick Links</a>
     <div class="section-label">Research</div>
     <a href="#" onclick="show('research',this)">🔬 Research Cards</a>
+    <a href="#" onclick="show('projects',this)">🗂 Projects</a>
+    <a href="#" onclick="show('students',this)">🎓 Students</a>
+    <a href="#" onclick="show('positions',this)">📌 Open Positions</a>
     <div class="section-label">Publications</div>
     <a href="#" onclick="show('publications',this)">📚 Publications</a>
+    <div class="section-label">Teaching &amp; CV</div>
+    <a href="#" onclick="show('teaching',this)">🏫 Teaching</a>
+    <a href="#" onclick="show('cv',this)">📋 CV</a>
     <div class="section-label">Other</div>
     <a href="#" onclick="show('password',this)">🔒 Change Password</a>
   </div>
@@ -352,6 +358,119 @@
         </div>
         <button class="btn-save" onclick="savePubs('book')">💾 Save Book Chapters</button>
       </div>
+    </div>
+
+    <!-- ===== PROJECTS ===== -->
+    <div class="page" id="page-projects">
+      <h2 class="page-title">Projects</h2>
+      <p class="page-desc">Add current and closed projects. Each project appears in the Projects page table.</p>
+      <div style="display:flex;gap:0;border-bottom:2px solid #dde8d0;margin-bottom:20px;">
+        <button id="prjtab-current" onclick="showProjTab('current')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid #3a7d1e;color:#3a7d1e;">🟢 Current Projects</button>
+        <button id="prjtab-closed" onclick="showProjTab('closed')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">🔴 Closed Projects</button>
+      </div>
+      <div id="prjpanel-current">
+        <div class="form-card"><h3>Current Projects</h3><div id="proj_current_container"></div><button class="btn-add" onclick="addProject('current')">+ Add Current Project</button></div>
+        <button class="btn-save" onclick="saveProjects('current')">💾 Save Current Projects</button>
+      </div>
+      <div id="prjpanel-closed" style="display:none">
+        <div class="form-card"><h3>Closed Projects</h3><div id="proj_closed_container"></div><button class="btn-add" onclick="addProject('closed')">+ Add Closed Project</button></div>
+        <button class="btn-save" onclick="saveProjects('closed')">💾 Save Closed Projects</button>
+      </div>
+    </div>
+
+    <!-- ===== STUDENTS ===== -->
+    <div class="page" id="page-students">
+      <h2 class="page-title">Students</h2>
+      <p class="page-desc">Add PhD, MTech, and BTech students. They appear on the Students page.</p>
+      <div style="display:flex;gap:0;border-bottom:2px solid #dde8d0;margin-bottom:20px;">
+        <button id="stutab-phd" onclick="showStuTab('phd')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid #3a7d1e;color:#3a7d1e;">PhD</button>
+        <button id="stutab-mtech" onclick="showStuTab('mtech')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">MTech</button>
+        <button id="stutab-btech" onclick="showStuTab('btech')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">BTech / Project</button>
+        <button id="stutab-alumni" onclick="showStuTab('alumni')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">Alumni</button>
+      </div>
+      <div id="stupanel-phd">
+        <div class="form-card"><h3>PhD Students</h3><div id="stu_phd_container"></div><button class="btn-add" onclick="addStudent('phd')">+ Add PhD Student</button></div>
+        <button class="btn-save" onclick="saveStudents('phd')">💾 Save PhD Students</button>
+      </div>
+      <div id="stupanel-mtech" style="display:none">
+        <div class="form-card"><h3>MTech Students</h3><div id="stu_mtech_container"></div><button class="btn-add" onclick="addStudent('mtech')">+ Add MTech Student</button></div>
+        <button class="btn-save" onclick="saveStudents('mtech')">💾 Save MTech Students</button>
+      </div>
+      <div id="stupanel-btech" style="display:none">
+        <div class="form-card"><h3>BTech / Project Students</h3><div id="stu_btech_container"></div><button class="btn-add" onclick="addStudent('btech')">+ Add Student</button></div>
+        <button class="btn-save" onclick="saveStudents('btech')">💾 Save BTech Students</button>
+      </div>
+      <div id="stupanel-alumni" style="display:none">
+        <div class="form-card"><h3>Alumni</h3><div id="stu_alumni_container"></div><button class="btn-add" onclick="addStudent('alumni')">+ Add Alumni</button></div>
+        <button class="btn-save" onclick="saveStudents('alumni')">💾 Save Alumni</button>
+      </div>
+    </div>
+
+    <!-- ===== OPEN POSITIONS ===== -->
+    <div class="page" id="page-positions">
+      <h2 class="page-title">Open Positions</h2>
+      <p class="page-desc">Manage open position announcements. They appear on the Open Positions page.</p>
+      <div class="form-card">
+        <div id="positions_container"></div>
+        <button class="btn-add" onclick="addPosition()">+ Add Position</button>
+      </div>
+      <button class="btn-save" onclick="savePositions()">💾 Save Positions</button>
+    </div>
+
+    <!-- ===== TEACHING ===== -->
+    <div class="page" id="page-teaching">
+      <h2 class="page-title">Teaching</h2>
+      <p class="page-desc">Add courses taught. They appear on the Teaching page.</p>
+      <div style="display:flex;gap:0;border-bottom:2px solid #dde8d0;margin-bottom:20px;">
+        <button id="teachtab-current" onclick="showTeachTab('current')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid #3a7d1e;color:#3a7d1e;">Current Semester</button>
+        <button id="teachtab-prev" onclick="showTeachTab('prev')" style="padding:8px 18px;font-size:13px;font-weight:bold;border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;color:#888;">Previous Courses</button>
+      </div>
+      <div id="teachpanel-current">
+        <div class="form-card"><h3>Current Semester Courses</h3><div id="teach_current_container"></div><button class="btn-add" onclick="addCourse('current')">+ Add Course</button></div>
+        <button class="btn-save" onclick="saveCourses('current')">💾 Save Current Courses</button>
+      </div>
+      <div id="teachpanel-prev" style="display:none">
+        <div class="form-card"><h3>Previous Courses</h3><div id="teach_prev_container"></div><button class="btn-add" onclick="addCourse('prev')">+ Add Course</button></div>
+        <button class="btn-save" onclick="saveCourses('prev')">💾 Save Previous Courses</button>
+      </div>
+    </div>
+
+    <!-- ===== CV ===== -->
+    <div class="page" id="page-cv">
+      <h2 class="page-title">CV</h2>
+      <p class="page-desc">Edit the CV page sections — awards, experience, education, and links.</p>
+      <div class="form-card">
+        <h3>Awards &amp; Fellowships</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px;">One award per line.</p>
+        <div class="field"><textarea id="cv_awards" rows="8" placeholder="C1973 Research Excellence Award — IIT Bombay, 2024&#10;INSA Associate Fellow — 2023"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Work Experience</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px;">One entry per line: <em>Role | Institution | Duration</em></p>
+        <div class="field"><textarea id="cv_experience" rows="8" placeholder="Assistant Professor (Grade-II) | Dr B R Ambedkar NIT, Jalandhar | Present&#10;Post-Doctoral Fellow | IIT Delhi | 2020–2021"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Education</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px;">One entry per line: <em>Degree | Institution | Year</em></p>
+        <div class="field"><textarea id="cv_education" rows="5" placeholder="PhD — Electrical Engineering | IIT (ISM) Dhanbad | 2019&#10;B.Tech — Electrical &amp; Electronics | Vinoba Bhave University"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Professional Memberships</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px;">One per line.</p>
+        <div class="field"><textarea id="cv_memberships" rows="4" placeholder="IEEE Senior Member&#10;IET Member"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Additional Links</h3>
+        <div class="row">
+          <div class="field"><label>LinkedIn URL</label><input type="text" id="cv_linkedin" placeholder="https://linkedin.com/in/..."></div>
+          <div class="field"><label>Google Scholar URL</label><input type="text" id="cv_scholar" placeholder="https://scholar.google.com/..."></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>NITJ Faculty Profile URL</label><input type="text" id="cv_nitj" placeholder="https://departments.nitj.ac.in/..."></div>
+          <div class="field"><label>Other Link URL</label><input type="text" id="cv_other" placeholder="https://..."></div>
+        </div>
+      </div>
+      <button class="btn-save" onclick="saveCV()">💾 Save CV</button>
     </div>
 
     <!-- ===== PASSWORD ===== -->
@@ -533,6 +652,268 @@ function save(section) {
     saveResearch();
   }
 }
+
+// ── Positions editor (Open Positions) ─────────────────────────
+// Positions management (no photos)
+function getPositionsList() {
+  const raw = localStorage.getItem('admin_positions_list');
+  return raw ? JSON.parse(raw) : [];
+}
+
+function renderPositions() {
+  const list = getPositionsList();
+  const c = document.getElementById('positions_container');
+  c.innerHTML = '';
+  if (list.length === 0) {
+    c.innerHTML = '<p style="color:#777;font-style:italic">No positions yet. Click "+ Add Position" to create one.</p>';
+    return;
+  }
+  list.forEach((p, i) => {
+    c.innerHTML += `
+      <div class="research-item">
+        <button class="btn-del del-btn" onclick="removePosition(${i})">✕ Remove</button>
+        <div style="margin-right:100px">
+          <div class="field"><label>Title</label><input type="text" id="pos_title_${i}" value="${esc(p.title||'')}"></div>
+          <div class="field"><label>Short summary / eligibility</label><textarea id="pos_note_${i}" rows="4">${esc(p.note||'')}</textarea></div>
+        </div>
+      </div>`;
+  });
+}
+
+function addPosition() {
+  const list = getPositionsList();
+  list.push({ title: 'New Position', note: 'Short description / eligibility criteria' });
+  localStorage.setItem('admin_positions_list', JSON.stringify(list));
+  renderPositions();
+}
+
+function removePosition(i) {
+  const list = getPositionsList(); list.splice(i,1);
+  localStorage.setItem('admin_positions_list', JSON.stringify(list)); renderPositions();
+}
+
+function savePositions() {
+  const list = getPositionsList();
+  const updated = list.map((_, i) => ({
+    title: document.getElementById(`pos_title_${i}`)?.value || '',
+    note: document.getElementById(`pos_note_${i}`)?.value || ''
+  }));
+  localStorage.setItem('admin_positions_list', JSON.stringify(updated));
+  // Build HTML for public page (no photos) and publish under positions key
+  let html = '';
+  updated.forEach(p => {
+    html += `<div style="margin-bottom:12px"><strong>${esc(p.title)}</strong><div style="margin-top:6px;color:var(--muted);">${p.note}</div></div>`;
+  });
+  localStorage.setItem('admin_positions', JSON.stringify(updated));
+  localStorage.setItem('positions', html);
+  toast('Open Positions saved!');
+}
+
+// init positions UI
+renderPositions();
+
+// ── Teaching management (current semester + previous courses)
+function getCourses(type) {
+  const r = localStorage.getItem('admin_courses_' + type);
+  return r ? JSON.parse(r) : [];
+}
+
+function renderCourses(type) {
+  const courses = getCourses(type);
+  const container = document.getElementById('teach_' + type + '_container');
+  if (!container) return;
+  container.innerHTML = '';
+  if (courses.length === 0) { container.innerHTML = '<p style="color:#777;font-style:italic">No courses yet.</p>'; return; }
+  courses.forEach((c, i) => {
+    container.innerHTML += `
+      <div class="research-item">
+        <button class="btn-del del-btn" onclick="removeCourse('${type}',${i})">✕ Remove</button>
+        <div style="margin-right:100px">
+          <div class="row">
+            <div class="field"><label>Course Name</label><input type="text" id="course_name_${type}_${i}" value="${esc(c.name||'')}"></div>
+            <div class="field"><label>Code / Meta</label><input type="text" id="course_meta_${type}_${i}" value="${esc(c.meta||'')}"></div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function addCourse(type) {
+  const list = getCourses(type);
+  list.push({ name: 'New Course', meta: '' });
+  localStorage.setItem('admin_courses_' + type, JSON.stringify(list));
+  renderCourses(type);
+}
+
+function removeCourse(type, i) {
+  const list = getCourses(type); list.splice(i,1);
+  localStorage.setItem('admin_courses_' + type, JSON.stringify(list)); renderCourses(type);
+}
+
+function saveCourses(type) {
+  const list = getCourses(type);
+  const updated = list.map((_, i) => ({ name: document.getElementById(`course_name_${type}_${i}`)?.value || '', meta: document.getElementById(`course_meta_${type}_${i}`)?.value || '' }));
+  localStorage.setItem('admin_courses_' + type, JSON.stringify(updated));
+  // also publish HTML for public teaching page
+  const htmlParts = updated.map(c => `<div class="course-row"><span class="course-name">${esc(c.name)}<span class="course-tag">${c.meta||''}</span></span><span class="course-meta">${c.meta||''}</span></div>`);
+  if (type === 'current') localStorage.setItem('teaching_current_html', htmlParts.join(''));
+  else localStorage.setItem('teaching_prev_html', htmlParts.join(''));
+  toast('Courses saved!');
+}
+
+function showTeachTab(which) {
+  document.getElementById('teachpanel-current').style.display = which === 'current' ? '' : 'none';
+  document.getElementById('teachpanel-prev').style.display = which === 'prev' ? '' : 'none';
+  document.getElementById('teachtab-current').style.borderBottom = which === 'current' ? '3px solid #3a7d1e' : '3px solid transparent';
+  document.getElementById('teachtab-prev').style.borderBottom = which === 'prev' ? '3px solid #3a7d1e' : '3px solid transparent';
+  document.getElementById('teachtab-current').style.color = which === 'current' ? '#3a7d1e' : '#888';
+  document.getElementById('teachtab-prev').style.color = which === 'prev' ? '#3a7d1e' : '#888';
+}
+
+// initialize teaching UI
+renderCourses('current'); renderCourses('prev');
+
+// ── Projects management (current / closed)
+function getProjects(type) {
+  const r = localStorage.getItem('admin_projects_' + type);
+  return r ? JSON.parse(r) : [];
+}
+
+function renderProjects(type) {
+  const list = getProjects(type);
+  const c = document.getElementById('proj_' + type + '_container');
+  if (!c) return;
+  c.innerHTML = '';
+  if (list.length === 0) { c.innerHTML = '<p style="color:#777;font-style:italic">No projects yet.</p>'; return; }
+  list.forEach((p, i) => {
+    c.innerHTML += `
+      <div class="research-item">
+        <button class="btn-del del-btn" onclick="removeProject('${type}',${i})">✕ Remove</button>
+        <div style="margin-right:100px">
+          <div class="field"><label>Project Title</label><input type="text" id="proj_title_${type}_${i}" value="${esc(p.title||'')}"></div>
+          <div class="field"><label>Funding Agency / Sponsor</label><input type="text" id="proj_sponsor_${type}_${i}" value="${esc(p.sponsor||'')}"></div>
+          <div class="row">
+            <div class="field"><label>Role</label><input type="text" id="proj_role_${type}_${i}" value="${esc(p.role||'')}"></div>
+            <div class="field"><label>Duration</label><input type="text" id="proj_dur_${type}_${i}" value="${esc(p.duration||'')}"></div>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function addProject(type) {
+  const list = getProjects(type);
+  list.push({ title: 'New Project', sponsor: '', role: '', duration: '' });
+  localStorage.setItem('admin_projects_' + type, JSON.stringify(list));
+  renderProjects(type);
+}
+
+function removeProject(type, i) {
+  const list = getProjects(type); list.splice(i,1);
+  localStorage.setItem('admin_projects_' + type, JSON.stringify(list)); renderProjects(type);
+}
+
+function saveProjects(type) {
+  const list = getProjects(type);
+  const updated = list.map((_, i) => ({
+    title: document.getElementById(`proj_title_${type}_${i}`)?.value || '',
+    sponsor: document.getElementById(`proj_sponsor_${type}_${i}`)?.value || '',
+    role: document.getElementById(`proj_role_${type}_${i}`)?.value || '',
+    duration: document.getElementById(`proj_dur_${type}_${i}`)?.value || ''
+  }));
+  localStorage.setItem('admin_projects_' + type, JSON.stringify(updated));
+  // publish HTML table rows for public projects page
+  let rows = '';
+  updated.forEach((p, idx) => {
+    rows += `<tr><td class="col-no">${idx+1}</td><td>${esc(p.title)}</td><td>${esc(p.sponsor)}</td><td>${esc(p.role)}</td><td class="col-duration">${esc(p.duration)}</td></tr>`;
+  });
+  if (type === 'current') localStorage.setItem('projects_current_html', rows);
+  else localStorage.setItem('projects_closed_html', rows);
+  toast('Projects saved!');
+}
+
+function showProjTab(which) {
+  document.getElementById('prjpanel-current').style.display = which === 'current' ? '' : 'none';
+  document.getElementById('prjpanel-closed').style.display = which === 'closed' ? '' : 'none';
+  document.getElementById('prjtab-current').style.borderBottom = which === 'current' ? '3px solid #3a7d1e' : '3px solid transparent';
+  document.getElementById('prjtab-closed').style.borderBottom = which === 'closed' ? '3px solid #3a7d1e' : '3px solid transparent';
+  document.getElementById('prjtab-current').style.color = which === 'current' ? '#3a7d1e' : '#888';
+  document.getElementById('prjtab-closed').style.color = which === 'closed' ? '#3a7d1e' : '#888';
+}
+
+// init projects UI
+renderProjects('current'); renderProjects('closed');
+
+// ── Students management (PhD, MTech, BTech, Alumni)
+function getStudentsType(type) {
+  const r = localStorage.getItem('admin_students_' + type);
+  return r ? JSON.parse(r) : [];
+}
+
+function renderStudents(type) {
+  const list = getStudentsType(type);
+  const c = document.getElementById('stu_' + type + '_container');
+  if (!c) return;
+  c.innerHTML = '';
+  if (list.length === 0) { c.innerHTML = '<p style="color:#777;font-style:italic">No entries yet.</p>'; return; }
+  list.forEach((s, i) => {
+    c.innerHTML += `
+      <div class="research-item">
+        <button class="btn-del del-btn" onclick="removeStudent('${type}',${i})">✕ Remove</button>
+        <div style="margin-right:100px">
+          <div class="field"><label>Name</label><input type="text" id="stu_name_${type}_${i}" value="${esc(s.name||'')}"></div>
+          <div class="field"><label>Role / Degree</label><input type="text" id="stu_role_${type}_${i}" value="${esc(s.role||'')}"></div>
+          <div class="field"><label>Note</label><textarea id="stu_note_${type}_${i}" rows="3">${esc(s.note||'')}</textarea></div>
+        </div>
+      </div>`;
+  });
+}
+
+function addStudent(type) {
+  const list = getStudentsType(type);
+  list.push({ photo: '', name: 'New Student', role: '', note: '' });
+  localStorage.setItem('admin_students_' + type, JSON.stringify(list)); renderStudents(type);
+}
+
+function removeStudent(type, i) {
+  const list = getStudentsType(type); list.splice(i,1); localStorage.setItem('admin_students_' + type, JSON.stringify(list)); renderStudents(type);
+}
+
+function saveStudents(type) {
+  const list = getStudentsType(type);
+  const updated = list.map((_, i) => ({ photo: '', name: document.getElementById(`stu_name_${type}_${i}`)?.value || '', role: document.getElementById(`stu_role_${type}_${i}`)?.value || '', note: document.getElementById(`stu_note_${type}_${i}`)?.value || '' }));
+  localStorage.setItem('admin_students_' + type, JSON.stringify(updated));
+  // rebuild combined admin_students for public page
+  const phd = JSON.parse(localStorage.getItem('admin_students_phd')||'[]');
+  const mtech = JSON.parse(localStorage.getItem('admin_students_mtech')||'[]');
+  const btech = JSON.parse(localStorage.getItem('admin_students_btech')||'[]');
+  const alumni = JSON.parse(localStorage.getItem('admin_students_alumni')||'[]');
+  const all = phd.concat(mtech,btech,alumni);
+  localStorage.setItem('admin_students', JSON.stringify(all));
+  toast('Students saved!');
+}
+
+function showStuTab(which) {
+  ['phd','mtech','btech','alumni'].forEach(t => {
+    document.getElementById('stupanel-' + t).style.display = (t === which) ? '' : 'none';
+    const btn = document.getElementById('stutab-' + t);
+    btn.style.borderBottom = (t === which) ? '3px solid #3a7d1e' : '3px solid transparent';
+    btn.style.color = (t === which) ? '#3a7d1e' : '#888';
+  });
+}
+
+// init students UI
+['phd','mtech','btech','alumni'].forEach(renderStudents);
+
+// Ensure initialization after full load (defensive)
+window.addEventListener('load', () => {
+  try {
+    renderCourses('current'); renderCourses('prev');
+    renderProjects('current'); renderProjects('closed');
+    ['phd','mtech','btech','alumni'].forEach(renderStudents);
+    showTeachTab('current'); showProjTab('current'); showStuTab('phd');
+  } catch (e) { console.warn('Admin init error', e); }
+});
 
 // ── Quick Links ───────────────────────────────────────────────
 const DEFAULT_LINKS = [
@@ -768,6 +1149,33 @@ function savePubs(type) {
 
 // init
 ['journal','conference','book'].forEach(renderPubs);
+
+// load CV fields into admin form if present
+['cv_awards','cv_experience','cv_education','cv_memberships','cv_linkedin','cv_scholar','cv_nitj','cv_other'].forEach(k => loadField(k, ''));
+
+// Save CV fields
+function saveCV() {
+  const awards = document.getElementById('cv_awards')?.value || '';
+  const experience = document.getElementById('cv_experience')?.value || '';
+  const education = document.getElementById('cv_education')?.value || '';
+  const memberships = document.getElementById('cv_memberships')?.value || '';
+  const linkedin = document.getElementById('cv_linkedin')?.value || '';
+  const scholar = document.getElementById('cv_scholar')?.value || '';
+  const nitj = document.getElementById('cv_nitj')?.value || '';
+  const other = document.getElementById('cv_other')?.value || '';
+  // store under admin_ keys so public page picks them up
+  localStorage.setItem('admin_cv_awards', awards);
+  localStorage.setItem('admin_cv_experience', experience);
+  localStorage.setItem('admin_cv_education', education);
+  localStorage.setItem('admin_cv_memberships', memberships);
+  localStorage.setItem('admin_cv_linkedin', linkedin);
+  localStorage.setItem('admin_cv_scholar', scholar);
+  localStorage.setItem('admin_cv_nitj', nitj);
+  localStorage.setItem('admin_cv_other', other);
+  // also save contact/profile fields that CV uses
+  saveField('prof_address'); saveField('prof_phone'); saveField('prof_email');
+  toast('CV saved!');
+}
 
 // ── Password ──────────────────────────────────────────────────
 function changePassword() {
