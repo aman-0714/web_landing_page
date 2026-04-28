@@ -8,16 +8,16 @@
 </head>
 <body>
 
-<header class="header">
-  <div class="header-left">
-    <h1 id="hdr_name">Dr Madan Kumar Das</h1>
-    <p id="hdr_title">
+<header class="site-header">
+  <div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_title">
       Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
-    </p>
+    </div>
   </div>
-  <div class="divider-vertical"></div>
-  <nav class="nav">
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
     <a href="index.html" class="active">Home</a>
     <a href="research.html">Research</a>
     <a href="teaching.html">Teaching</a>
@@ -25,54 +25,60 @@
   </nav>
 </header>
 
-<div class="line"></div>
-<div class="home">Home</div>
-<div class="line"></div>
-<hr>
+<div class="page-wrap">
+  <div class="page-bar">Home</div>
 
-<section class="container">
+  <section class="home-grid">
 
-  <!-- LEFT SIDE -->
-  <div class="left-section">
-    <img id="prof_photo" src="profile.jpg" alt="Profile">
+    <!-- LEFT -->
+    <div>
+      <img id="prof_photo" class="prof-photo" src="profile.jpg" alt="Profile">
+      <div class="contact-box">
+        <strong>Contact</strong><br>
+        <span id="contact_info">
+          303, 3rd Floor Academic Building,<br>
+          Dept. of Electrical Engineering,<br>
+          Dr B R Ambedkar NIT, Jalandhar 144008<br>
+          <strong>Tel:</strong> 01815037465, Ext: 1503<br>
+          <strong>Email:</strong> dasmk@nitj.ac.in
+        </span>
+      </div>
+      <a id="cal_link" class="cal-link" href="https://calendar.google.com" target="_blank">
+        → Check my calendar for visits
+      </a>
+    </div>
 
-    <div class="contact">
-      <h3>Contact:</h3>
-      <p id="contact_info">
-        303, 3rd Floor Academic Building,<br>
-        Dept. of Electrical Engineering,<br>
-        Dr B R Ambedkar NIT, Jalandhar, Punjab 144008<br>
-        Tel (O): 01815037465, Ext: 1503<br>
-        Mobile: +91-6207667319<br>
-        Email: dasmk@nitj.ac.in
+    <!-- CENTRE -->
+    <div>
+      <h2 class="sec-heading">
+        <span class="sec-bar bar-orange"></span> About Me
+      </h2>
+      <p id="about_p1">
+        I am an Assistant Professor (Grade-II) in the Department of Electrical Engineering
+        at Dr B R Ambedkar National Institute of Technology (NIT Jalandhar), Punjab.
+        Prior to this, I was a Post-Doctoral Fellow at the Indian Institute of Technology, Delhi.
       </p>
-      <p class="calendar-text">
-        <span class="green">Please check</span>
-        <a id="cal_link" href="https://calendar.google.com" target="_blank">my calendar</a>
-        <span class="green">to plan visits and meetings</span>
+      <br>
+      <p id="about_p2">
+        I received my Ph.D. in Electrical Engineering from IIT (ISM) Dhanbad in 2019,
+        and my B.Tech in Electrical and Electronics Engineering from Vinoba Bhave University (VBU),
+        Hazaribagh, Jharkhand.
+      </p>
+      <br>
+      <p id="about_p3">
+        My research interests are in the area of Power Electronics, including Multilevel Inverters,
+        Renewable Energy (Grid-Connected Systems), Active Power Factor Correction (PFC), and
+        DC-DC Converters for Solar PV and Electric Vehicle applications.
       </p>
     </div>
-  </div>
 
-  <!-- CENTER -->
-  <div class="about">
-    <h2><span class="bar orange"></span> About Me</h2>
-    <p id="about_p1">
-      I am an Assistant Professor (Grade-II) in the Department of Electrical Engineering
-      at Dr B R Ambedkar National Institute of Technology (NIT Jalandhar), Punjab.
-      Prior to this, I was a Post-Doctoral Fellow at the Indian Institute of Technology, Delhi.
-    </p>
-    <p id="about_p2">
-      I received my Ph.D. in Electrical Engineering from IIT (ISM) Dhanbad in 2019,
-      and my B.Tech in Electrical and Electronics Engineering from Vinoba Bhave University (VBU),
-      Hazaribagh, Jharkhand.
-    </p>
-    <p id="about_p3">
-      My research interests are in the area of Power Electronics, including Multilevel Inverters,
-      Renewable Energy (Grid-Connected Systems), Active Power Factor Correction (PFC), and
-      DC-DC Converters for Solar PV and Electric Vehicle applications.
-    </p>
-  </div>
+    <!-- RIGHT -->
+    <div class="qlinks">
+      <h2 class="sec-heading">
+        <span class="sec-bar bar-blue"></span> Quick Links
+      </h2>
+      <ul id="quick_links_list"></ul>
+    </div>
 
   <!-- RIGHT -->
   <div class="links">
@@ -97,6 +103,10 @@
 <div style="text-align:right;padding:20px 40px;font-size:12px;">
   <a href="admin-login.html" style="color:#bbb;text-decoration:none;">⚙ Admin</a>
 </div>
+
+<footer class="site-footer">
+  <a href="admin-login.html">⚙ Admin</a>
+</footer>
 
 <script src="script.js"></script>
 <script>
@@ -125,8 +135,8 @@ if (img) document.getElementById("prof_photo").src = img;
 if (addr || phone || email) {
   const lines = [];
   if (addr)  lines.push(addr.replace(/\n/g,"<br>"));
-  if (phone) lines.push("Tel (O): " + phone);
-  if (email) lines.push("Email: " + email);
+  if (phone) lines.push("<strong>Tel:</strong> " + phone);
+  if (email) lines.push("<strong>Email:</strong> " + email);
   document.getElementById("contact_info").innerHTML = lines.join("<br>");
 }
 if (cal) document.getElementById("cal_link").href = cal;
@@ -156,7 +166,7 @@ const ul = document.getElementById("quick_links_list");
 ul.innerHTML = "";
 quickLinks.forEach(lk => {
   const li = document.createElement("li");
-  li.innerHTML = (lk.isNew ? '<span class="new">New:</span> ' : '') +
+  li.innerHTML = (lk.isNew ? '<span class="badge-new">New</span> ' : '') +
     '<a href="' + (lk.url||"#") + '">' + lk.label + '</a>';
   ul.appendChild(li);
 });

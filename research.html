@@ -8,17 +8,16 @@
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="left">
-    <h1 id="hdr_name">Dr Madan Kumar Das</h1>
-    <p id="hdr_sub">
+<header class="site-header">
+  <div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_title">
       Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
-    </p>
+    </div>
   </div>
-  <div class="divider-vertical"></div>
-  <nav class="nav">
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
     <a href="index.html">Home</a>
     <a href="research.html" class="active">Research</a>
     <a href="teaching.html">Teaching</a>
@@ -26,34 +25,34 @@
   </nav>
 </header>
 
-<div class="line"></div>
+<div class="page-wrap">
+  <div class="page-bar">Research</div>
 
-<!-- SUB NAV -->
-<div class="sub-nav">
-  <a href="research.html" class="active">Overview</a>
-  <a href="publications.html">Publications</a>
-  <a href="projects.html">Projects</a>
-  <a href="students.html">Students</a>
-  <a href="presentations.html">Presentations &amp; Videos</a>
-  <a href="positions.html">Open Positions</a>
+  <!-- SUB NAV -->
+  <div class="sub-nav">
+    <a href="research.html" class="active">Overview</a>
+    <a href="publications.html">Publications</a>
+    <a href="projects.html">Projects</a>
+    <a href="students.html">Students</a>
+    <a href="presentations.html">Presentations &amp; Videos</a>
+    <a href="positions.html">Open Positions</a>
+  </div>
+
+  <!-- HIGHLIGHT -->
+  <div class="highlight-box">
+    Research and Development Activities:
+  </div>
+
+  <p class="note">Click images to see full size.</p>
+
+  <!-- GRID (populated by JS) -->
+  <div class="research-grid" id="research_grid"></div>
+
 </div>
 
-<div class="line"></div>
-
-<!-- HIGHLIGHT -->
-<div class="highlight-box">
-  Research and Development Activities:
-</div>
-
-<p class="note">Click images to see full size.</p>
-
-<!-- GRID (populated by JS) -->
-<div class="research-grid" id="research_grid"></div>
-
-<!-- Admin link -->
-<div style="text-align:right;padding:20px 40px;font-size:12px;">
-  <a href="admin-login.html" style="color:#bbb;text-decoration:none;">⚙ Admin</a>
-</div>
+<footer class="site-footer">
+  <a href="admin-login.html">⚙ Admin</a>
+</footer>
 
 <script>
 // Apply profile header
@@ -63,7 +62,7 @@ const dept  = localStorage.getItem("admin_prof_dept");
 const inst  = localStorage.getItem("admin_prof_institute");
 if (name) document.getElementById("hdr_name").textContent = name;
 if (title || dept || inst) {
-  document.getElementById("hdr_sub").innerHTML =
+  document.getElementById("hdr_title").innerHTML =
     (title||"Assistant Professor (Grade-II)") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
     (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
 }
@@ -86,7 +85,6 @@ grid.innerHTML = "";
 cards.forEach(card => {
   const div = document.createElement("div");
   div.className = "card";
-  // Support both old {img} format and new {imgData} format
   const src = card.imgData || card.img || "";
   if (src) {
     div.innerHTML =

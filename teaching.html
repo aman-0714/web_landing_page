@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teaching – Dr Madan Kumar Das</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .course-list { padding-bottom: 48px; }
+    .course-year {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 28px 0 10px;
+    }
+    .course-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    .course-row:last-child { border-bottom: none; }
+    .course-name { color: var(--text); }
+    .course-meta { color: #999; font-size: 13px; white-space: nowrap; }
+    .course-tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--green-light);
+      color: var(--green);
+      font-weight: 500;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="hdr-name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub">
+      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
+      Dr B R Ambedkar National Institute of Technology, Jalandhar
+    </div>
+  </div>
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
+    <a href="index.html">Home</a>
+    <a href="research.html">Research</a>
+    <a href="teaching.html" class="active">Teaching</a>
+    <a href="cv.html">CV</a>
+  </nav>
+</header>
+
+<div class="page-wrap">
+  <div class="page-bar">Teaching</div>
+
+  <div class="course-list">
+
+    <div class="course-year">Current Semester</div>
+
+    <div class="course-row">
+      <span class="course-name">
+        Power Electronics
+        <span class="course-tag">UG</span>
+      </span>
+      <span class="course-meta">EE 301</span>
+    </div>
+
+    <div class="course-row">
+      <span class="course-name">
+        DC-DC Converters for Renewable Energy
+        <span class="course-tag">PG</span>
+      </span>
+      <span class="course-meta">EE 601</span>
+    </div>
+
+    <div class="course-year">Previous Courses</div>
+
+    <div class="course-row">
+      <span class="course-name">Multilevel Inverters</span>
+      <span class="course-meta">EE 502</span>
+    </div>
+
+    <div class="course-row">
+      <span class="course-name">Circuit Theory</span>
+      <span class="course-meta">EE 101</span>
+    </div>
+
+    <div class="course-row">
+      <span class="course-name">Electrical Machines</span>
+      <span class="course-meta">EE 201</span>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
+</body>
+</html>
