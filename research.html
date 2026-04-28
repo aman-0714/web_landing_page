@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Research - Sandeep Anand</title>
+  <title>Research - Dr Madan Kumar Das</title>
   <link rel="stylesheet" href="research.css">
 </head>
 <body>
@@ -10,10 +10,10 @@
 <!-- HEADER -->
 <header class="header">
   <div class="left">
-    <h1 id="hdr_name">Sandeep Anand</h1>
+    <h1 id="hdr_name">Dr Madan Kumar Das</h1>
     <p id="hdr_sub">
-      Professor, Dept. of Electrical Engineering,<br>
-      Indian Institute of Technology Bombay
+      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
+      Dr B R Ambedkar National Institute of Technology, Jalandhar
     </p>
   </div>
   <div class="divider-vertical"></div>
@@ -63,8 +63,8 @@ const inst  = localStorage.getItem("admin_prof_institute");
 if (name) document.getElementById("hdr_name").textContent = name;
 if (title || dept || inst) {
   document.getElementById("hdr_sub").innerHTML =
-    (title||"Professor") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
-    (inst||"Indian Institute of Technology Bombay");
+    (title||"Assistant Professor (Grade-II)") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
+    (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
 }
 
 // Research cards
