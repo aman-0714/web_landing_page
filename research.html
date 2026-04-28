@@ -10,20 +10,18 @@
 <!-- HEADER -->
 <header class="header">
   <div class="left">
-    <h1>Sandeep Anand</h1>
-    <p>
+    <h1 id="hdr_name">Sandeep Anand</h1>
+    <p id="hdr_sub">
       Professor, Dept. of Electrical Engineering,<br>
       Indian Institute of Technology Bombay
     </p>
   </div>
-
   <div class="divider-vertical"></div>
-
   <nav class="nav">
     <a href="index.html">Home</a>
     <a href="research.html" class="active">Research</a>
-    <a href="#">Teaching</a>
-    <a href="#">CV</a>
+    <a href="teaching.html">Teaching</a>
+    <a href="cv.html">CV</a>
   </nav>
 </header>
 
@@ -35,7 +33,7 @@
   <a href="publications.html">Publications</a>
   <a href="projects.html">Projects</a>
   <a href="students.html">Students</a>
-  <a href="presentations.html">Presentations & Videos</a>
+  <a href="presentations.html">Presentations &amp; Videos</a>
   <a href="positions.html">Open Positions</a>
 </div>
 
@@ -48,46 +46,51 @@
 
 <p class="note">Click images to see full size.</p>
 
-<!-- GRID -->
-<div class="research-grid">
+<!-- GRID (populated by JS) -->
+<div class="research-grid" id="research_grid"></div>
 
-  <div class="card">
-    <img src="img1.jpg">
-    <p>
-      Dynamic Rds-on measurement circuit: start assessing from the 1st cycle...
-    </p>
-  </div>
-
-  <div class="card">
-    <img src="img2.jpg">
-    <p>
-      Zero voltage switched, regenerative snubber based isolated dc-dc converter...
-    </p>
-  </div>
-
-  <div class="card active-card">
-    <img src="img3.jpg">
-    <p>
-      GaN based independently controlled multi output flyback with high efficiency...
-    </p>
-  </div>
-
-  <div class="card">
-    <img src="img4.jpg">
-    <p>Additional research content...</p>
-  </div>
-
-  <div class="card">
-    <img src="img5.jpg">
-    <p>Additional research content...</p>
-  </div>
-
-  <div class="card">
-    <img src="img6.jpg">
-    <p>Additional research content...</p>
-  </div>
-
+<!-- Admin link -->
+<div style="text-align:right;padding:20px 40px;font-size:12px;">
+  <a href="admin-login.html" style="color:#bbb;text-decoration:none;">⚙ Admin</a>
 </div>
+
+<script>
+// Apply profile header
+const name = localStorage.getItem("admin_prof_name");
+const title = localStorage.getItem("admin_prof_title");
+const dept  = localStorage.getItem("admin_prof_dept");
+const inst  = localStorage.getItem("admin_prof_institute");
+if (name) document.getElementById("hdr_name").textContent = name;
+if (title || dept || inst) {
+  document.getElementById("hdr_sub").innerHTML =
+    (title||"Professor") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
+    (inst||"Indian Institute of Technology Bombay");
+}
+
+// Research cards
+const DEFAULT_RESEARCH = [
+  { img: "img1.jpg", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
+  { img: "img2.jpg", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
+  { img: "img3.jpg", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
+  { img: "img4.jpg", desc: "Additional research content." },
+  { img: "img5.jpg", desc: "Additional research content." },
+  { img: "img6.jpg", desc: "Additional research content." }
+];
+
+const raw = localStorage.getItem("admin_research");
+const cards = raw ? JSON.parse(raw) : DEFAULT_RESEARCH;
+
+const grid = document.getElementById("research_grid");
+grid.innerHTML = "";
+cards.forEach(card => {
+  const div = document.createElement("div");
+  div.className = "card";
+  div.innerHTML =
+    '<img src="' + card.img + '" onclick="window.open(this.src)" style="cursor:zoom-in" title="Click to view full size">' +
+    '<p>' + card.desc + '</p>';
+  grid.appendChild(div);
+});
+</script>
 
 </body>
 </html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard – Sandeep Anand</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f0f3eb; color: #333; }
+
+    /* TOPBAR */
+    .topbar {
+      background: #3a7d1e; color: #fff; display: flex;
+      align-items: center; justify-content: space-between;
+      padding: 14px 30px; position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .topbar h1 { font-size: 18px; font-weight: bold; }
+    .topbar .right { display: flex; align-items: center; gap: 16px; }
+    .topbar a { color: #d4f0c0; font-size: 13px; text-decoration: none; }
+    .topbar a:hover { color: #fff; }
+    .btn-logout {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+      color: #fff; padding: 7px 16px; border-radius: 4px; cursor: pointer;
+      font-size: 13px; transition: background .2s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 50px); }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 220px; background: #fff; border-right: 1px solid #ddd;
+      padding: 20px 0; flex-shrink: 0; position: sticky;
+      top: 50px; height: calc(100vh - 50px); overflow-y: auto;
+    }
+    .sidebar .section-label {
+      font-size: 10px; color: #999; text-transform: uppercase;
+      letter-spacing: 1px; padding: 8px 20px 4px;
+    }
+    .sidebar a {
+      display: block; padding: 10px 20px; font-size: 14px;
+      color: #555; text-decoration: none; transition: all .15s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a:hover { background: #f0f3eb; color: #3a7d1e; }
+    .sidebar a.active { background: #eef5e8; color: #3a7d1e;
+                        border-left-color: #3a7d1e; font-weight: bold; }
+
+    /* MAIN */
+    .main { flex: 1; padding: 30px; max-width: 900px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    h2.page-title {
+      font-size: 20px; color: #3a7d1e; margin-bottom: 6px;
+      padding-bottom: 10px; border-bottom: 2px solid #dde8d0;
+    }
+    .page-desc { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+    /* CARD */
+    .form-card {
+      background: #fff; border: 1px solid #ddd; border-radius: 6px;
+      padding: 24px; margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .form-card h3 { font-size: 15px; color: #444; margin-bottom: 16px;
+                    padding-bottom: 8px; border-bottom: 1px solid #eee; }
+
+    label { display: block; font-size: 12px; color: #666; font-weight: bold;
+            letter-spacing: 0.3px; margin-bottom: 5px; }
+    input[type=text], input[type=email], input[type=tel], textarea, select {
+      width: 100%; padding: 9px 12px; border: 1px solid #ccc;
+      border-radius: 4px; font-size: 14px; font-family: Arial, sans-serif;
+      transition: border-color .2s; background: #fafafa;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: #3a7d1e; background: #fff;
+    }
+    textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+    .field { margin-bottom: 16px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+    /* BUTTONS */
+    .btn-save {
+      background: #3a7d1e; color: #fff; border: none; padding: 10px 24px;
+      border-radius: 4px; font-size: 14px; cursor: pointer; font-weight: bold;
+      transition: background .2s;
+    }
+    .btn-save:hover { background: #2e6218; }
+    .btn-add {
+      background: #fff; color: #3a7d1e; border: 1px solid #3a7d1e;
+      padding: 8px 18px; border-radius: 4px; font-size: 13px;
+      cursor: pointer; margin-top: 8px; transition: all .2s;
+    }
+    .btn-add:hover { background: #eef5e8; }
+    .btn-del {
+      background: #fff; color: #c0392b; border: 1px solid #e0a0a0;
+      padding: 5px 12px; border-radius: 4px; font-size: 12px;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-del:hover { background: #fdf0f0; }
+
+    /* SUCCESS TOAST */
+    .toast {
+      position: fixed; bottom: 30px; right: 30px; background: #3a7d1e;
+      color: #fff; padding: 12px 24px; border-radius: 6px;
+      font-size: 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      opacity: 0; transform: translateY(10px);
+      transition: all .3s; pointer-events: none; z-index: 999;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* RESEARCH CARD ROW */
+    .research-item {
+      border: 1px solid #ddd; border-radius: 5px; padding: 16px;
+      margin-bottom: 14px; background: #fafafa; position: relative;
+    }
+    .research-item .del-btn {
+      position: absolute; top: 12px; right: 12px;
+    }
+
+    /* IMAGE PREVIEW */
+    .img-preview {
+      width: 100%; max-height: 160px; object-fit: cover;
+      border: 1px solid #ddd; border-radius: 4px; margin-top: 8px; display: none;
+    }
+
+    /* QUICK LINKS LIST */
+    .link-item {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 10px; padding: 10px; background: #fafafa;
+      border: 1px solid #eee; border-radius: 4px;
+    }
+    .link-item input { margin: 0; }
+    .link-item .is-new { width: 60px; flex-shrink: 0; }
+
+    /* PREVIEW BADGE */
+    .badge {
+      display: inline-block; background: #eef5e8; color: #3a7d1e;
+      font-size: 11px; padding: 2px 8px; border-radius: 12px;
+      font-weight: bold; margin-left: 8px; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <h1>🛠 Admin Dashboard <span style="font-weight:normal;font-size:14px;opacity:.8">– Sandeep Anand, IIT Bombay</span></h1>
+  <div class="right">
+    <a href="index.html" target="_blank">View Site ↗</a>
+    <button class="btn-logout" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="section-label">Home Page</div>
+    <a href="#" class="active" onclick="show('profile',this)">👤 Profile & Contact</a>
+    <a href="#" onclick="show('about',this)">📝 About Me</a>
+    <a href="#" onclick="show('quicklinks',this)">🔗 Quick Links</a>
+
+    <div class="section-label">Research</div>
+    <a href="#" onclick="show('research',this)">🔬 Research Cards</a>
+
+    <div class="section-label">Other</div>
+    <a href="#" onclick="show('password',this)">🔒 Change Password</a>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- ========== PROFILE ========== -->
+    <div class="page active" id="page-profile">
+      <h2 class="page-title">Profile & Contact</h2>
+      <p class="page-desc">Edit the professor's name, title, contact details, and profile image shown on the Home page.</p>
+
+      <div class="form-card">
+        <h3>Basic Info</h3>
+        <div class="row">
+          <div class="field">
+            <label>Full Name</label>
+            <input type="text" id="prof_name" placeholder="e.g. Sandeep Anand">
+          </div>
+          <div class="field">
+            <label>Title / Designation</label>
+            <input type="text" id="prof_title" placeholder="e.g. Professor">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Department</label>
+            <input type="text" id="prof_dept" placeholder="e.g. Dept. of Electrical Engineering">
+          </div>
+          <div class="field">
+            <label>Institute</label>
+            <input type="text" id="prof_institute" placeholder="e.g. Indian Institute of Technology Bombay">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Contact Details</h3>
+        <div class="field">
+          <label>Office Address</label>
+          <textarea id="prof_address" rows="2" placeholder="Ground Floor, Dept. of Elec. Engg., IIT Bombay, Mumbai - 400076"></textarea>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="prof_phone" placeholder="(91) 22 2576 7409">
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="prof_email" placeholder="example@iitb.ac.in">
+          </div>
+        </div>
+        <div class="field">
+          <label>Google Calendar URL</label>
+          <input type="text" id="prof_cal" placeholder="https://calendar.google.com/...">
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Profile Picture</h3>
+        <div class="field">
+          <label>Image filename (must be in the same folder)</label>
+          <input type="text" id="prof_img" placeholder="profile.jpg" oninput="previewImg('prof_img','prof_img_preview')">
+          <img id="prof_img_preview" class="img-preview">
+        </div>
+      </div>
+
+      <button class="btn-save" onclick="save('profile')">💾 Save Profile</button>
+    </div>
+
+    <!-- ========== ABOUT ========== -->
+    <div class="page" id="page-about">
+      <h2 class="page-title">About Me</h2>
+      <p class="page-desc">Edit the bio paragraphs displayed in the About Me section on the Home page.</p>
+
+      <div class="form-card">
+        <h3>Paragraph 1</h3>
+        <div class="field">
+          <textarea id="about_p1" rows="5" placeholder="I am a faculty member in the Department..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <h3>Paragraph 2</h3>
+        <div class="field">
+          <textarea id="about_p2" rows="4" placeholder="I received Ph.D. and B.Tech degrees..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn-save" onclick="save('about')">💾 Save About Me</button>
+    </div>
+
+    <!-- ========== QUICK LINKS ========== -->
+    <div class="page" id="page-quicklinks">
+      <h2 class="page-title">Quick Links</h2>
+      <p class="page-desc">Manage the Quick Links list shown on the right of the Home page. Toggle "New" badge per link.</p>
+
+      <div class="form-card">
+        <h3>Links List</h3>
+        <div id="links_container"></div>
+        <button class="btn-add" onclick="addLink()">+ Add Link</button>
+      </div>
+
+      <button class="btn-save" onclick="save('quicklinks')">💾 Save Quick Links</button>
+    </div>
+
+    <!-- ========== RESEARCH ========== -->
+    <div class="page" id="page-research">
+      <h2 class="page-title">Research Cards</h2>
+      <p class="page-desc">Add, edit, or remove research project cards displayed on the Research page.</p>
+
+      <div class="form-card">
+        <div id="research_container"></div>
+        <button class="btn-add" onclick="addResearchCard()">+ Add Research Card</button>
+      </div>
+
+      <button class="btn-save" onclick="save('research')">💾 Save Research Cards</button>
+    </div>
+
+    <!-- ========== PASSWORD ========== -->
+    <div class="page" id="page-password">
+      <h2 class="page-title">Change Password</h2>
+      <p class="page-desc">Update the admin login credentials. Changes take effect immediately.</p>
+
+      <div class="form-card">
+        <h3>Update Credentials</h3>
+        <div class="field">
+          <label>New Username</label>
+          <input type="text" id="new_user" placeholder="admin">
+        </div>
+        <div class="field">
+          <label>New Password</label>
+          <input type="password" id="new_pass" placeholder="New password">
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" id="conf_pass" placeholder="Repeat password">
+        </div>
+      </div>
+      <button class="btn-save" onclick="changePassword()">🔒 Update Credentials</button>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<div class="toast" id="toast">✓ Saved successfully!</div>
+
+<script>
+// ─── Auth guard ───────────────────────────────────────────────
+if (sessionStorage.getItem("adminLoggedIn") !== "true") {
+  window.location.href = "admin-login.html";
+}
+function logout() {
+  sessionStorage.removeItem("adminLoggedIn");
+  window.location.href = "admin-login.html";
+}
+
+// ─── Page switching ───────────────────────────────────────────
+function show(id, el) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+  document.getElementById("page-" + id).classList.add("active");
+  el.classList.add("active");
+  return false;
+}
+
+// ─── Toast ────────────────────────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = "✓ " + msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+// ─── Image preview ────────────────────────────────────────────
+function previewImg(inputId, imgId) {
+  const val = document.getElementById(inputId).value.trim();
+  const el = document.getElementById(imgId);
+  if (val) { el.src = val; el.style.display = "block"; }
+  else { el.style.display = "none"; }
+}
+
+// ─── Defaults ─────────────────────────────────────────────────
+const DEFAULTS = {
+  profile: {
+    prof_name: "Sandeep Anand",
+    prof_title: "Professor",
+    prof_dept: "Dept. of Electrical Engineering",
+    prof_institute: "Indian Institute of Technology Bombay",
+    prof_address: "Ground Floor, Dept. of Elec. Engg.,\nIIT Bombay, Mumbai - 400076",
+    prof_phone: "(91) 22 2576 7409",
+    prof_email: "example@iitb.ac.in",
+    prof_cal: "https://calendar.google.com",
+    prof_img: "profile.jpg"
+  },
+  about: {
+    about_p1: "I am a faculty member in the Department of Electrical Engineering, IITB, India. Before this, I was at IITK, during 2013-2020. I was also a visiting scholar at WSU, Pullman, US, and Queen's University, Kingston, CA during Summer 2018 and Winter 2018, respectively. During 2012-13, I was a postdoctoral research associate at WSU, Pullman, US.",
+    about_p2: "I received Ph.D. and B.Tech degrees in EE from IITB. I have worked on solar PV systems, UPS systems, and digital controllers."
+  }
+};
+
+// ─── Load / Save helpers ──────────────────────────────────────
+function loadFields(keys) {
+  keys.forEach(k => {
+    const el = document.getElementById(k);
+    if (!el) return;
+    const stored = localStorage.getItem("admin_" + k);
+    el.value = stored !== null ? stored : (DEFAULTS.profile[k] || DEFAULTS.about[k] || "");
+  });
+}
+
+function saveFields(keys) {
+  keys.forEach(k => {
+    const el = document.getElementById(k);
+    if (el) localStorage.setItem("admin_" + k, el.value);
+  });
+}
+
+// ─── Save dispatcher ─────────────────────────────────────────
+function save(section) {
+  if (section === "profile") {
+    saveFields(["prof_name","prof_title","prof_dept","prof_institute",
+                "prof_address","prof_phone","prof_email","prof_cal","prof_img"]);
+    toast("Profile saved!");
+  } else if (section === "about") {
+    saveFields(["about_p1","about_p2"]);
+    toast("About Me saved!");
+  } else if (section === "quicklinks") {
+    saveQuickLinks();
+  } else if (section === "research") {
+    saveResearch();
+  }
+}
+
+// ─── Init profile & about ─────────────────────────────────────
+loadFields(["prof_name","prof_title","prof_dept","prof_institute",
+            "prof_address","prof_phone","prof_email","prof_cal","prof_img"]);
+loadFields(["about_p1","about_p2"]);
+
+// ─── Quick Links ──────────────────────────────────────────────
+const DEFAULT_LINKS = [
+  { label: "Conference presentations and videos by students", url: "#", isNew: true },
+  { label: "Video Lectures on Power Electronic Converters for Solar Integration", url: "#", isNew: false },
+  { label: "Video Lectures on Power Electronics", url: "#", isNew: false },
+  { label: "Video Lectures on Introduction to Electrical Engineering", url: "#", isNew: false },
+  { label: "Publications", url: "#", isNew: true },
+  { label: "Students Achievements / Awards", url: "#", isNew: false },
+  { label: "LinkedIn Profile", url: "#", isNew: false },
+  { label: "Google Scholar Profile", url: "#", isNew: false }
+];
+
+function getLinks() {
+  const raw = localStorage.getItem("admin_quicklinks");
+  return raw ? JSON.parse(raw) : DEFAULT_LINKS;
+}
+
+function renderLinks() {
+  const links = getLinks();
+  const c = document.getElementById("links_container");
+  c.innerHTML = "";
+  links.forEach((lk, i) => {
+    c.innerHTML += `
+      <div class="link-item" id="lk_${i}">
+        <input type="text" style="flex:2" id="lk_label_${i}" value="${esc(lk.label)}" placeholder="Link label">
+        <input type="text" style="flex:1" id="lk_url_${i}" value="${esc(lk.url)}" placeholder="URL">
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0">
+          <input type="checkbox" id="lk_new_${i}" ${lk.isNew?"checked":""}> New
+        </label>
+        <button class="btn-del" onclick="removeLink(${i})">✕</button>
+      </div>`;
+  });
+}
+
+function addLink() {
+  const links = getLinks();
+  links.push({ label: "New Link", url: "#", isNew: false });
+  localStorage.setItem("admin_quicklinks", JSON.stringify(links));
+  renderLinks();
+}
+
+function removeLink(i) {
+  const links = getLinks();
+  links.splice(i, 1);
+  localStorage.setItem("admin_quicklinks", JSON.stringify(links));
+  renderLinks();
+}
+
+function saveQuickLinks() {
+  const links = getLinks();
+  const updated = links.map((_, i) => ({
+    label: document.getElementById("lk_label_"+i)?.value || "",
+    url:   document.getElementById("lk_url_"+i)?.value || "#",
+    isNew: document.getElementById("lk_new_"+i)?.checked || false
+  }));
+  localStorage.setItem("admin_quicklinks", JSON.stringify(updated));
+  toast("Quick Links saved!");
+}
+
+renderLinks();
+
+// ─── Research Cards ───────────────────────────────────────────
+const DEFAULT_RESEARCH = [
+  { img: "img1.jpg", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
+  { img: "img2.jpg", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
+  { img: "img3.jpg", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
+  { img: "img4.jpg", desc: "Additional research content." },
+  { img: "img5.jpg", desc: "Additional research content." },
+  { img: "img6.jpg", desc: "Additional research content." }
+];
+
+function getResearch() {
+  const raw = localStorage.getItem("admin_research");
+  return raw ? JSON.parse(raw) : DEFAULT_RESEARCH;
+}
+
+function renderResearch() {
+  const cards = getResearch();
+  const c = document.getElementById("research_container");
+  c.innerHTML = "";
+  cards.forEach((card, i) => {
+    c.innerHTML += `
+      <div class="research-item">
+        <button class="btn-del del-btn" onclick="removeResearch(${i})">✕ Remove</button>
+        <div class="row" style="margin-right:90px">
+          <div class="field">
+            <label>Image Filename</label>
+            <input type="text" id="rc_img_${i}" value="${esc(card.img)}" placeholder="img1.jpg"
+                   oninput="previewImg('rc_img_${i}','rc_prev_${i}')">
+            <img id="rc_prev_${i}" class="img-preview" ${card.img ? `src="${esc(card.img)}" style="display:block"` : ""}>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea id="rc_desc_${i}" rows="4">${esc(card.desc)}</textarea>
+          </div>
+        </div>
+      </div>`;
+  });
+}
+
+function addResearchCard() {
+  const cards = getResearch();
+  cards.push({ img: "", desc: "New research description." });
+  localStorage.setItem("admin_research", JSON.stringify(cards));
+  renderResearch();
+}
+
+function removeResearch(i) {
+  const cards = getResearch();
+  cards.splice(i, 1);
+  localStorage.setItem("admin_research", JSON.stringify(cards));
+  renderResearch();
+}
+
+function saveResearch() {
+  const cards = getResearch();
+  const updated = cards.map((_, i) => ({
+    img:  document.getElementById("rc_img_"+i)?.value || "",
+    desc: document.getElementById("rc_desc_"+i)?.value || ""
+  }));
+  localStorage.setItem("admin_research", JSON.stringify(updated));
+  toast("Research Cards saved!");
+}
+
+renderResearch();
+
+// ─── Password change ──────────────────────────────────────────
+function changePassword() {
+  const u = document.getElementById("new_user").value.trim();
+  const p = document.getElementById("new_pass").value;
+  const c = document.getElementById("conf_pass").value;
+  if (!u || !p) { alert("Username and password cannot be empty."); return; }
+  if (p !== c) { alert("Passwords do not match."); return; }
+  localStorage.setItem("admin_creds", JSON.stringify({ user: u, pass: p }));
+  toast("Credentials updated!");
+}
+
+// ─── Escape HTML ─────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>
