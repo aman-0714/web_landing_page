@@ -2,183 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-<<<<<<< HEAD
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV - Sandeep Anand</title>
-=======
-  <title>CV - Dr Madan Kumar Das</title>
->>>>>>> b0d7fd9e02cd7f9b281fae7ab76a411e9ee80c15
+  <title>CV – Dr Madan Kumar Das</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-      color: #333;
-    }
-
-    .container {
-      width: 90%;
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-      background: white;
-      box-sizing: border-box;
-    }
-
-   .header {
-  display: flex;
-  align-items: center;
-  padding: 30px 0px;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.header-left h1 {
-  color: green;
-  margin: 0;
-  font-size: 30px;
-  align-items: center;
-}
-
-.header-left p {
-  margin-top: 8px;
-  font-size: 15px;
-  line-height: 1.4;
-}
-
-    .name {
-      color: green;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: #555;
-    }
-
-    .nav a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #555;
-    }
-
-    .nav a.active {
-      border-bottom: 2px solid green;
-      padding-bottom: 3px;
-    }
-
-    h2 {
-      margin-top: 30px;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 5px;
-    }
-
-    .grid {
+    .cv-grid {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
+      gap: 32px;
+      padding-bottom: 48px;
     }
-
-    @media (max-width: 768px) {
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 16px 0;
-      }
-      .divider-vertical { display: none; }
-      .nav a { margin: 0 8px; font-size: 14px; }
-      .grid { grid-template-columns: 1fr; }
-      .name { font-size: 22px; }
+    .cv-section h3 {
+      font-family: 'EB Garamond', serif;
+      font-size: 17px;
+      font-weight: 500;
+      margin: 16px 0 4px;
+      color: var(--text);
     }
-
-    @media (max-width: 480px) {
-      .container { padding: 12px; }
-      .name { font-size: 18px; }
-      .nav a { font-size: 13px; margin: 0 6px; }
-      li { font-size: 13px; }
-      p { font-size: 13px; }
+    .cv-section p, .cv-section li {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.7;
     }
-
-    .section {
-      margin-top: 20px;
+    .cv-section ul { padding-left: 16px; margin-top: 4px; }
+    .cv-section li { margin-bottom: 6px; }
+    .cv-entry { margin-bottom: 14px; }
+    .cv-entry strong { color: var(--text); font-weight: 500; font-size: 14px; }
+    .cv-entry small { display: block; font-size: 12px; color: #999; }
+    .cv-links a {
+      display: block;
+      font-size: 13.5px;
+      color: var(--blue);
+      text-decoration: none;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0f0f0;
     }
-
-    .section-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-    }
-
-    .bar {
-      width: 4px;
-      height: 18px;
-      margin-right: 8px;
-    }
-
-    .green { background: green; }
-    .orange { background: orange; }
-    .black { background: black; }
-
-    ul {
-      padding-left: 18px;
-    }
-
-    li {
-      margin-bottom: 8px;
-    }
-
-    .small {
-      font-size: 14px;
-      color: #666;
-    }
-
-    .contact p {
-      margin: 5px 0;
+    .cv-links a:last-child { border-bottom: none; }
+    .cv-links a:hover { color: var(--green); }
+    @media (max-width: 700px) {
+      .cv-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-
 <body>
-
-<div class="container">
-
-  <!-- Header -->
-  <header class="header">
-  <div class="header-left">
-    <h1>Dr Madan Kumar Das</h1>
-    <p>
+<header class="site-header">
+  <div>
+    <div class="hdr-name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub">
       Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
-    </p>
+    </div>
   </div>
-
-  <div class="divider-vertical"></div>
-<nav class="nav">
-  <a href="index.html" class="active">Home</a>
-  <a href="research.html">Research</a>
-  <a href="teaching.html">Teaching</a>
-  <a href="cv.html">CV</a>
-</nav>
+  <div class="hdr-divider"></div>
+  <nav class="site-nav">
+    <a href="index.html">Home</a>
+    <a href="research.html">Research</a>
+    <a href="teaching.html">Teaching</a>
+    <a href="cv.html" class="active">CV</a>
+  </nav>
 </header>
 
-<div class="line"></div>
+<div class="page-wrap">
+  <div class="page-bar">Curriculum Vitae</div>
 
-<div class="home">Home</div>
+  <div class="cv-grid">
 
-<div class="line"></div>
-
-  <h2>Curriculum Vitae</h2>
-
-  <div class="grid">
-
-    <!-- Awards -->
-    <div class="section">
-      <div class="section-title">
-        <div class="bar green"></div>
-        Awards & Fellowships
-      </div>
+    <div class="cv-section">
+      <h2 class="sec-heading">
+        <span class="sec-bar bar-green"></span> Awards
+      </h2>
       <ul>
         <li>Cited 437+ times on Google Scholar</li>
         <li>Post-Doctoral Fellow, IIT Delhi</li>
@@ -187,44 +79,49 @@
       </ul>
     </div>
 
-    <!-- Work -->
-    <div class="section">
-      <div class="section-title">
-        <div class="bar orange"></div>
-        Work Experience
+    <div class="cv-section">
+      <h2 class="sec-heading">
+        <span class="sec-bar bar-orange"></span> Experience
+      </h2>
+      <div class="cv-entry">
+        <strong>Assistant Professor (Grade-II)</strong>
+        <small>Dr B R Ambedkar NIT, Jalandhar — Present</small>
       </div>
-
-      <p><b>Assistant Professor (Grade-II)</b> <span class="small">Present</span></p>
-      <p class="small">Dr B R Ambedkar NIT, Jalandhar</p>
-
+      <div class="cv-entry">
+        <strong>Post-Doctoral Fellow</strong>
+        <small>IIT Delhi</small>
+      </div>
       <h3>Education</h3>
-      <p><b>Post-Doctoral Fellow</b> - IIT Delhi</p>
-      <p><b>PhD</b> - IIT (ISM), Dhanbad – Electrical Engineering</p>
-      <p><b>B.Tech</b> - Vinoba Bhave University (VBU), Hazaribagh – Electrical & Electronics Engineering</p>
+      <div class="cv-entry">
+        <strong>PhD — Electrical Engineering</strong>
+        <small>IIT (ISM) Dhanbad, 2019</small>
+      </div>
+      <div class="cv-entry">
+        <strong>B.Tech — Electrical & Electronics</strong>
+        <small>Vinoba Bhave University, Hazaribagh</small>
+      </div>
     </div>
 
-    <!-- Info -->
-    <div class="section">
-      <div class="section-title">
-        <div class="bar black"></div>
-        Additional Info
+    <div class="cv-section">
+      <h2 class="sec-heading">
+        <span class="sec-bar bar-blue"></span> Links & Contact
+      </h2>
+      <div class="cv-links">
+        <a href="#">Publications</a>
+        <a href=".">LinkedIn Profile</a>
+        <a href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ">Google Scholar</a>
+        <a href="https://departments.nitj.ac.in/...">NITJ Faculty Profile</a>
       </div>
-
-      <p>🔗 Publications</p>
-      <p>🔗 LinkedIn</p>
-      <p>🔗 Google Scholar</p>
-
-      <h3>Contact Details</h3>
-      <div class="contact">
-        <p><b>Address:</b> 303, 3rd Floor Academic Building, Dept. of Electrical Engineering, Dr B R Ambedkar NIT, Jalandhar, Punjab 144008</p>
-        <p><b>Phone:</b> 01815037465, Ext: 1503 | Mobile: +91-6207667319</p>
-        <p><b>Email:</b> dasmk@nitj.ac.in</p>
-      </div>
+      <h3>Contact</h3>
+      <p>303, 3rd Floor Academic Building,<br>
+      Dept. of Electrical Engineering,<br>
+      Dr B R Ambedkar NIT, Jalandhar 144008<br>
+      Tel: 01815037465 | Mobile: +91-6207667319<br>
+      Email: dasmk@nitj.ac.in</p>
     </div>
 
   </div>
-
 </div>
-
+<footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
 </body>
 </html>
