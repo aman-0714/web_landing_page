@@ -16,8 +16,10 @@
       font-family: 'EB Garamond', serif;
       font-size: 17px;
       font-weight: 500;
-      margin: 16px 0 4px;
+      margin: 20px 0 6px;
       color: var(--text);
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
     }
     .cv-section p, .cv-section li {
       font-size: 13.5px;
@@ -27,8 +29,8 @@
     .cv-section ul { padding-left: 16px; margin-top: 4px; }
     .cv-section li { margin-bottom: 6px; }
     .cv-entry { margin-bottom: 14px; }
-    .cv-entry strong { color: var(--text); font-weight: 500; font-size: 14px; }
-    .cv-entry small { display: block; font-size: 12px; color: #999; }
+    .cv-entry strong { color: var(--text); font-weight: 500; font-size: 14px; display: block; }
+    .cv-entry small { display: block; font-size: 12px; color: #999; margin-top: 2px; }
     .cv-links a {
       display: block;
       font-size: 13.5px;
@@ -39,76 +41,19 @@
     }
     .cv-links a:last-child { border-bottom: none; }
     .cv-links a:hover { color: var(--green); }
-    .site-footer { color: var(--green); }
-    .site-footer a { color: var(--green); }
+    .contact-info { font-size: 13px; color: var(--muted); line-height: 1.8; margin-top: 10px; }
     @media (max-width: 700px) {
       .cv-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
 <header class="site-header">
   <div>
-    <div class="hdr-name">Dr Madan Kumar Das</div>
-    <div class="hdr-sub">
-      Assistant Professor , Dept. of Electrical Engineering,<br>
-<script>
-// read CV pieces published by admin (stored under admin_ keys)
-function adminGet(k){return localStorage.getItem('admin_'+k);} 
-function renderList(key, containerSelector, defaultList){
-  const raw = adminGet(key);
-  const container = document.querySelector(containerSelector);
-  let items = raw ? raw.split('\n').filter(Boolean) : defaultList;
-  if (!container) return;
-  container.innerHTML = items.map(it => `<li>${it}</li>`).join('');
-}
-// Awards
-const awardsRaw = adminGet('cv_awards');
-const awardsList = awardsRaw ? awardsRaw.split('\n').filter(Boolean) : ['Cited 437+ times on Google Scholar','Post-Doctoral Fellow, IIT Delhi','Research on Multilevel Inverters & Grid-Connected Renewable Energy','Active Power Factor Correction (PFC) Systems'];
-const awardsEl = document.querySelector('.cv-grid .cv-section:nth-of-type(1) ul');
-if (awardsEl) awardsEl.innerHTML = awardsList.map(a => `<li>${a}</li>`).join('');
-
-// Experience and Education
-const expRaw = adminGet('cv_experience');
-const expList = expRaw ? expRaw.split('\n').filter(Boolean) : ['Assistant Professor (Grade-II) | Dr B R Ambedkar NIT, Jalandhar | Present','Post-Doctoral Fellow | IIT Delhi | 2020–2021'];
-const expEl = document.querySelector('.cv-grid .cv-section:nth-of-type(2)');
-if (expEl) {
-  // build experience entries and keep education below
-  const parts = expList.map(e => {
-    const [role, inst, dur] = e.split('|').map(s=>s? s.trim() : '');
-    return `<div class="cv-entry"><strong>${role||''}</strong>${inst? `<small>${inst}${dur? ' — '+dur : ''}</small>` : ''}</div>`;
-  }).join('');
-  // education
-  const eduRaw = adminGet('cv_education');
-  const eduList = eduRaw ? eduRaw.split('\n').filter(Boolean) : ['PhD — Electrical Engineering | IIT (ISM) Dhanbad | 2019','B.Tech — Electrical & Electronics | Vinoba Bhave University'];
-  const eduHtml = `<h3>Education</h3>` + eduList.map(ed=>{
-    const [deg, inst, year] = ed.split('|').map(s=>s? s.trim():'');
-    return `<div class="cv-entry"><strong>${deg||''}</strong>${inst? `<small>${inst}${year? ', '+year : ''}</small>` : ''}</div>`;
-  }).join('');
-  expEl.innerHTML = parts + eduHtml;
-}
-
-// Links & contact
-const linksEl = document.querySelector('.cv-links');
-if (linksEl) {
-  const ln = (adminGet('cv_linkedin') ? `<a href="${adminGet('cv_linkedin')}">LinkedIn Profile</a>` : '') +
-             (adminGet('cv_scholar') ? `<a href="${adminGet('cv_scholar')}">Google Scholar</a>` : '') +
-             (adminGet('cv_nitj') ? `<a href="${adminGet('cv_nitj')}">NITJ Faculty Profile</a>` : '') +
-             (adminGet('cv_other') ? `<a href="${adminGet('cv_other')}">Other Link</a>` : '');
-  if (ln) linksEl.innerHTML = ln; // otherwise keep defaults
-}
-
-// Contact block: override contact if admin saved address/phone/email
-const contactEl = document.querySelector('.cv-grid .cv-section:nth-of-type(3) p');
-if (contactEl) {
-  const addr = adminGet('prof_address');
-  const phone = adminGet('prof_phone');
-  const email = adminGet('prof_email');
-  if (addr || phone || email) {
-    contactEl.innerHTML = (addr? addr.replace(/\n/g,'<br>') + '<br>' : '') + (phone? 'Tel: '+phone + ' | ' : '') + (email? 'Email: '+email : '');
-  }
-}
-</script>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_sub">
+      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
     </div>
   </div>
@@ -126,61 +71,172 @@ if (contactEl) {
 
   <div class="cv-grid">
 
+    <!-- COLUMN 1: Awards + Memberships -->
     <div class="cv-section">
       <h2 class="sec-heading">
-        <span class="sec-bar bar-green"></span> Awards
+        <span class="sec-bar bar-green"></span> Awards &amp; Fellowships
       </h2>
-      <ul>
+      <ul id="awards_list">
         <li>Cited 437+ times on Google Scholar</li>
         <li>Post-Doctoral Fellow, IIT Delhi</li>
-        <li>Research on Multilevel Inverters & Grid-Connected Renewable Energy</li>
+        <li>Research on Multilevel Inverters &amp; Grid-Connected Renewable Energy</li>
         <li>Active Power Factor Correction (PFC) Systems</li>
+      </ul>
+
+      <h3>Professional Memberships</h3>
+      <ul id="memberships_list">
+        <li>IEEE Member</li>
       </ul>
     </div>
 
+    <!-- COLUMN 2: Experience + Education -->
     <div class="cv-section">
       <h2 class="sec-heading">
         <span class="sec-bar bar-orange"></span> Experience
       </h2>
-      <div class="cv-entry">
-        <strong>Assistant Professor (Grade-II)</strong>
-        <small>Dr B R Ambedkar NIT, Jalandhar — Present</small>
+      <div id="experience_list">
+        <div class="cv-entry">
+          <strong>Assistant Professor (Grade-II)</strong>
+          <small>Dr B R Ambedkar NIT, Jalandhar — Present</small>
+        </div>
+        <div class="cv-entry">
+          <strong>Post-Doctoral Fellow</strong>
+          <small>IIT Delhi — 2020–2021</small>
+        </div>
       </div>
-      <div class="cv-entry">
-        <strong>Post-Doctoral Fellow</strong>
-        <small>IIT Delhi</small>
-      </div>
+
       <h3>Education</h3>
-      <div class="cv-entry">
-        <strong>PhD — Electrical Engineering</strong>
-        <small>IIT (ISM) Dhanbad, 2019</small>
-      </div>
-      <div class="cv-entry">
-        <strong>B.Tech — Electrical & Electronics</strong>
-        <small>Vinoba Bhave University, Hazaribagh</small>
+      <div id="education_list">
+        <div class="cv-entry">
+          <strong>PhD — Electrical Engineering</strong>
+          <small>IIT (ISM) Dhanbad, 2019</small>
+        </div>
+        <div class="cv-entry">
+          <strong>B.Tech — Electrical &amp; Electronics</strong>
+          <small>Vinoba Bhave University, Hazaribagh</small>
+        </div>
       </div>
     </div>
 
+    <!-- COLUMN 3: Links + Contact -->
     <div class="cv-section">
       <h2 class="sec-heading">
-        <span class="sec-bar bar-blue"></span> Links & Contact
+        <span class="sec-bar bar-blue"></span> Links &amp; Contact
       </h2>
-      <div class="cv-links">
-        <a href="#">Publications</a>
-        <a href=".">LinkedIn Profile</a>
-        <a href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ">Google Scholar</a>
-        <a href="https://departments.nitj.ac.in/...">NITJ Faculty Profile</a>
+      <div class="cv-links" id="cv_links_list">
+        <a href="publications.html">Publications</a>
+        <a href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ" target="_blank">Google Scholar</a>
+        <a href="https://departments.nitj.ac.in/" target="_blank">NITJ Faculty Profile</a>
       </div>
+
       <h3>Contact</h3>
-      <p>303, 3rd Floor Academic Building,<br>
-      Dept. of Electrical Engineering,<br>
-      Dr B R Ambedkar NIT, Jalandhar 144008<br>
-      Tel: 01815037465 | Mobile: +91-6207667319<br>
-      Email: dasmk@nitj.ac.in</p>
+      <div class="contact-info" id="contact_info">
+        303, 3rd Floor Academic Building,<br>
+        Dept. of Electrical Engineering,<br>
+        Dr B R Ambedkar NIT, Jalandhar 144008<br>
+        Tel: 01815037465<br>
+        Email: <a href="mailto:dasmk@nitj.ac.in">dasmk@nitj.ac.in</a>
+      </div>
     </div>
 
   </div>
 </div>
-<footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
+
+<footer class="site-footer">
+  <a href="admin-login.html">⚙ Admin</a>
+</footer>
+
+<!-- JS at bottom so DOM is ready -->
+<script>
+function adminGet(k) { return localStorage.getItem('admin_' + k); }
+
+// ── Profile header ───────────────────────────────────────────
+const profName = adminGet('prof_name');
+const profTitle = adminGet('prof_title');
+const profDept = adminGet('prof_dept');
+const profInst = adminGet('prof_institute');
+if (profName) document.getElementById('hdr_name').textContent = profName;
+if (profTitle || profDept || profInst) {
+  document.getElementById('hdr_sub').innerHTML =
+    (profTitle || 'Assistant Professor (Grade-II)') + ', ' +
+    (profDept || 'Dept. of Electrical Engineering') + ',<br>' +
+    (profInst || 'Dr B R Ambedkar National Institute of Technology, Jalandhar');
+}
+
+// ── Awards ───────────────────────────────────────────────────
+const awardsRaw = adminGet('cv_awards');
+if (awardsRaw && awardsRaw.trim()) {
+  const items = awardsRaw.split('\n').filter(Boolean);
+  document.getElementById('awards_list').innerHTML = items.map(a => `<li>${a}</li>`).join('');
+}
+
+// ── Memberships ──────────────────────────────────────────────
+const membRaw = adminGet('cv_memberships');
+if (membRaw && membRaw.trim()) {
+  const items = membRaw.split('\n').filter(Boolean);
+  document.getElementById('memberships_list').innerHTML = items.map(m => `<li>${m}</li>`).join('');
+}
+
+// ── Experience ───────────────────────────────────────────────
+const expRaw = adminGet('cv_experience');
+if (expRaw && expRaw.trim()) {
+  const items = expRaw.split('\n').filter(Boolean);
+  document.getElementById('experience_list').innerHTML = items.map(e => {
+    const parts = e.split('|').map(s => s.trim());
+    const role = parts[0] || '';
+    const inst = parts[1] || '';
+    const dur  = parts[2] || '';
+    return `<div class="cv-entry">
+      <strong>${role}</strong>
+      ${inst ? `<small>${inst}${dur ? ' — ' + dur : ''}</small>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Education ────────────────────────────────────────────────
+const eduRaw = adminGet('cv_education');
+if (eduRaw && eduRaw.trim()) {
+  const items = eduRaw.split('\n').filter(Boolean);
+  document.getElementById('education_list').innerHTML = items.map(ed => {
+    const parts = ed.split('|').map(s => s.trim());
+    const deg  = parts[0] || '';
+    const inst = parts[1] || '';
+    const year = parts[2] || '';
+    return `<div class="cv-entry">
+      <strong>${deg}</strong>
+      ${inst ? `<small>${inst}${year ? ', ' + year : ''}</small>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── Links ────────────────────────────────────────────────────
+const linkedin = adminGet('cv_linkedin');
+const scholar  = adminGet('cv_scholar');
+const nitj     = adminGet('cv_nitj');
+const other    = adminGet('cv_other');
+const linksEl  = document.getElementById('cv_links_list');
+let linksHtml  = '<a href="publications.html">Publications</a>';
+if (linkedin) linksHtml += `<a href="${linkedin}" target="_blank">LinkedIn Profile</a>`;
+if (scholar)  linksHtml += `<a href="${scholar}" target="_blank">Google Scholar</a>`;
+if (nitj)     linksHtml += `<a href="${nitj}" target="_blank">NITJ Faculty Profile</a>`;
+if (other)    linksHtml += `<a href="${other}" target="_blank">Other Link</a>`;
+if (!linkedin && !scholar && !nitj && !other) {
+  // keep defaults already in HTML
+} else {
+  linksEl.innerHTML = linksHtml;
+}
+
+// ── Contact ──────────────────────────────────────────────────
+const addr  = adminGet('prof_address');
+const phone = adminGet('prof_phone');
+const email = adminGet('prof_email');
+if (addr || phone || email) {
+  document.getElementById('contact_info').innerHTML =
+    (addr ? addr.replace(/\n/g, '<br>') + '<br>' : '') +
+    (phone ? 'Tel: ' + phone + '<br>' : '') +
+    (email ? 'Email: <a href="mailto:' + email + '">' + email + '</a>' : '');
+}
+</script>
+
 </body>
 </html>
