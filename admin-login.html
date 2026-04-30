@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login – Madan kumar das</title>
+  <title>Admin Login – Dr Madan Kumar Das</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -13,12 +13,9 @@
       min-height: 100vh;
     }
     .card {
-      background: #fff;
-      border: 1px solid #ddd;
-      border-top: 5px solid #1a4fa0;
-      border-radius: 6px;
-      padding: 44px 52px;
-      width: 400px;
+      background: #fff; border: 1px solid #ddd;
+      border-top: 5px solid #1a4fa0; border-radius: 6px;
+      padding: 44px 52px; width: 400px;
       box-shadow: 0 6px 24px rgba(0,0,0,0.08);
     }
     .card h1 { color: #1a4fa0; font-size: 24px; font-weight: bold; }
@@ -38,6 +35,7 @@
       font-weight: bold; font-family: Arial, sans-serif; transition: background .2s;
     }
     button:hover { background: #133d80; }
+    button:disabled { background: #888; cursor: not-allowed; }
     .error { color: #c0392b; font-size: 13px; margin-top: 14px;
              font-family: Arial, sans-serif; display: none; }
     .back { display: block; text-align: center; margin-top: 20px;
@@ -49,7 +47,7 @@
 <body>
 <div class="card">
   <h1>Admin Panel</h1>
-  <p class="sub">Madan kumar das · NIT Jalandhar</p>
+  <p class="sub">Dr Madan Kumar Das · NIT Jalandhar</p>
 
   <label>Username</label>
   <input type="text" id="u" placeholder="Enter username" autocomplete="username">
@@ -57,25 +55,36 @@
   <label>Password</label>
   <input type="password" id="p" placeholder="Enter password" autocomplete="current-password">
 
-  <button onclick="login()">Login →</button>
+  <button id="loginBtn" onclick="login()">Login →</button>
   <p class="error" id="err">Invalid username or password. Please try again.</p>
   <a href="index.html" class="back">← Back to main site</a>
 </div>
-<script>
-  const ADMIN_USER = "admin";
-  const ADMIN_PASS = "iitb2024";
 
-  function login() {
-    const u = document.getElementById("u").value.trim();
-    const p = document.getElementById("p").value;
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-      sessionStorage.setItem("adminLoggedIn", "true");
-      window.location.href = "admin-dashboard.html";
-    } else {
-      document.getElementById("err").style.display = "block";
+<script src="api.js"></script>
+<script>
+  // If already logged in, go straight to dashboard
+  if (API.isLoggedIn()) window.location.href = 'admin-dashboard.html';
+
+  async function login() {
+    const u = document.getElementById('u').value.trim();
+    const p = document.getElementById('p').value;
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('err');
+    err.style.display = 'none';
+    if (!u || !p) { err.textContent = 'Please enter username and password.'; err.style.display = 'block'; return; }
+    btn.disabled = true;
+    btn.textContent = 'Logging in…';
+    try {
+      await API.login(u, p);
+      window.location.href = 'admin-dashboard.html';
+    } catch (e) {
+      err.textContent = e.message || 'Invalid credentials.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Login →';
     }
   }
-  document.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 </script>
 </body>
 </html>

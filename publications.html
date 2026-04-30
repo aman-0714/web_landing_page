@@ -320,22 +320,9 @@
 </div>
 
 <script src="script.js"></script>
+<script src="api.js"></script>
 <script>
-// ── Header from admin ──────────────────────────────────────────
-function get(key) { return localStorage.getItem("admin_" + key); }
-const name = get("prof_name");
-const title = get("prof_title");
-const dept  = get("prof_dept");
-const inst  = get("prof_institute");
-if (name) document.getElementById("hdr_name").textContent = name;
-if (title || dept || inst) {
-  document.getElementById("hdr_title").innerHTML =
-    (title||"Assistant Professor (Grade-II)") + ", " +
-    (dept||"Dept. of Electrical Engineering") + ",<br>" +
-    (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
-}
 
-// ── Tab switching ──────────────────────────────────────────────
 function switchTab(type, el) {
   document.querySelectorAll('.pub-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -421,11 +408,21 @@ function escHtml(s) {
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── Load from localStorage or fall back to defaults ────────────
-function loadAllPubs() {
+// ── Load from API ────────────────────────────────────────────
+async function loadAllPubs() {
+  const all = await API.getAll();
+  const p = all.profile || {};
+  if (p.name) document.getElementById("hdr_name").textContent = p.name;
+  if (p.title || p.dept || p.institute) {
+    document.getElementById("hdr_title").innerHTML =
+      (p.title||"Assistant Professor (Grade-II)") + ", " +
+      (p.dept||"Dept. of Electrical Engineering") + ",<br>" +
+      (p.institute||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
+  }
   ['journal','conference','book'].forEach(type => {
-    const stored = localStorage.getItem('admin_pubs_' + type);
-    const pubs = stored ? JSON.parse(stored) : DEFAULT_PUBLICATIONS[type] || [];
+    const pubs = (all['pubs_' + type] && all['pubs_' + type].length)
+      ? all['pubs_' + type]
+      : DEFAULT_PUBLICATIONS[type] || [];
     renderPubs(type, pubs);
   });
 }

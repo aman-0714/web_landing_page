@@ -110,36 +110,26 @@
   <a href="admin-login.html" style="color:#3a7d1e;">⚙ Admin</a>
 </footer>
 
+<script src="api.js"></script>
 <script>
-// Apply profile header
-const profName = localStorage.getItem("admin_prof_name");
-const profTitle = localStorage.getItem("admin_prof_title");
-const profDept  = localStorage.getItem("admin_prof_dept");
-const profInst  = localStorage.getItem("admin_prof_institute");
-if (profName) document.getElementById("hdr_name").textContent = profName;
-if (profTitle || profDept || profInst) {
-  document.getElementById("hdr_title").innerHTML =
-    (profTitle||"Assistant Professor (Grade-II)") + ", " +
-    (profDept||"Dept. of Electrical Engineering") + ",<br>" +
-    (profInst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
-}
+(async () => {
+  const all = await API.getAll();
+  const p = all.profile || {};
+  if (p.name) document.getElementById("hdr_name").textContent = p.name;
+  if (p.title || p.dept || p.institute) {
+    document.getElementById("hdr_title").innerHTML =
+      (p.title||"Assistant Professor (Grade-II)") + ", " +
+      (p.dept||"Dept. of Electrical Engineering") + ",<br>" +
+      (p.institute||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
+  }
 
-// Load gallery from admin_gallery (set by Admin Dashboard > Student Gallery)
-function getGallery() {
-  const raw = localStorage.getItem("admin_gallery");
-  return raw ? JSON.parse(raw) : [];
-}
-
-function renderGallery() {
-  const gallery = getGallery();
+  const gallery = all.gallery || [];
   const grid = document.getElementById("student_grid");
   grid.innerHTML = "";
-
   if (gallery.length === 0) {
     grid.innerHTML = '<div class="empty-msg">No student event photos uploaded yet.<br>Use Admin Dashboard → Student Gallery to add photos.</div>';
     return;
   }
-
   gallery.forEach(card => {
     const div = document.createElement("div");
     div.className = "student-card";
@@ -148,13 +138,10 @@ function renderGallery() {
     const imageHtml = hasImg
       ? `<img src="${card.imgData}" onclick="window.open(this.src)" title="Click to view full size">`
       : `<div class="placeholder">📷<br>No photo for this event yet.</div>`;
-    const descHtml = card.desc ? `<p class="card-desc">${card.desc}</p>` : '';
-    div.innerHTML = titleHtml + imageHtml + descHtml;
+    div.innerHTML = titleHtml + imageHtml;
     grid.appendChild(div);
   });
-}
-
-renderGallery();
+})();
 </script>
 
 </body>

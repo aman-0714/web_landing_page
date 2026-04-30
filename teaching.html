@@ -64,22 +64,75 @@
   <div class="page-bar">Teaching</div>
 
   <div class="course-list">
-  <div class="course-year">Current Semester</div>
-  <div id="current_courses_area"></div>
+    <div class="course-year">Current Semester</div>
+    <div id="current_courses_area"></div>
 
-  <div class="course-year">Previous Courses</div>
-  <div id="previous_courses_area"></div>
-
+    <div class="course-year">Previous Courses</div>
+    <div id="previous_courses_area"></div>
   </div>
 </div>
 
 <footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
+
 <script>
-function get(k){return localStorage.getItem(k);} 
-const cur = get('teaching_current_html');
-const prev = get('teaching_prev_html');
-document.getElementById('current_courses_area').innerHTML = cur || '<p style="color:#777;font-style:italic">No current semester courses listed.</p>';
-document.getElementById('previous_courses_area').innerHTML = prev || '<p style="color:#777;font-style:italic">No previous courses listed.</p>';
+// Default courses shown when admin hasn't saved anything yet
+var DEFAULT_CURRENT = [
+  { name: "Database Management System", meta: "CS301" }
+];
+var DEFAULT_PREV = [];
+
+function renderCourseRows(list) {
+  if (!list || list.length === 0) return '<p style="color:#777;font-style:italic">No courses listed.</p>';
+  return list.map(function(c) {
+    return '<div class="course-row">'
+      + '<span class="course-name">' + escHtml(c.name || '') + '</span>'
+      + (c.meta ? '<span class="course-meta">' + escHtml(c.meta) + '</span>' : '')
+      + '</div>';
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// Load from admin_courses_* (set by admin dashboard)
+var rawCurrent = localStorage.getItem('admin_courses_current');
+var rawPrev    = localStorage.getItem('admin_courses_prev');
+
+// Also fall back to legacy teaching_current_html / teaching_prev_html if present
+var legacyCurrent = localStorage.getItem('teaching_current_html');
+var legacyPrev    = localStorage.getItem('teaching_prev_html');
+
+var currentArea = document.getElementById('current_courses_area');
+var prevArea    = document.getElementById('previous_courses_area');
+
+if (rawCurrent) {
+  try {
+    currentArea.innerHTML = renderCourseRows(JSON.parse(rawCurrent));
+  } catch(e) {
+    currentArea.innerHTML = legacyCurrent || renderCourseRows(DEFAULT_CURRENT);
+  }
+} else if (legacyCurrent) {
+  currentArea.innerHTML = legacyCurrent;
+} else {
+  currentArea.innerHTML = renderCourseRows(DEFAULT_CURRENT);
+}
+
+if (rawPrev) {
+  try {
+    prevArea.innerHTML = renderCourseRows(JSON.parse(rawPrev));
+  } catch(e) {
+    prevArea.innerHTML = legacyPrev || renderCourseRows(DEFAULT_PREV);
+  }
+} else if (legacyPrev) {
+  prevArea.innerHTML = legacyPrev;
+} else {
+  prevArea.innerHTML = renderCourseRows(DEFAULT_PREV);
+}
 </script>
 </body>
 </html>
