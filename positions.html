@@ -5,19 +5,89 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Open Positions – Dr Madan Kumar Das</title>
   <link rel="stylesheet" href="styles.css">
-  
   <style>
-    .positions-wrap { max-width: 920px; margin: 0 auto; padding: 0 24px 40px; }
-    .vacancy-box { background:#fff7d9; border:1px solid #f3e3a8; padding:12px 14px; border-radius:4px; color:#6b4f00; font-weight:600; margin-bottom:14px; }
-    .positions-content { color:var(--muted); font-size:14px; line-height:1.6; }
+    .positions-wrap { max-width: 920px; margin: 0 auto; padding: 0 24px 48px; }
+
+    .sub-nav { display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:28px;overflow-x:auto;-webkit-overflow-scrolling:touch; }
+    .sub-nav a { text-decoration:none;font-size:13px;color:var(--muted);padding:10px 18px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s; }
+    .sub-nav a:hover { color:var(--text); }
+    .sub-nav a.active { color:var(--green);border-bottom-color:var(--green);font-weight:500; }
+
+    .positions-hero {
+      background: linear-gradient(135deg, #fff7d9 0%, #fff3b0 100%);
+      border: 1px solid #f3e3a8;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .positions-hero-icon { font-size: 36px; flex-shrink:0; }
+    .positions-hero-text h3 { font-size: 16px; color: #6b4f00; font-weight: 600; margin-bottom: 4px; }
+    .positions-hero-text p { font-size: 13px; color: #8a6a20; line-height: 1.6; }
+
+    .position-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px 24px;
+      margin-bottom: 18px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .position-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+    .position-card h3 {
+      font-size: 16px; font-weight: 600; color: var(--green); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .position-card h3::before { content:'📌'; font-size:14px; }
+    .position-card p {
+      font-size: 13.5px; color: var(--muted); line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .position-type-badge {
+      display: inline-block;
+      font-size: 10.5px; font-weight: 700;
+      padding: 2px 8px; border-radius: 3px; margin-left: 8px;
+      vertical-align: middle;
+    }
+    .badge-phd { background:#e8f5e8; color:var(--green); border:1px solid #c8e6c9; }
+    .badge-postdoc { background:#e3f2fd; color:#1565c0; border:1px solid #bbdefb; }
+    .badge-project { background:#fff8e1; color:#e65100; border:1px solid #ffcc80; }
+    .badge-intern { background:#f3e5f5; color:#7b1fa2; border:1px solid #e1bee7; }
+
+    .how-to-apply {
+      background: var(--green-light);
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-top: 32px;
+    }
+    .how-to-apply h3 { font-size: 16px; color: var(--green); margin-bottom: 10px; font-weight: 600; }
+    .how-to-apply p { font-size: 13.5px; color: #444; line-height: 1.7; }
+    .how-to-apply a { color: var(--green); font-weight: 500; }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: #bbb; font-size: 14px;
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; display: block; }
+
+    @media (max-width:600px) {
+      .positions-hero { flex-direction:column; align-items:flex-start; }
+      .positions-hero-icon { display:none; }
+    }
   </style>
 </head>
 <body>
 
 <header class="site-header">
   <div>
-    <div class="hdr-name">Dr Madan Kumar Das</div>
-    <div class="hdr-sub">Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>Dr B R Ambedkar National Institute of Technology, Jalandhar</div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
+    <div class="hdr-sub" id="hdr_sub">
+      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
+      Dr B R Ambedkar National Institute of Technology, Jalandhar
+    </div>
   </div>
   <div class="hdr-divider"></div>
   <nav class="site-nav">
@@ -30,59 +100,101 @@
 
 <div class="page-wrap">
   <div class="page-bar">Open Positions</div>
-  <div class="positions-wrap">
+</div>
 
-    <div class="sub-nav" style="margin-bottom:12px">
-      <a href="research.html">Overview</a>
-      <a href="publications.html">Publications</a>
-      <a href="projects.html">Projects</a>
-      <a href="students.html">Students</a>
-      <a href="researchlab.html">Power Electronics Research Lab</a>
-   
-      <a href="positions.html" class="active">Open Positions</a>
-    </div>
+<div class="positions-wrap">
 
-    <div id="vacancy_box" class="vacancy-box">Project Positions in Power Electronics Research</div>
-
-    <div id="positions_content" class="positions-content">
-      <!-- content from admin will be injected here -->
-    </div>
-
+  <div class="sub-nav">
+    <a href="research.html">Overview</a>
+    <a href="publications.html">Publications</a>
+    <a href="projects.html">Projects</a>
+    <a href="students.html">Students</a>
+    <a href="researchlab.html">Power Electronics Research Lab</a>
+    <a href="positions.html" class="active">Open Positions</a>
   </div>
+
+  <div class="positions-hero">
+    <div class="positions-hero-icon">🚀</div>
+    <div class="positions-hero-text">
+      <h3>Join Our Research Group</h3>
+      <p>We are looking for motivated students and researchers passionate about power electronics to work full-time with us. Candidates are expected to have good academic and research credentials.</p>
+    </div>
+  </div>
+
+  <div id="positions_list">
+    <!-- JS populates this -->
+    <div class="empty-state">
+      <span class="icon">📋</span>
+      Loading positions…
+    </div>
+  </div>
+
+  <div class="how-to-apply" id="how_to_apply">
+    <h3>How to Apply</h3>
+    <p>To know more about our current research interests, visit the <a href="research.html">Research Overview</a> and <a href="publications.html">Publications</a> pages.</p>
+    <p style="margin-top:8px">If you are interested in joining us, please send your CV and a brief statement of purpose to <a href="mailto:dasmk@nitj.ac.in">dasmk@nitj.ac.in</a></p>
+  </div>
+
 </div>
 
 <footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
 
+<script src="api.js"></script>
 <script>
-// populate header info (profile fields are stored under admin_ prefix)
-function getAdmin(k){return localStorage.getItem('admin_'+k);} 
-const nm = getAdmin('prof_name'); const title = getAdmin('prof_title'); const dept = getAdmin('prof_dept'); const inst = getAdmin('prof_institute');
-if (nm) document.querySelector('.hdr-name').textContent = nm;
-if (title||dept||inst) document.querySelector('.hdr-sub').innerHTML = (title||'Assistant Professor (Grade-II)') + ', ' + (dept||'Dept. of Electrical Engineering') + ',<br>' + (inst||'Dr B R Ambedkar National Institute of Technology, Jalandhar');
+(async () => {
+  let all = {};
+  try { all = await API.getAll(); } catch(e) {}
+  all = all || {};
 
-// load positions text from admin storage
-const contentEl = document.getElementById('positions_content');
-// Primary: admin writes plain HTML to the 'positions' key. Older admin code may have stored a JSON list
-const positionsHtml = localStorage.getItem('positions');
-const positionsJson = localStorage.getItem('admin_positions') || localStorage.getItem('admin_positions_list');
-if (positionsHtml) {
-  contentEl.innerHTML = positionsHtml;
-} else if (positionsJson) {
-  // parse JSON and render as HTML (avoid showing raw JSON to users)
-  try {
-    const arr = JSON.parse(positionsJson);
-    if (Array.isArray(arr) && arr.length) {
-      contentEl.innerHTML = arr.map(p => `<div style="margin-bottom:12px"><strong>${p.title||''}</strong><div style="margin-top:6px;color:var(--muted);">${p.note||''}</div></div>`).join('');
-    } else {
-      contentEl.innerHTML = '<p>We are looking for motivated students/researchers, who are passionate about power electronics, to work as a full time student/researcher with us. Candidates are expected to have good academic/research credentials.</p><p>These are ideal positions for graduating or recently graduated students looking for research experience in the area of power electronics.</p><p>To know more about our current research interests, you may visit "overview of research" and "publications".</p><p>In case you are interested in joining us, you may send your CV to sa[AT]ee.iitb.ac.in</p>';
-    }
-  } catch (e) {
-    // fallback: show raw string but escaped
-    contentEl.textContent = positionsJson;
+  // Header
+  const p = all.profile || {};
+  if (p.name) document.getElementById('hdr_name').textContent = p.name;
+  if (p.title || p.dept || p.institute) {
+    document.getElementById('hdr_sub').innerHTML =
+      (p.title||'Assistant Professor (Grade-II)') + ', ' +
+      (p.dept||'Dept. of Electrical Engineering') + ',<br>' +
+      (p.institute||'Dr B R Ambedkar National Institute of Technology, Jalandhar');
   }
-} else {
-  contentEl.innerHTML = '<p>We are looking for motivated students/researchers, who are passionate about power electronics, to work as a full time student/researcher with us. Candidates are expected to have good academic/research credentials.</p><p>These are ideal positions for graduating or recently graduated students looking for research experience in the area of power electronics.</p><p>To know more about our current research interests, you may visit "overview of research" and "publications".</p><p>In case you are interested in joining us, you may send your CV to sa[AT]ee.iitb.ac.in</p>';
-}
+
+  // Contact in how-to-apply
+  if (p.email) {
+    document.querySelector('.how-to-apply a[href^="mailto"]').href = 'mailto:' + p.email;
+    document.querySelector('.how-to-apply a[href^="mailto"]').textContent = p.email;
+  }
+
+  // Positions
+  const positions = all.positions || [];
+  const listEl = document.getElementById('positions_list');
+
+  if (positions.length === 0) {
+    listEl.innerHTML = `<div class="empty-state">
+      <span class="icon">📋</span>
+      No positions currently listed. Please check back later or contact us directly.
+    </div>`;
+    return;
+  }
+
+  listEl.innerHTML = '';
+  positions.forEach(pos => {
+    if (!pos.title && !pos.note) return;
+    const card = document.createElement('div');
+    card.className = 'position-card';
+
+    // Detect badge type from title keywords
+    const titleLow = (pos.title||'').toLowerCase();
+    let badge = '';
+    if (titleLow.includes('phd') || titleLow.includes('ph.d')) badge = '<span class="position-type-badge badge-phd">PhD</span>';
+    else if (titleLow.includes('postdoc') || titleLow.includes('post-doc')) badge = '<span class="position-type-badge badge-postdoc">Postdoc</span>';
+    else if (titleLow.includes('project') || titleLow.includes('research')) badge = '<span class="position-type-badge badge-project">Project</span>';
+    else if (titleLow.includes('intern')) badge = '<span class="position-type-badge badge-intern">Intern</span>';
+
+    card.innerHTML = `
+      <h3>${pos.title || 'Position'}${badge}</h3>
+      <p>${(pos.note||'').replace(/\n/g, '\n')}</p>
+    `;
+    listEl.appendChild(card);
+  });
+})();
 </script>
 </body>
 </html>

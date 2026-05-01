@@ -56,7 +56,7 @@
                     padding-bottom: 8px; border-bottom: 1px solid #eee; }
     label { display: block; font-size: 12px; color: #666; font-weight: bold;
             letter-spacing: 0.3px; margin-bottom: 5px; }
-    input[type=text], input[type=email], input[type=tel], input[type=password], textarea, select {
+    input[type=text], input[type=email], input[type=tel], input[type=password], input[type=number], textarea, select {
       width: 100%; padding: 9px 12px; border: 1px solid #ccc;
       border-radius: 4px; font-size: 14px; font-family: Arial, sans-serif;
       transition: border-color .2s; background: #fafafa;
@@ -173,8 +173,7 @@
   </div>
 </div>
 
-<!-- admin status / debug bar -->
-<div style="background:#fff6e6;border-top:1px solid #ffe0b2;padding:8px 30px;font-size:13px;color:#6b4a00;display:flex;align-items:center;gap:12px;">
+<div style="background:#fff6e6;border-top:1px solid #ffe0b2;padding:8px 30px;font-size:13px;color:#6b4a00;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
   <div id="admin_status_text">Initializing…</div>
   <button class="btn-add" onclick="checkApiAndShow()" style="padding:6px 12px;font-size:12px;">Check API</button>
   <button class="btn-add" onclick="forceLoadOffline()" style="padding:6px 12px;font-size:12px;">Load offline data</button>
@@ -190,6 +189,7 @@
     <div class="section-label">Research</div>
     <a href="#" onclick="show('research',this)">🔬 Research Cards</a>
     <a href="#" onclick="show('projects',this)">🗂 Projects</a>
+    <a href="#" onclick="show('lab',this)">⚡ Research Lab</a>
     <a href="#" onclick="show('students',this)">🎓 Students</a>
     <a href="#" onclick="show('gallery',this)">📷 Student Gallery</a>
     <a href="#" onclick="show('positions',this)">📌 Open Positions</a>
@@ -221,8 +221,7 @@
       </div>
       <div class="form-card">
         <h3>Contact Details</h3>
-        <div class="field"><label>Office Address</label>
-          <textarea id="prof_address" rows="3"></textarea></div>
+        <div class="field"><label>Office Address</label><textarea id="prof_address" rows="3"></textarea></div>
         <div class="row">
           <div class="field"><label>Phone</label><input type="tel" id="prof_phone"></div>
           <div class="field"><label>Email</label><input type="email" id="prof_email"></div>
@@ -277,18 +276,18 @@
     <!-- ===== RESEARCH CARDS ===== -->
     <div class="page" id="page-research">
       <h2 class="page-title">Research Cards</h2>
-      <p class="page-desc">Upload images and descriptions for the Research page.</p>
+      <p class="page-desc">Upload images and descriptions for the Research overview page.</p>
       <div class="form-card">
         <div id="research_container"></div>
         <button class="btn-add" onclick="addResearchCard()">+ Add Card</button>
       </div>
-  <button class="btn-save" onclick="saveResearch()">💾 Save Research Cards</button>
+      <button class="btn-save" onclick="saveResearch()">💾 Save Research Cards</button>
     </div>
 
     <!-- ===== PROJECTS ===== -->
     <div class="page" id="page-projects">
       <h2 class="page-title">Projects</h2>
-      <p class="page-desc">Add current and closed projects shown on the Projects page.</p>
+      <p class="page-desc">Add current and closed projects. You can optionally add a project photo.</p>
       <div class="sub-tabs">
         <button class="sub-tab active" id="prjtab-current" onclick="showTab('prj','current')">🟢 Current Projects</button>
         <button class="sub-tab" id="prjtab-closed" onclick="showTab('prj','closed')">🔴 Closed Projects</button>
@@ -301,6 +300,17 @@
         <div class="form-card"><h3>Closed Projects</h3><div id="proj_closed_container"></div><button class="btn-add" onclick="addProject('closed')">+ Add</button></div>
         <button class="btn-save" onclick="saveProjects('closed')">💾 Save Closed Projects</button>
       </div>
+    </div>
+
+    <!-- ===== RESEARCH LAB ===== -->
+    <div class="page" id="page-lab">
+      <h2 class="page-title">⚡ Power Electronics Research Lab</h2>
+      <p class="page-desc">Add photos and details of lab equipment, project setups, and experiments shown on the Research Lab page.</p>
+      <div class="form-card">
+        <div id="lab_container"></div>
+        <button class="btn-add" onclick="addLabItem()">+ Add Photo / Setup</button>
+      </div>
+      <button class="btn-save" onclick="saveLab()">💾 Save Lab Content</button>
     </div>
 
     <!-- ===== STUDENTS ===== -->
@@ -320,7 +330,7 @@
     <!-- ===== GALLERY ===== -->
     <div class="page" id="page-gallery">
       <h2 class="page-title">Student Gallery</h2>
-      <p class="page-desc">Upload student event photos. They appear on the Students photo gallery page.</p>
+      <p class="page-desc">Upload student event photos.</p>
       <div class="form-card">
         <div id="gallery_container"></div>
         <button class="btn-add" onclick="addGalleryCard()">+ Add Photo</button>
@@ -331,7 +341,7 @@
     <!-- ===== POSITIONS ===== -->
     <div class="page" id="page-positions">
       <h2 class="page-title">Open Positions</h2>
-      <p class="page-desc">Manage open position announcements.</p>
+      <p class="page-desc">Manage open position announcements shown on the Open Positions page. Each position has a title and a description/eligibility text.</p>
       <div class="form-card">
         <div id="positions_container"></div>
         <button class="btn-add" onclick="addPosition()">+ Add Position</button>
@@ -342,15 +352,17 @@
     <!-- ===== PUBLICATIONS ===== -->
     <div class="page" id="page-publications">
       <h2 class="page-title">Publications</h2>
-      <p class="page-desc">Add journal papers, conference papers, and book chapters.</p>
+      <p class="page-desc">Add journal papers, conference papers, book chapters, and patents.</p>
       <div class="sub-tabs">
         <button class="sub-tab active" id="ptab-journal" onclick="showTab('p','journal')">📄 Journal</button>
         <button class="sub-tab" id="ptab-conference" onclick="showTab('p','conference')">🎤 Conference</button>
         <button class="sub-tab" id="ptab-book" onclick="showTab('p','book')">📖 Book Chapters</button>
+        <button class="sub-tab" id="ptab-patent" onclick="showTab('p','patent')">🔒 Patents</button>
       </div>
       <div id="ppanel-journal"><div class="form-card"><h3>Journal Papers</h3><div id="pubs_journal_container"></div><button class="btn-add" onclick="addPub('journal')">+ Add</button></div><button class="btn-save" onclick="savePubs('journal')">💾 Save Journal Papers</button></div>
       <div id="ppanel-conference" style="display:none"><div class="form-card"><h3>Conference Papers</h3><div id="pubs_conference_container"></div><button class="btn-add" onclick="addPub('conference')">+ Add</button></div><button class="btn-save" onclick="savePubs('conference')">💾 Save Conference Papers</button></div>
       <div id="ppanel-book" style="display:none"><div class="form-card"><h3>Book Chapters</h3><div id="pubs_book_container"></div><button class="btn-add" onclick="addPub('book')">+ Add</button></div><button class="btn-save" onclick="savePubs('book')">💾 Save Book Chapters</button></div>
+      <div id="ppanel-patent" style="display:none"><div class="form-card"><h3>Patents</h3><div id="pubs_patent_container"></div><button class="btn-add" onclick="addPub('patent')">+ Add</button></div><button class="btn-save" onclick="savePubs('patent')">💾 Save Patents</button></div>
     </div>
 
     <!-- ===== TEACHING ===== -->
@@ -368,19 +380,36 @@
     <!-- ===== CV ===== -->
     <div class="page" id="page-cv">
       <h2 class="page-title">CV</h2>
-      <p class="page-desc">Edit awards, experience, education, memberships, and links.</p>
-      <div class="form-card"><h3>Awards &amp; Fellowships</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_awards" rows="6"></textarea></div></div>
-      <div class="form-card"><h3>Work Experience</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Role | Institution | Duration</em></p><div class="field"><textarea id="cv_experience" rows="6"></textarea></div></div>
-      <div class="form-card"><h3>Education</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Degree | Institution | Year</em></p><div class="field"><textarea id="cv_education" rows="5"></textarea></div></div>
-      <div class="form-card"><h3>Professional Memberships</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_memberships" rows="4"></textarea></div></div>
-      <div class="form-card"><h3>Links</h3>
+      <p class="page-desc">Edit awards, experience, education, memberships, and links. The CV page will automatically populate from the Profile &amp; Contact section.</p>
+      <div class="form-card">
+        <h3>Awards &amp; Fellowships</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
+        <div class="field"><textarea id="cv_awards" rows="6" placeholder="Cited 440+ times on Google Scholar&#10;Post-Doctoral Fellow, IIT Delhi&#10;GATE 2013 Qualified"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Work Experience</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Role | Institution | Duration | Tag (optional, e.g. Current)</em></p>
+        <div class="field"><textarea id="cv_experience" rows="8" placeholder="Assistant Professor (Level-II) | Dr B R Ambedkar NIT, Jalandhar | 4 Sep 2023 – Till date | Current&#10;Post-Doctoral Fellow | IIT Delhi | 2020–2022"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Education</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Degree | Institution | Year/Details</em></p>
+        <div class="field"><textarea id="cv_education" rows="6" placeholder="PhD – Electrical Engineering | IIT (ISM) Dhanbad | Jan 2014 – Feb 2020&#10;B.Tech – EEE | Vinoba Bhave University | 2011, 65.8%"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Professional Memberships</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
+        <div class="field"><textarea id="cv_memberships" rows="4" placeholder="IEEE Member&#10;ISTE Member"></textarea></div>
+      </div>
+      <div class="form-card">
+        <h3>Profile Links</h3>
         <div class="row">
-          <div class="field"><label>LinkedIn URL</label><input type="text" id="cv_linkedin"></div>
-          <div class="field"><label>Google Scholar URL</label><input type="text" id="cv_scholar"></div>
+          <div class="field"><label>LinkedIn URL</label><input type="text" id="cv_linkedin" placeholder="https://www.linkedin.com/in/..."></div>
+          <div class="field"><label>Google Scholar URL</label><input type="text" id="cv_scholar" placeholder="https://scholar.google.co.in/..."></div>
         </div>
         <div class="row">
-          <div class="field"><label>NITJ Faculty Profile URL</label><input type="text" id="cv_nitj"></div>
-          <div class="field"><label>Other Link</label><input type="text" id="cv_other"></div>
+          <div class="field"><label>NITJ Faculty Profile URL</label><input type="text" id="cv_nitj" placeholder="https://departments.nitj.ac.in/..."></div>
+          <div class="field"><label>Other Link (e.g. Scopus, ResearchGate)</label><input type="text" id="cv_other" placeholder="https://..."></div>
         </div>
       </div>
       <button class="btn-save" onclick="saveCV()">💾 Save CV</button>
@@ -405,11 +434,11 @@
 
 <script src="api.js"></script>
 <script>
-// ── Auth guard ───────────────────────────────────────────────
+// ── Auth guard
 if (!API.isLoggedIn()) window.location.href = 'admin-login.html';
 function doLogout() { API.logout(); window.location.href = 'admin-login.html'; }
 
-// ── Nav ──────────────────────────────────────────────────────
+// ── Nav
 function show(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
@@ -418,19 +447,17 @@ function show(id, el) {
   return false;
 }
 
-// ── Sub-tab switcher ─────────────────────────────────────────
+// ── Sub-tab switcher
 function showTab(prefix, which) {
-  const panels = document.querySelectorAll(`[id^="${prefix}panel-"]`);
-  const tabs   = document.querySelectorAll(`[id^="${prefix}tab-"]`);
-  panels.forEach(p => p.style.display = 'none');
-  tabs.forEach(t => { t.classList.remove('active'); });
+  document.querySelectorAll(`[id^="${prefix}panel-"]`).forEach(p => p.style.display = 'none');
+  document.querySelectorAll(`[id^="${prefix}tab-"]`).forEach(t => t.classList.remove('active'));
   const panel = document.getElementById(`${prefix}panel-${which}`);
   const tab   = document.getElementById(`${prefix}tab-${which}`);
   if (panel) panel.style.display = '';
   if (tab)   tab.classList.add('active');
 }
 
-// ── Toast ────────────────────────────────────────────────────
+// ── Toast
 function toast(msg, isError) {
   const t = document.getElementById('toast');
   t.textContent = (isError ? '✗ ' : '✓ ') + msg;
@@ -438,7 +465,7 @@ function toast(msg, isError) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── Escape HTML ──────────────────────────────────────────────
+// ── Escape HTML
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')
     .replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -463,6 +490,7 @@ function compressImage(file, maxW, maxH, quality, callback) {
   reader.readAsDataURL(file);
 }
 
+// ── Image upload helpers
 function handleImg(input, boxId, hiddenId) {
   const file = input.files[0];
   if (!file) return;
@@ -471,6 +499,34 @@ function handleImg(input, boxId, hiddenId) {
     showImgBox(boxId, b64, file.name);
     document.getElementById(hiddenId).value = b64;
   });
+  // Compress if very large
+  const reader = new FileReader();
+  reader.onload = e => {
+    const b64 = e.target.result;
+    // If > 1MB, compress via canvas
+    if (b64.length > 1_000_000) {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 900;
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', 0.82);
+        showImgBox(boxId, compressed, file.name);
+        document.getElementById(hiddenId).value = compressed;
+      };
+      img.src = b64;
+    } else {
+      showImgBox(boxId, b64, file.name);
+      document.getElementById(hiddenId).value = b64;
+    }
+  };
+  reader.readAsDataURL(file);
 }
 function showImgBox(boxId, b64, fname) {
   const box = document.getElementById(boxId);
@@ -478,263 +534,171 @@ function showImgBox(boxId, b64, fname) {
   box.querySelector('.img-upload-preview').src = b64;
   box.querySelector('.img-upload-preview').style.display = 'block';
   box.querySelector('.img-upload-footer').style.display = 'flex';
-  box.querySelector('.fname').textContent = fname || 'saved image';
-  box.querySelector('.img-upload-area').style.display = 'none';
+  const fnEl = box.querySelector('.fname');
+  if (fnEl) fnEl.textContent = fname || 'saved image';
+  const area = box.querySelector('.img-upload-area');
+  if (area) area.style.display = 'none';
 }
 function clearImg(boxId, hiddenId) {
   const box = document.getElementById(boxId);
+  if (!box) return;
   box.querySelector('.img-upload-preview').src = '';
   box.querySelector('.img-upload-preview').style.display = 'none';
   box.querySelector('.img-upload-footer').style.display = 'none';
-  box.querySelector('.img-upload-area').style.display = 'flex';
-  box.querySelector('input[type=file]').value = '';
+  const area = box.querySelector('.img-upload-area');
+  if (area) area.style.display = 'flex';
+  const fi = box.querySelector('input[type=file]');
+  if (fi) fi.value = '';
   document.getElementById(hiddenId).value = '';
 }
 
-// ════════════════════════════════════════════════════════════
-// IN-MEMORY STATE  (loaded from DB on page load)
-// ════════════════════════════════════════════════════════════
+// ── State
 const state = {
   profile: {}, about: '', quicklinks: [],
   research: [], gallery: [], positions: [],
-  'pubs_journal': [], 'pubs_conference': [], 'pubs_book': [],
-  'proj_current': [], 'proj_closed': [],
-  'stu_phd': [], 'stu_mtech': [], 'stu_btech': [], 'stu_alumni': [],
-  'courses_current': [], 'courses_prev': [],
+  pubs_journal: [], pubs_conference: [], pubs_book: [], pubs_patent: [],
+  proj_current: [], proj_closed: [],
+  stu_phd: [], stu_mtech: [], stu_btech: [],
+  courses_current: [], courses_prev: [],
+  researchlab: [],
   cv: {}
 };
 
-// ── Load all data from DB on startup ────────────────────────
+// ── Offline fallback
 function getOfflineAll() {
-  const parse = (k) => {
-    try { return JSON.parse(localStorage.getItem(k) || 'null') || null; } catch (e) { return null; }
-  };
-  const profile = {
-    name: localStorage.getItem('admin_prof_name') || localStorage.getItem('prof_name') || '',
-    title: localStorage.getItem('admin_prof_title') || '',
-    dept: localStorage.getItem('admin_prof_dept') || '',
-    institute: localStorage.getItem('admin_prof_institute') || '',
-    address: localStorage.getItem('admin_prof_address') || '',
-    phone: localStorage.getItem('admin_prof_phone') || '',
-    email: localStorage.getItem('admin_prof_email') || '',
-    cal: localStorage.getItem('admin_prof_cal') || '',
-    photo: localStorage.getItem('admin_prof_photo_data') || localStorage.getItem('admin_prof_img') || '',
-    photoName: localStorage.getItem('admin_prof_photo_name') || ''
-  };
+  const parse = k => { try { return JSON.parse(localStorage.getItem(k)||'null'); } catch(e) { return null; } };
   return {
-    profile,
-    about: localStorage.getItem('admin_about') || localStorage.getItem('about') || '',
-    quicklinks: parse('admin_quicklinks') || [],
-    research: parse('admin_research') || [],
-    gallery: parse('admin_gallery') || parse('admin_students') || [],
-    positions: parse('admin_positions') || parse('admin_positions_list') || [],
-    pubs_journal: parse('admin_pubs_journal') || [],
-    pubs_conference: parse('admin_pubs_conference') || [],
-    pubs_book: parse('admin_pubs_book') || [],
-    proj_current: parse('admin_projects_current') || parse('admin_proj_current') || [],
-    proj_closed: parse('admin_projects_closed') || parse('admin_proj_closed') || [],
-    stu_phd: parse('admin_students_phd') || [],
-    stu_mtech: parse('admin_students_mtech') || [],
-    stu_btech: parse('admin_students_btech') || [],
-    stu_alumni: parse('admin_students_alumni') || [],
-    courses_current: parse('admin_courses_current') || [],
-    courses_prev: parse('admin_courses_prev') || [],
-    cv: {
-      awards: localStorage.getItem('admin_cv_awards') || '',
-      experience: localStorage.getItem('admin_cv_experience') || '',
-      education: localStorage.getItem('admin_cv_education') || '',
-      memberships: localStorage.getItem('admin_cv_memberships') || '',
-      linkedin: localStorage.getItem('admin_cv_linkedin') || '',
-      scholar: localStorage.getItem('admin_cv_scholar') || '',
-      nitj: localStorage.getItem('admin_cv_nitj') || '',
-      other: localStorage.getItem('admin_cv_other') || ''
+    profile: parse('admin_profile') || {
+      name: localStorage.getItem('admin_prof_name')||'',
+      title: localStorage.getItem('admin_prof_title')||'',
+      dept: localStorage.getItem('admin_prof_dept')||'',
+      institute: localStorage.getItem('admin_prof_institute')||'',
+      address: localStorage.getItem('admin_prof_address')||'',
+      phone: localStorage.getItem('admin_prof_phone')||'',
+      email: localStorage.getItem('admin_prof_email')||'',
+      cal: localStorage.getItem('admin_prof_cal')||'',
+      photo: localStorage.getItem('admin_prof_photo_data')||'',
+    },
+    about: localStorage.getItem('admin_about')||'',
+    quicklinks: parse('admin_quicklinks')||[],
+    research: parse('admin_research')||[],
+    gallery: parse('admin_gallery')||[],
+    positions: parse('admin_positions')||[],
+    pubs_journal: parse('admin_pubs_journal')||[],
+    pubs_conference: parse('admin_pubs_conference')||[],
+    pubs_book: parse('admin_pubs_book')||[],
+    pubs_patent: parse('admin_pubs_patent')||[],
+    proj_current: parse('admin_proj_current')||parse('admin_projects_current')||[],
+    proj_closed: parse('admin_proj_closed')||parse('admin_projects_closed')||[],
+    stu_phd: parse('admin_stu_phd')||[],
+    stu_mtech: parse('admin_stu_mtech')||[],
+    stu_btech: parse('admin_stu_btech')||[],
+    courses_current: parse('admin_courses_current')||[],
+    courses_prev: parse('admin_courses_prev')||[],
+    researchlab: parse('admin_researchlab')||[],
+    cv: parse('admin_cv') || {
+      awards: localStorage.getItem('admin_cv_awards')||'',
+      experience: localStorage.getItem('admin_cv_experience')||'',
+      education: localStorage.getItem('admin_cv_education')||'',
+      memberships: localStorage.getItem('admin_cv_memberships')||'',
+      linkedin: localStorage.getItem('admin_cv_linkedin')||'',
+      scholar: localStorage.getItem('admin_cv_scholar')||'',
+      nitj: localStorage.getItem('admin_cv_nitj')||'',
+      other: localStorage.getItem('admin_cv_other')||''
     }
   };
 }
-
-async function loadAll() {
-  let all = {};
-  try {
-    all = await API.getAll();
-  } catch (e) {
-    console.warn('API.getAll failed, falling back to offline data', e);
-    all = {};
-  }
-  if (!all || Object.keys(all).length === 0) {
-    const off = getOfflineAll();
-    if ((off.profile && off.profile.name) || off.about || (off.quicklinks && off.quicklinks.length)) {
-      all = off;
-      toast('Loaded offline data');
-    }
-  }
-
-  // Profile
-  const p = all.profile || {};
-  state.profile = p;
-  document.getElementById('prof_name').value      = p.name || '';
-  document.getElementById('prof_title').value     = p.title || '';
-  document.getElementById('prof_dept').value      = p.dept || '';
-  document.getElementById('prof_institute').value = p.institute || '';
-  document.getElementById('prof_address').value   = p.address || '';
-  document.getElementById('prof_phone').value     = p.phone || '';
-  document.getElementById('prof_email').value     = p.email || '';
-  document.getElementById('prof_cal').value       = p.cal || '';
-  if (p.photo) {
-    document.getElementById('prof_photo_data').value = p.photo;
-    showImgBox('profile_box', p.photo, p.photoName || 'profile photo');
-  }
-
-  state.about = all.about || '';
-  document.getElementById('about_text').value = state.about;
-
-  state.quicklinks = all.quicklinks || [];
-  renderLinks();
-
-  state.research = all.research || [];
-  renderResearch();
-
-  state.gallery = all.gallery || [];
-  renderGallery();
-
-  state.positions = all.positions || [];
-  renderPositions();
-
-  state['pubs_journal']     = all['pubs_journal']     || [];
-  state['pubs_conference']  = all['pubs_conference']  || [];
-  state['pubs_book']        = all['pubs_book']        || [];
-  renderPubs('journal');
-  renderPubs('conference');
-  renderPubs('book');
-
-  state['proj_current'] = all['proj_current'] || [];
-  state['proj_closed']  = all['proj_closed']  || [];
-  renderProjects('current');
-  renderProjects('closed');
-
-  ['phd','mtech','btech'].forEach(t => {
-    state['stu_'+t] = all['stu_'+t] || [];
-    renderStudents(t);
-  });
-
-  state['courses_current'] = all['courses_current'] || [];
-  state['courses_prev']    = all['courses_prev']    || [];
-  renderCourses('current');
-  renderCourses('prev');
-
-  const cv = all.cv || {};
-  state.cv = cv;
-  document.getElementById('cv_awards').value      = cv.awards      || '';
-  document.getElementById('cv_experience').value  = cv.experience  || '';
-  document.getElementById('cv_education').value   = cv.education   || '';
-  document.getElementById('cv_memberships').value = cv.memberships || '';
-  document.getElementById('cv_linkedin').value    = cv.linkedin    || '';
-  document.getElementById('cv_scholar').value     = cv.scholar     || '';
-  document.getElementById('cv_nitj').value        = cv.nitj        || '';
-  document.getElementById('cv_other').value       = cv.other       || '';
-}
-
-loadAll().catch(e => toast('Could not load data: ' + e.message, true));
 
 function populateFrom(all) {
   const p = all.profile || {};
   state.profile = p;
-  document.getElementById('prof_name').value      = p.name || '';
-  document.getElementById('prof_title').value     = p.title || '';
-  document.getElementById('prof_dept').value      = p.dept || '';
-  document.getElementById('prof_institute').value = p.institute || '';
-  document.getElementById('prof_address').value   = p.address || '';
-  document.getElementById('prof_phone').value     = p.phone || '';
-  document.getElementById('prof_email').value     = p.email || '';
-  document.getElementById('prof_cal').value       = p.cal || '';
-  if (p.photo) { document.getElementById('prof_photo_data').value = p.photo; showImgBox('profile_box', p.photo, p.photoName || 'profile photo'); }
+  setValue('prof_name', p.name); setValue('prof_title', p.title);
+  setValue('prof_dept', p.dept); setValue('prof_institute', p.institute);
+  setValue('prof_address', p.address); setValue('prof_phone', p.phone);
+  setValue('prof_email', p.email); setValue('prof_cal', p.cal);
+  if (p.photo) { setValue('prof_photo_data', p.photo); showImgBox('profile_box', p.photo, p.photoName||'profile photo'); }
 
   state.about = all.about || '';
-  document.getElementById('about_text').value = state.about;
-
-  state.quicklinks = all.quicklinks || [];
-  renderLinks();
-
-  state.research = all.research || [];
-  renderResearch();
-
-  state.gallery = all.gallery || [];
-  renderGallery();
-
-  state.positions = all.positions || [];
-  renderPositions();
-
-  state['pubs_journal']     = all['pubs_journal']     || [];
-  state['pubs_conference']  = all['pubs_conference']  || [];
-  state['pubs_book']        = all['pubs_book']        || [];
-  renderPubs('journal'); renderPubs('conference'); renderPubs('book');
-
-  state['proj_current'] = all['proj_current'] || [];
-  state['proj_closed']  = all['proj_closed']  || [];
-  renderProjects('current'); renderProjects('closed');
-
-  ['phd','mtech','btech'].forEach(t => { state['stu_'+t] = all['stu_'+t] || []; renderStudents(t); });
-
-  state['courses_current'] = all['courses_current'] || [];
-  state['courses_prev']    = all['courses_prev']    || [];
-  renderCourses('current'); renderCourses('prev');
+  setValue('about_text', state.about);
+  state.quicklinks = all.quicklinks || []; renderLinks();
+  state.research = all.research || []; renderResearch();
+  state.gallery = all.gallery || []; renderGallery();
+  state.positions = all.positions || []; renderPositions();
+  state.pubs_journal = all.pubs_journal || [];
+  state.pubs_conference = all.pubs_conference || [];
+  state.pubs_book = all.pubs_book || [];
+  state.pubs_patent = all.pubs_patent || [];
+  renderPubs('journal'); renderPubs('conference'); renderPubs('book'); renderPubs('patent');
+  state.proj_current = all.proj_current || []; renderProjects('current');
+  state.proj_closed = all.proj_closed || []; renderProjects('closed');
+  ['phd','mtech','btech'].forEach(t => { state['stu_'+t] = all['stu_'+t]||[]; renderStudents(t); });
+  state.courses_current = all.courses_current || []; renderCourses('current');
+  state.courses_prev = all.courses_prev || []; renderCourses('prev');
+  state.researchlab = all.researchlab || []; renderLab();
 
   const cv = all.cv || {};
   state.cv = cv;
-  document.getElementById('cv_awards').value      = cv.awards      || '';
-  document.getElementById('cv_experience').value  = cv.experience  || '';
-  document.getElementById('cv_education').value   = cv.education   || '';
-  document.getElementById('cv_memberships').value = cv.memberships || '';
-  document.getElementById('cv_linkedin').value    = cv.linkedin    || '';
-  document.getElementById('cv_scholar').value     = cv.scholar     || '';
-  document.getElementById('cv_nitj').value        = cv.nitj        || '';
-  document.getElementById('cv_other').value       = cv.other       || '';
+  setValue('cv_awards', cv.awards); setValue('cv_experience', cv.experience);
+  setValue('cv_education', cv.education); setValue('cv_memberships', cv.memberships);
+  setValue('cv_linkedin', cv.linkedin); setValue('cv_scholar', cv.scholar);
+  setValue('cv_nitj', cv.nitj); setValue('cv_other', cv.other);
 }
 
-async function checkApiAndShow() {
-  const statusEl = document.getElementById('admin_status_text');
-  try {
-    const res = await fetch(API.BASE + '/api/health', {cache:'no-store'});
-    if (res.ok) {
-      statusEl.textContent = 'API reachable — online';
-    } else statusEl.textContent = 'API responded with ' + res.status;
-  } catch (e) { statusEl.textContent = 'API unreachable — using offline/localStorage'; }
+function setValue(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val || '';
 }
 
-function forceLoadOffline() {
-  const off = getOfflineAll();
-  populateFrom(off);
-  document.getElementById('admin_status_text').textContent = 'Loaded offline data (manual)';
+async function loadAll() {
+  let all = {};
+  try { all = await API.getAll(); } catch(e) { console.warn('API.getAll failed', e); }
+  if (!all || Object.keys(all).length === 0) {
+    all = getOfflineAll();
+    if (all.profile && (all.profile.name || all.about)) toast('Loaded offline data');
+  }
+  populateFrom(all);
 }
-
-function showLocalStorageSnapshot() {
-  const keys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i));
-  const sample = keys.slice(0,50).map(k => ({ k, v: localStorage.getItem(k) }));
-  const win = window.open('', '_blank', 'width=700,height=600,scrollbars=yes');
-  win.document.write('<pre style="font-family:monospace;white-space:pre-wrap">' + JSON.stringify(sample, null, 2) + '</pre>');
-}
+loadAll().catch(e => toast('Could not load: ' + e.message, true));
 
 setTimeout(() => {
-  const p = localStorage.getItem('admin_prof_name') || '';
   const stat = document.getElementById('admin_status_text');
-  if (p) stat.textContent = 'Loaded profile for: ' + p;
-  else stat.textContent = 'No profile found in localStorage / offline';
-}, 800);
+  if (stat) stat.textContent = API.isLoggedIn() ? 'Logged in – loading data…' : 'Not logged in';
+}, 200);
 
+async function checkApiAndShow() {
+  try {
+    const res = await fetch(API.BASE + '/api/health', { cache: 'no-store' });
+    document.getElementById('admin_status_text').textContent = res.ok ? 'API reachable ✓' : 'API error: ' + res.status;
+  } catch(e) { document.getElementById('admin_status_text').textContent = 'API unreachable – offline mode'; }
+}
+function forceLoadOffline() {
+  const off = getOfflineAll(); populateFrom(off);
+  document.getElementById('admin_status_text').textContent = 'Loaded offline data';
+}
+function showLocalStorageSnapshot() {
+  const keys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i));
+  const sample = keys.slice(0, 50).map(k => ({ k, v: (localStorage.getItem(k)||'').slice(0,200) }));
+  const win = window.open('', '_blank', 'width=700,height=600,scrollbars=yes');
+  win.document.write('<pre style="font-family:monospace;white-space:pre-wrap;font-size:12px">' + JSON.stringify(sample, null, 2) + '</pre>');
+}
+
+// ── Save with localStorage fallback
 async function saveOrFallback(key, value) {
   try {
     await API.save(key, value);
     return { ok: true };
-  } catch (e) {
+  } catch(e) {
     try {
-      localStorage.setItem('admin_' + key, JSON.stringify(value));
+      const str = JSON.stringify(value);
+      localStorage.setItem('admin_' + key, str);
       return { ok: false, fallback: true };
-    } catch (err) {
-      throw new Error('Save failed and fallback also failed');
+    } catch(err) {
+      throw new Error('Save failed and fallback also failed: ' + e.message);
     }
   }
 }
 
-// ── PROFILE ──────────────────────────────────────────────────
+// ── PROFILE
 async function saveProfile() {
   const value = {
     name:      document.getElementById('prof_name').value,
@@ -748,82 +712,66 @@ async function saveProfile() {
     photo:     document.getElementById('prof_photo_data').value,
     photoName: document.getElementById('profile_box_name')?.textContent || ''
   };
-  try {
-    const res = await saveOrFallback('profile', value);
-    toast(res.ok ? 'Profile saved!' : 'Profile saved locally (offline)');
-  } catch(e) { toast(e.message, true); }
+  try { const r = await saveOrFallback('profile', value); toast(r.ok ? 'Profile saved!' : 'Profile saved locally'); }
+  catch(e) { toast(e.message, true); }
 }
 
-// ── ABOUT ────────────────────────────────────────────────────
+// ── ABOUT
 async function saveAbout() {
-  try {
-    const res = await saveOrFallback('about', document.getElementById('about_text').value);
-    toast(res.ok ? 'About Me saved!' : 'About Me saved locally (offline)');
-  } catch(e) { toast(e.message, true); }
+  try { const r = await saveOrFallback('about', document.getElementById('about_text').value); toast(r.ok ? 'About Me saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
 }
 
-// ── QUICK LINKS ──────────────────────────────────────────────
+// ── QUICK LINKS
 function renderLinks() {
   const c = document.getElementById('links_container');
-  c.innerHTML = '';
   if (!state.quicklinks.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No links yet.</p>'; return; }
-  state.quicklinks.forEach((lk, i) => {
-    c.innerHTML += `<div class="link-item">
-      <input type="text" style="flex:2" id="lk_label_${i}" value="${esc(lk.label)}" placeholder="Link label">
-      <input type="text" style="flex:1" id="lk_url_${i}" value="${esc(lk.url)}" placeholder="URL">
-      <label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0">
-        <input type="checkbox" id="lk_new_${i}" ${lk.isNew?'checked':''}> New
-      </label>
-      <button class="btn-del" onclick="removeLink(${i})">✕</button>
-    </div>`;
-  });
+  c.innerHTML = state.quicklinks.map((lk, i) => `<div class="link-item">
+    <input type="text" style="flex:2" id="lk_label_${i}" value="${esc(lk.label)}" placeholder="Link label">
+    <input type="text" style="flex:1" id="lk_url_${i}" value="${esc(lk.url)}" placeholder="URL">
+    <label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0">
+      <input type="checkbox" id="lk_new_${i}" ${lk.isNew?'checked':''}> New
+    </label>
+    <button class="btn-del" onclick="removeLink(${i})">✕</button>
+  </div>`).join('');
 }
 function syncLinksFromDOM() {
   state.quicklinks = state.quicklinks.map((lk, i) => ({
     label: document.getElementById(`lk_label_${i}`)?.value ?? lk.label,
-    url:   document.getElementById(`lk_url_${i}`)?.value   ?? lk.url,
+    url:   document.getElementById(`lk_url_${i}`)?.value ?? lk.url,
     isNew: document.getElementById(`lk_new_${i}`)?.checked ?? lk.isNew
   }));
 }
-function addLink() {
-  syncLinksFromDOM();
-  state.quicklinks.push({ label: 'New Link', url: '#', isNew: false });
-  renderLinks();
-}
-function removeLink(i) {
-  syncLinksFromDOM();
-  state.quicklinks.splice(i, 1);
-  renderLinks();
-}
+function addLink() { syncLinksFromDOM(); state.quicklinks.push({ label:'New Link', url:'#', isNew:false }); renderLinks(); }
+function removeLink(i) { syncLinksFromDOM(); state.quicklinks.splice(i,1); renderLinks(); }
 async function saveQuickLinks() {
-  const updated = state.quicklinks.map((_, i) => ({
+  const updated = state.quicklinks.map((_,i) => ({
     label: document.getElementById(`lk_label_${i}`)?.value || '',
-    url:   document.getElementById(`lk_url_${i}`)?.value   || '#',
+    url:   document.getElementById(`lk_url_${i}`)?.value || '#',
     isNew: document.getElementById(`lk_new_${i}`)?.checked || false
   }));
-  try { const res = await saveOrFallback('quicklinks', updated); toast(res.ok ? 'Quick Links saved!' : 'Quick Links saved locally (offline)'); }
+  try { const r = await saveOrFallback('quicklinks', updated); toast(r.ok ? 'Quick Links saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── RESEARCH CARDS ───────────────────────────────────────────
+// ── RESEARCH CARDS
 function renderResearch() {
   const c = document.getElementById('research_container');
-  c.innerHTML = '';
   if (!state.research.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No cards yet.</p>'; return; }
-  state.research.forEach((card, i) => {
+  c.innerHTML = state.research.map((card, i) => {
     const boxId = `rc_box_${i}`, dataId = `rc_data_${i}`;
-    c.innerHTML += `<div class="research-item">
+    return `<div class="research-item">
       <button class="btn-del del-btn" onclick="removeResearch(${i})">✕ Remove</button>
       <div class="row" style="margin-right:100px">
         <div class="field"><label>Image</label>
           <div class="img-upload-box" id="${boxId}">
             <div class="img-upload-area" ${card.imgData?'style="display:none"':''}>
-              <div class="icon">📷</div><div class="label-text">Browse image</div><div class="hint">JPG, PNG, WEBP</div>
+              <div class="icon">📷</div><div class="label-text">Browse image</div><div class="hint">JPG, PNG, WEBP · auto-compressed</div>
             </div>
             <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
-            <img class="img-upload-preview" id="${boxId}_prev" ${card.imgData?`src="${card.imgData}" style="display:block"`:''}>
-            <div class="img-upload-footer" id="${boxId}_footer" style="${card.imgData?'display:flex':''}">
-              <span class="fname" id="${boxId}_name">${esc(card.imgName||'')}</span>
+            <img class="img-upload-preview" ${card.imgData?`src="${card.imgData}" style="display:block"`:''}> 
+            <div class="img-upload-footer" style="${card.imgData?'display:flex':''}">
+              <span class="fname">${esc(card.imgName||'')}</span>
               <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
             </div>
           </div>
@@ -834,51 +782,80 @@ function renderResearch() {
         </div>
       </div>
     </div>`;
-  });
+  }).join('');
 }
 function syncResearchFromDOM() {
-  const updated = state.research.map((_, i) => {
-    const boxId = `rc_box_${i}`;
-    return {
-      imgData: document.getElementById(`rc_data_${i}`)?.value || '',
-      imgName: document.getElementById(`${boxId}_name`)?.textContent || '',
-      desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
-    };
-  });
-  state.research = updated;
+  state.research = state.research.map((_,i) => ({
+    imgData: document.getElementById(`rc_data_${i}`)?.value || '',
+    imgName: document.getElementById(`rc_box_${i}`)?.querySelector('.fname')?.textContent || '',
+    desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
+  }));
 }
-function addResearchCard() {
-  syncResearchFromDOM();
-  state.research.push({ imgData:'', imgName:'', desc:'New research description.' });
-  renderResearch();
-}
-function removeResearch(i) {
-  syncResearchFromDOM();
-  state.research.splice(i,1);
-  renderResearch();
-}
+function addResearchCard() { syncResearchFromDOM(); state.research.push({ imgData:'', imgName:'', desc:'Research description.' }); renderResearch(); }
+function removeResearch(i) { syncResearchFromDOM(); state.research.splice(i,1); renderResearch(); }
 async function saveResearch() {
-  const updated = state.research.map((_, i) => {
-    const boxId = `rc_box_${i}`;
-    return {
-      imgData: document.getElementById(`rc_data_${i}`)?.value || '',
-      imgName: document.getElementById(`${boxId}_name`)?.textContent || '',
-      desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
-    };
-  });
-  state.research = updated;
-  try { const res = await saveOrFallback('research', updated); toast(res && res.ok ? 'Research Cards saved!' : 'Research saved locally (offline)'); }
+  syncResearchFromDOM();
+  try { const r = await saveOrFallback('research', state.research); toast(r.ok ? 'Research Cards saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── STUDENT GALLERY ──────────────────────────────────────────
+// ── RESEARCH LAB
+function renderLab() {
+  const c = document.getElementById('lab_container');
+  if (!state.researchlab.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No lab items yet. Add photos of your equipment and project setups.</p>'; return; }
+  c.innerHTML = state.researchlab.map((item, i) => {
+    const boxId = `lab_box_${i}`, dataId = `lab_data_${i}`;
+    return `<div class="research-item">
+      <button class="btn-del del-btn" onclick="removeLabItem(${i})">✕ Remove</button>
+      <div class="row" style="margin-right:100px">
+        <div class="field"><label>Photo</label>
+          <div class="img-upload-box" id="${boxId}">
+            <div class="img-upload-area" ${item.imgData?'style="display:none"':''}>
+              <div class="icon">🔬</div><div class="label-text">Browse lab photo</div><div class="hint">JPG, PNG, WEBP · auto-compressed</div>
+            </div>
+            <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
+            <img class="img-upload-preview" ${item.imgData?`src="${item.imgData}" style="display:block"`:''}> 
+            <div class="img-upload-footer" style="${item.imgData?'display:flex':''}">
+              <span class="fname">${esc(item.imgName||'')}</span>
+              <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
+            </div>
+          </div>
+          <input type="hidden" id="${dataId}" value="${item.imgData?esc(item.imgData):''}">
+        </div>
+        <div class="field">
+          <div class="field"><label>Title / Equipment Name</label>
+            <input type="text" id="lab_title_${i}" value="${esc(item.title||'')}" placeholder="e.g. 13-level MLI Prototype Setup">
+          </div>
+          <label>Description</label>
+          <textarea id="lab_desc_${i}" rows="5" placeholder="Describe the setup, equipment, or experiment...">${esc(item.desc||'')}</textarea>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function syncLabFromDOM() {
+  state.researchlab = state.researchlab.map((_,i) => ({
+    imgData: document.getElementById(`lab_data_${i}`)?.value || '',
+    imgName: document.getElementById(`lab_box_${i}`)?.querySelector('.fname')?.textContent || '',
+    title:   document.getElementById(`lab_title_${i}`)?.value || '',
+    desc:    document.getElementById(`lab_desc_${i}`)?.value || ''
+  }));
+}
+function addLabItem() { syncLabFromDOM(); state.researchlab.push({ imgData:'', imgName:'', title:'', desc:'' }); renderLab(); }
+function removeLabItem(i) { syncLabFromDOM(); state.researchlab.splice(i,1); renderLab(); }
+async function saveLab() {
+  syncLabFromDOM();
+  try { const r = await saveOrFallback('researchlab', state.researchlab); toast(r.ok ? 'Lab content saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+// ── STUDENT GALLERY
 function renderGallery() {
   const c = document.getElementById('gallery_container');
-  c.innerHTML = '';
   if (!state.gallery.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No photos yet.</p>'; return; }
-  state.gallery.forEach((card, i) => {
+  c.innerHTML = state.gallery.map((card, i) => {
     const boxId = `gal_box_${i}`, dataId = `gal_data_${i}`;
-    c.innerHTML += `<div class="research-item">
+    return `<div class="research-item">
       <button class="btn-del del-btn" onclick="removeGallery(${i})">✕ Remove</button>
       <div class="row" style="margin-right:100px">
         <div class="field"><label>Event Name</label>
@@ -890,7 +867,7 @@ function renderGallery() {
               <div class="icon">📷</div><div class="label-text">Browse photo</div><div class="hint">JPG, PNG, WEBP</div>
             </div>
             <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
-            <img class="img-upload-preview" ${card.imgData?`src="${card.imgData}" style="display:block"`:''}>
+            <img class="img-upload-preview" ${card.imgData?`src="${card.imgData}" style="display:block"`:''}> 
             <div class="img-upload-footer" style="${card.imgData?'display:flex':''}">
               <span class="fname">${esc(card.imgName||'')}</span>
               <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
@@ -900,100 +877,74 @@ function renderGallery() {
         </div>
       </div>
     </div>`;
-  });
+  }).join('');
 }
 function addGalleryCard() { state.gallery.push({ imgData:'', imgName:'', eventName:'New Event' }); renderGallery(); }
 function removeGallery(i) { state.gallery.splice(i,1); renderGallery(); }
 async function saveGallery() {
-  const updated = state.gallery.map((_, i) => {
-    const boxId = `gal_box_${i}`;
-    return {
-      imgData:   document.getElementById(`gal_data_${i}`)?.value || '',
-      imgName:   document.getElementById(boxId)?.querySelector('.fname')?.textContent || '',
-      eventName: document.getElementById(`gal_event_${i}`)?.value || ''
-    };
-  });
-  try { const res = await saveOrFallback('gallery', updated); toast(res.ok ? 'Gallery saved!' : 'Gallery saved locally (offline)'); }
+  const updated = state.gallery.map((_,i) => ({
+    imgData:   document.getElementById(`gal_data_${i}`)?.value || '',
+    imgName:   document.getElementById(`gal_box_${i}`)?.querySelector('.fname')?.textContent || '',
+    eventName: document.getElementById(`gal_event_${i}`)?.value || ''
+  }));
+  try { const r = await saveOrFallback('gallery', updated); toast(r.ok ? 'Gallery saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── POSITIONS ────────────────────────────────────────────────
+// ── POSITIONS
 function renderPositions() {
   const c = document.getElementById('positions_container');
-  c.innerHTML = '';
   if (!state.positions.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No positions yet.</p>'; return; }
-  state.positions.forEach((p, i) => {
-    c.innerHTML += `<div class="research-item">
-      <button class="btn-del del-btn" onclick="removePosition(${i})">✕ Remove</button>
-      <div style="margin-right:100px">
-        <div class="field"><label>Title</label><input type="text" id="pos_title_${i}" value="${esc(p.title||'')}"></div>
-        <div class="field"><label>Description / Eligibility</label><textarea id="pos_note_${i}" rows="4">${esc(p.note||'')}</textarea></div>
+  c.innerHTML = state.positions.map((p, i) => `<div class="research-item">
+    <button class="btn-del del-btn" onclick="removePosition(${i})">✕ Remove</button>
+    <div style="margin-right:100px">
+      <div class="field"><label>Position Title</label>
+        <input type="text" id="pos_title_${i}" value="${esc(p.title||'')}" placeholder="e.g. PhD Position in Power Electronics">
       </div>
-    </div>`;
-  });
+      <div class="field"><label>Description / Eligibility</label>
+        <textarea id="pos_note_${i}" rows="5" placeholder="Describe the position, requirements, stipend, etc...">${esc(p.note||'')}</textarea>
+      </div>
+    </div>
+  </div>`).join('');
 }
-function addPosition() { state.positions.push({ title:'New Position', note:'' }); renderPositions(); }
 function syncPositionsFromDOM() {
-  const list = state.positions || [];
-  const updated = list.map((p, i) => ({
+  state.positions = state.positions.map((p,i) => ({
     title: document.getElementById(`pos_title_${i}`)?.value || p.title || '',
-    note:  document.getElementById(`pos_note_${i}`)?.value  || p.note  || ''
+    note:  document.getElementById(`pos_note_${i}`)?.value || p.note || ''
   }));
-  state.positions = updated;
 }
-
-function addPosition() { syncPositionsFromDOM(); state.positions.push({ title:'New Position', note:'' }); renderPositions(); }
+function addPosition() { syncPositionsFromDOM(); state.positions.push({ title:'', note:'' }); renderPositions(); }
 function removePosition(i) { syncPositionsFromDOM(); state.positions.splice(i,1); renderPositions(); }
 async function savePositions() {
-  const updated = state.positions.map((_,i) => ({
-    title: document.getElementById(`pos_title_${i}`)?.value || '',
-    note:  document.getElementById(`pos_note_${i}`)?.value  || ''
-  }));
-  try { const res = await saveOrFallback('positions', updated); toast(res.ok ? 'Positions saved!' : 'Positions saved locally (offline)'); }
+  syncPositionsFromDOM();
+  try { const r = await saveOrFallback('positions', state.positions); toast(r.ok ? 'Positions saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── PUBLICATIONS ─────────────────────────────────────────────
+// ── PUBLICATIONS (journal, conference, book, patent)
 function renderPubs(type) {
   const c = document.getElementById(`pubs_${type}_container`);
   const pubs = state[`pubs_${type}`] || [];
-  c.innerHTML = '';
   if (!pubs.length) { c.innerHTML = '<p style="color:#aaa;font-size:13px;font-style:italic">No entries yet.</p>'; return; }
-  pubs.forEach((p, i) => {
-    c.innerHTML += `<div class="research-item">
-      <button class="btn-del del-btn" onclick="removePub('${type}',${i})">✕ Remove</button>
-      <div style="margin-right:100px">
-        <div class="row">
-          <div class="field"><label>Title</label><input type="text" id="pub_title_${type}_${i}" value="${esc(p.title||'')}"></div>
-          <div class="field"><label>Year</label><input type="text" id="pub_year_${type}_${i}" value="${esc(p.year||'')}"></div>
-        </div>
-        <div class="field"><label>Authors</label><input type="text" id="pub_authors_${type}_${i}" value="${esc(p.authors||'')}"></div>
-        <div class="row">
-          <div class="field"><label>Journal / Conference</label><input type="text" id="pub_journal_${type}_${i}" value="${esc(p.journal||'')}"></div>
-          <div class="field"><label>Volume / Pages</label><input type="text" id="pub_details_${type}_${i}" value="${esc(p.details||'')}"></div>
-        </div>
-        <div class="field"><label>DOI / URL</label><input type="text" id="pub_url_${type}_${i}" value="${esc(p.url||'')}"></div>
+  const isPatent = type === 'patent';
+  c.innerHTML = pubs.map((p,i) => `<div class="research-item">
+    <button class="btn-del del-btn" onclick="removePub('${type}',${i})">✕ Remove</button>
+    <div style="margin-right:100px">
+      <div class="row">
+        <div class="field"><label>${isPatent ? 'Patent Title' : 'Title'}</label><input type="text" id="pub_title_${type}_${i}" value="${esc(p.title||'')}"></div>
+        <div class="field"><label>Year</label><input type="text" id="pub_year_${type}_${i}" value="${esc(p.year||'')}"></div>
       </div>
-    </div>`;
-  });
+      <div class="field"><label>${isPatent ? 'Inventors / Authors' : 'Authors'}</label><input type="text" id="pub_authors_${type}_${i}" value="${esc(p.authors||'')}"></div>
+      <div class="row">
+        <div class="field"><label>${isPatent ? 'Patent Office / Application No.' : 'Journal / Conference'}</label><input type="text" id="pub_journal_${type}_${i}" value="${esc(p.journal||'')}"></div>
+        <div class="field"><label>${isPatent ? 'Status (Filed / Published / Granted)' : 'Volume / Pages'}</label><input type="text" id="pub_details_${type}_${i}" value="${esc(p.details||'')}"></div>
+      </div>
+      <div class="field"><label>DOI / URL</label><input type="text" id="pub_url_${type}_${i}" value="${esc(p.url||'')}"></div>
+    </div>
+  </div>`).join('');
 }
 function syncPubsFromDOM(type) {
-  const pubs = state[`pubs_${type}`] || [];
-  const updated = pubs.map((p, i) => ({
-    title:   document.getElementById(`pub_title_${type}_${i}`)?.value   || p.title || '',
-    authors: document.getElementById(`pub_authors_${type}_${i}`)?.value || p.authors || '',
-    journal: document.getElementById(`pub_journal_${type}_${i}`)?.value || p.journal || '',
-    details: document.getElementById(`pub_details_${type}_${i}`)?.value || p.details || '',
-    year:    document.getElementById(`pub_year_${type}_${i}`)?.value    || p.year || '',
-    url:     document.getElementById(`pub_url_${type}_${i}`)?.value     || p.url || ''
-  }));
-  state[`pubs_${type}`] = updated;
-}
-function addPub(type) { syncPubsFromDOM(type); state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
-function removePub(type, i) { syncPubsFromDOM(type); state[`pubs_${type}`].splice(i,1); renderPubs(type); }
-async function savePubs(type) {
-  const pubs = state[`pubs_${type}`];
-  const updated = pubs.map((_,i) => ({
+  state[`pubs_${type}`] = (state[`pubs_${type}`]||[]).map((p,i) => ({
     title:   document.getElementById(`pub_title_${type}_${i}`)?.value   || '',
     authors: document.getElementById(`pub_authors_${type}_${i}`)?.value || '',
     journal: document.getElementById(`pub_journal_${type}_${i}`)?.value || '',
@@ -1001,206 +952,162 @@ async function savePubs(type) {
     year:    document.getElementById(`pub_year_${type}_${i}`)?.value    || '',
     url:     document.getElementById(`pub_url_${type}_${i}`)?.value     || ''
   }));
-  try { const res = await saveOrFallback(`pubs_${type}`, updated); toast(res.ok ? 'Saved!' : 'Saved locally (offline)'); }
+}
+function addPub(type) { syncPubsFromDOM(type); state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
+function removePub(type,i) { syncPubsFromDOM(type); state[`pubs_${type}`].splice(i,1); renderPubs(type); }
+async function savePubs(type) {
+  syncPubsFromDOM(type);
+  try { const r = await saveOrFallback(`pubs_${type}`, state[`pubs_${type}`]); toast(r.ok ? 'Saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── PROJECTS ─────────────────────────────────────────────────
+// ── PROJECTS (with image upload)
 function renderProjects(type) {
   const c = document.getElementById(`proj_${type}_container`);
   const list = state[`proj_${type}`] || [];
-  c.innerHTML = '';
   if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No projects yet.</p>'; return; }
-  list.forEach((p, i) => {
-    c.innerHTML += `<div class="research-item">
+  c.innerHTML = list.map((p,i) => {
+    const boxId = `proj_box_${type}_${i}`, dataId = `proj_img_${type}_${i}`;
+    return `<div class="research-item">
       <button class="btn-del del-btn" onclick="removeProject('${type}',${i})">✕ Remove</button>
       <div style="margin-right:100px">
         <div class="field"><label>Project Title</label><input type="text" id="proj_title_${type}_${i}" value="${esc(p.title||'')}"></div>
-        <div class="field"><label>Funding Agency</label><input type="text" id="proj_sponsor_${type}_${i}" value="${esc(p.sponsor||'')}"></div>
         <div class="row">
-          <div class="field"><label>Role</label><input type="text" id="proj_role_${type}_${i}" value="${esc(p.role||'')}"></div>
-          <div class="field"><label>Duration</label><input type="text" id="proj_dur_${type}_${i}" value="${esc(p.duration||'')}"></div>
+          <div class="field"><label>Funding Agency / Sponsor</label><input type="text" id="proj_sponsor_${type}_${i}" value="${esc(p.sponsor||'')}"></div>
+          <div class="field"><label>Outlay (₹)</label><input type="text" id="proj_amount_${type}_${i}" value="${esc(p.amount||'')}" placeholder="e.g. 5,00,000"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Role (PI / Co-PI etc.)</label><input type="text" id="proj_role_${type}_${i}" value="${esc(p.role||'')}"></div>
+          <div class="field"><label>Duration</label><input type="text" id="proj_dur_${type}_${i}" value="${esc(p.duration||'')}" placeholder="e.g. 2023 – Ongoing"></div>
+        </div>
+        <div class="field"><label>Project Photo (optional)</label>
+          <div class="img-upload-box" id="${boxId}">
+            <div class="img-upload-area" ${p.imgData?'style="display:none"':''}>
+              <div class="icon">🗂</div><div class="label-text">Browse project photo</div><div class="hint">JPG, PNG, WEBP · optional</div>
+            </div>
+            <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
+            <img class="img-upload-preview" ${p.imgData?`src="${p.imgData}" style="display:block"`:''}> 
+            <div class="img-upload-footer" style="${p.imgData?'display:flex':''}">
+              <span class="fname">${esc(p.imgName||'')}</span>
+              <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
+            </div>
+          </div>
+          <input type="hidden" id="${dataId}" value="${p.imgData?esc(p.imgData):''}">
         </div>
       </div>
     </div>`;
-  });
+  }).join('');
 }
 function syncProjectsFromDOM(type) {
-  const list = state[`proj_${type}`] || [];
-  for (let i = 0; i < list.length; i++) {
-    list[i] = {
-      title:   document.getElementById(`proj_title_${type}_${i}`)?.value || '',
-      sponsor: document.getElementById(`proj_sponsor_${type}_${i}`)?.value || '',
-      role:    document.getElementById(`proj_role_${type}_${i}`)?.value || '',
-      duration:document.getElementById(`proj_dur_${type}_${i}`)?.value || ''
-    };
-  }
-  state[`proj_${type}`] = list;
-}
-function addProject(type) { syncProjectsFromDOM(type); state[`proj_${type}`].push({ title:'',sponsor:'',role:'',duration:'' }); renderProjects(type); }
-function removeProject(type, i) { syncProjectsFromDOM(type); state[`proj_${type}`].splice(i,1); renderProjects(type); }
-async function saveProjects(type) {
-  const list = state[`proj_${type}`];
-  const updated = list.map((_,i) => ({
+  state[`proj_${type}`] = (state[`proj_${type}`]||[]).map((_,i) => ({
     title:    document.getElementById(`proj_title_${type}_${i}`)?.value   || '',
     sponsor:  document.getElementById(`proj_sponsor_${type}_${i}`)?.value || '',
+    amount:   document.getElementById(`proj_amount_${type}_${i}`)?.value  || '',
     role:     document.getElementById(`proj_role_${type}_${i}`)?.value    || '',
-    duration: document.getElementById(`proj_dur_${type}_${i}`)?.value     || ''
+    duration: document.getElementById(`proj_dur_${type}_${i}`)?.value     || '',
+    imgData:  document.getElementById(`proj_img_${type}_${i}`)?.value     || '',
+    imgName:  document.getElementById(`proj_box_${type}_${i}`)?.querySelector('.fname')?.textContent || ''
   }));
-  try {
-    const res = await saveOrFallback(`proj_${type}`, updated);
-    state[`proj_${type}`] = updated;
-    let rows = '';
-    updated.forEach((p, idx) => {
-      rows += `<tr><td class="col-no">${idx+1}</td><td>${esc(p.title)}</td><td>${esc(p.sponsor)}</td><td>${esc(p.role)}</td><td class="col-duration">${esc(p.duration)}</td></tr>`;
-    });
-    if (type === 'current') localStorage.setItem('projects_current_html', rows);
-    else localStorage.setItem('projects_closed_html', rows);
-    renderProjects(type);
-    toast(res.ok ? 'Projects saved!' : 'Projects saved locally (offline)');
-  } catch(e) { toast(e.message, true); }
+}
+function addProject(type) { syncProjectsFromDOM(type); state[`proj_${type}`].push({ title:'',sponsor:'',amount:'',role:'',duration:'',imgData:'',imgName:'' }); renderProjects(type); }
+function removeProject(type,i) { syncProjectsFromDOM(type); state[`proj_${type}`].splice(i,1); renderProjects(type); }
+async function saveProjects(type) {
+  syncProjectsFromDOM(type);
+  try { const r = await saveOrFallback(`proj_${type}`, state[`proj_${type}`]); toast(r.ok ? 'Projects saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
 }
 
-// ════════════════════════════════════════════════════════════
-// ── STUDENTS (with photo upload + BTech major/minor) ─────────
-// ════════════════════════════════════════════════════════════
-
+// ── STUDENTS
 function renderStudents(type) {
   const c = document.getElementById(`stu_${type}_container`);
   const list = state[`stu_${type}`] || [];
-  c.innerHTML = '';
   if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No entries yet.</p>'; return; }
-  list.forEach((s, i) => {
-    const boxId  = `stu_box_${type}_${i}`;
-    const dataId = `stu_photo_${type}_${i}`;
+  c.innerHTML = list.map((s,i) => {
+    const boxId = `stu_box_${type}_${i}`, dataId = `stu_photo_${type}_${i}`;
     const hasImg = s.photo && s.photo.length > 100;
-
-    // BTech-specific dropdown for Major/Minor
-    const btechFields = type === 'btech' ? `
-      <div class="field">
-        <label>Programme Type</label>
-        <select id="stu_programme_${type}_${i}">
-          <option value="" ${!s.programme ? 'selected' : ''}>-- Select --</option>
-          <option value="Major" ${s.programme === 'Major' ? 'selected' : ''}>Major</option>
-          <option value="Minor" ${s.programme === 'Minor' ? 'selected' : ''}>Minor</option>
-        </select>
-      </div>` : '';
-
-    c.innerHTML += `<div class="research-item">
+    const btechFields = type === 'btech' ? `<div class="field"><label>Programme Type</label>
+      <select id="stu_programme_${type}_${i}">
+        <option value="" ${!s.programme?'selected':''}>-- Select --</option>
+        <option value="Major" ${s.programme==='Major'?'selected':''}>Major</option>
+        <option value="Minor" ${s.programme==='Minor'?'selected':''}>Minor</option>
+      </select></div>` : '';
+    return `<div class="research-item">
       <button class="btn-del del-btn" onclick="removeStudent('${type}',${i})">✕ Remove</button>
       <div style="margin-right:110px">
         <div class="row">
-          <div class="field"><label>Name</label>
-            <input type="text" id="stu_name_${type}_${i}" value="${esc(s.name||'')}">
-          </div>
-          <div class="field"><label>Role / Degree</label>
-            <input type="text" id="stu_role_${type}_${i}" value="${esc(s.role||'')}">
-          </div>
+          <div class="field"><label>Name</label><input type="text" id="stu_name_${type}_${i}" value="${esc(s.name||'')}"></div>
+          <div class="field"><label>Role / Degree</label><input type="text" id="stu_role_${type}_${i}" value="${esc(s.role||'')}"></div>
         </div>
         ${btechFields}
         <div class="field"><label>Photo (optional)</label>
           <div class="img-upload-box" id="${boxId}">
-            <div class="img-upload-area" ${hasImg ? 'style="display:none"' : ''}>
-              <div class="icon">👤</div>
-              <div class="label-text">Browse photo</div>
-              <div class="hint">JPG, PNG, WEBP · student photo</div>
+            <div class="img-upload-area" ${hasImg?'style="display:none"':''}>
+              <div class="icon">👤</div><div class="label-text">Browse photo</div><div class="hint">JPG, PNG, WEBP</div>
             </div>
             <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
-            <img class="img-upload-preview" ${hasImg ? `src="${s.photo}" style="display:block"` : ''}>
-            <div class="img-upload-footer" style="${hasImg ? 'display:flex' : ''}">
+            <img class="img-upload-preview" ${hasImg?`src="${s.photo}" style="display:block"`:''}> 
+            <div class="img-upload-footer" style="${hasImg?'display:flex':''}">
               <span class="fname">${esc(s.photoName||'')}</span>
               <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
             </div>
           </div>
-          <input type="hidden" id="${dataId}" value="${hasImg ? esc(s.photo) : ''}">
+          <input type="hidden" id="${dataId}" value="${hasImg?esc(s.photo):''}">
         </div>
-        <div class="field"><label>Note</label>
-          <textarea id="stu_note_${type}_${i}" rows="2">${esc(s.note||'')}</textarea>
-        </div>
+        <div class="field"><label>Note</label><textarea id="stu_note_${type}_${i}" rows="2">${esc(s.note||'')}</textarea></div>
       </div>
     </div>`;
-  });
+  }).join('');
 }
-
-// Sync DOM → state before add/remove so no data is lost
 function syncStudentsFromDOM(type) {
-  const list = state[`stu_${type}`] || [];
-  for (let i = 0; i < list.length; i++) {
+  state[`stu_${type}`] = (state[`stu_${type}`]||[]).map((_,i) => {
     const boxId = `stu_box_${type}_${i}`;
-    list[i] = {
+    return {
       name:      document.getElementById(`stu_name_${type}_${i}`)?.value || '',
       role:      document.getElementById(`stu_role_${type}_${i}`)?.value || '',
       note:      document.getElementById(`stu_note_${type}_${i}`)?.value || '',
       photo:     document.getElementById(`stu_photo_${type}_${i}`)?.value || '',
       photoName: document.getElementById(boxId)?.querySelector('.fname')?.textContent || '',
-      ...(type === 'btech' ? { programme: document.getElementById(`stu_programme_${type}_${i}`)?.value || '' } : {})
+      ...(type==='btech' ? { programme: document.getElementById(`stu_programme_${type}_${i}`)?.value || '' } : {})
     };
-  }
-  state[`stu_${type}`] = list;
-}
-
-function addStudent(type) {
-  syncStudentsFromDOM(type);
-  const newEntry = { name:'', role:'', note:'', photo:'', photoName:'' };
-  if (type === 'btech') newEntry.programme = '';
-  state[`stu_${type}`].push(newEntry);
-  renderStudents(type);
-}
-
-function removeStudent(type, i) {
-  syncStudentsFromDOM(type);
-  state[`stu_${type}`].splice(i, 1);
-  renderStudents(type);
-}
-
-async function saveStudents(type) {
-  syncStudentsFromDOM(type);
-  const updated = state[`stu_${type}`];
-  try {
-    const res = await saveOrFallback(`stu_${type}`, updated);
-    toast(res.ok ? 'Students saved!' : 'Saved locally (offline)');
-  } catch(e) { toast(e.message, true); }
-}
-
-// ── COURSES ──────────────────────────────────────────────────
-function renderCourses(type) {
-  const c = document.getElementById(`teach_${type}_container`);
-  const list = state[`courses_${type}`] || [];
-  c.innerHTML = '';
-  if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No courses yet.</p>'; return; }
-  list.forEach((course, i) => {
-    c.innerHTML += `<div class="research-item">
-      <button class="btn-del del-btn" onclick="removeCourse('${type}',${i})">✕ Remove</button>
-      <div class="row" style="margin-right:100px">
-        <div class="field"><label>Course Name</label><input type="text" id="course_name_${type}_${i}" value="${esc(course.name||'')}"></div>
-        <div class="field"><label>Code / Semester</label><input type="text" id="course_meta_${type}_${i}" value="${esc(course.meta||'')}"></div>
-      </div>
-    </div>`;
   });
 }
-function syncCoursesFromDOM(type) {
-  const list = state[`courses_${type}`] || [];
-  const updated = list.map((c, i) => ({
-    name: document.getElementById(`course_name_${type}_${i}`)?.value || c.name || '',
-    meta: document.getElementById(`course_meta_${type}_${i}`)?.value || c.meta || ''
-  }));
-  state[`courses_${type}`] = updated;
-}
-function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
-function removeCourse(type, i) { syncCoursesFromDOM(type); state[`courses_${type}`].splice(i,1); renderCourses(type); }
-async function saveCourses(type) {
-  const list = state[`courses_${type}`];
-  const updated = list.map((_,i) => ({
-    name: document.getElementById(`course_name_${type}_${i}`)?.value || '',
-    meta: document.getElementById(`course_meta_${type}_${i}`)?.value || ''
-  }));
-  // Mirror courses to localStorage so public teaching page (which reads admin_courses_*) shows them
-  try { localStorage.setItem('admin_courses_' + type, JSON.stringify(updated)); } catch(e) { console.warn('Could not mirror courses to localStorage', e); }
-  try { const res = await saveOrFallback(`courses_${type}`, updated); toast(res.ok ? 'Courses saved!' : 'Courses saved locally (offline)'); }
+function addStudent(type) { syncStudentsFromDOM(type); const e = { name:'',role:'',note:'',photo:'',photoName:'' }; if(type==='btech') e.programme=''; state[`stu_${type}`].push(e); renderStudents(type); }
+function removeStudent(type,i) { syncStudentsFromDOM(type); state[`stu_${type}`].splice(i,1); renderStudents(type); }
+async function saveStudents(type) {
+  syncStudentsFromDOM(type);
+  try { const r = await saveOrFallback(`stu_${type}`, state[`stu_${type}`]); toast(r.ok ? 'Students saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── CV ───────────────────────────────────────────────────────
+// ── COURSES
+function renderCourses(type) {
+  const c = document.getElementById(`teach_${type}_container`);
+  const list = state[`courses_${type}`] || [];
+  if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No courses yet.</p>'; return; }
+  c.innerHTML = list.map((course,i) => `<div class="research-item">
+    <button class="btn-del del-btn" onclick="removeCourse('${type}',${i})">✕ Remove</button>
+    <div class="row" style="margin-right:100px">
+      <div class="field"><label>Course Name</label><input type="text" id="course_name_${type}_${i}" value="${esc(course.name||'')}"></div>
+      <div class="field"><label>Code / Semester</label><input type="text" id="course_meta_${type}_${i}" value="${esc(course.meta||'')}"></div>
+    </div>
+  </div>`).join('');
+}
+function syncCoursesFromDOM(type) {
+  state[`courses_${type}`] = (state[`courses_${type}`]||[]).map((_,i) => ({
+    name: document.getElementById(`course_name_${type}_${i}`)?.value || '',
+    meta: document.getElementById(`course_meta_${type}_${i}`)?.value || ''
+  }));
+}
+function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
+function removeCourse(type,i) { syncCoursesFromDOM(type); state[`courses_${type}`].splice(i,1); renderCourses(type); }
+async function saveCourses(type) {
+  syncCoursesFromDOM(type);
+  try { localStorage.setItem('admin_courses_'+type, JSON.stringify(state[`courses_${type}`])); } catch(e) {}
+  try { const r = await saveOrFallback(`courses_${type}`, state[`courses_${type}`]); toast(r.ok ? 'Courses saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+// ── CV
 async function saveCV() {
   const value = {
     awards:      document.getElementById('cv_awards').value,
@@ -1212,11 +1119,11 @@ async function saveCV() {
     nitj:        document.getElementById('cv_nitj').value,
     other:       document.getElementById('cv_other').value
   };
-  try { const res = await saveOrFallback('cv', value); toast(res.ok ? 'CV saved!' : 'CV saved locally (offline)'); }
+  try { const r = await saveOrFallback('cv', value); toast(r.ok ? 'CV saved!' : 'CV saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
-// ── PASSWORD ─────────────────────────────────────────────────
+// ── PASSWORD
 async function changePassword() {
   const u = document.getElementById('new_user').value.trim();
   const p = document.getElementById('new_pass').value;
@@ -1230,7 +1137,7 @@ async function changePassword() {
       body: JSON.stringify({ newUsername: u, newPassword: p })
     });
     if (!res.ok) throw new Error((await res.json()).error);
-    toast('Credentials updated! Please log in again.');
+    toast('Credentials updated! Logging out…');
     setTimeout(() => { API.logout(); window.location.href = 'admin-login.html'; }, 2000);
   } catch(e) { toast(e.message, true); }
 }
