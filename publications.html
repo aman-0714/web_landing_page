@@ -260,6 +260,7 @@
     <div class="pub-tab active" onclick="switchTab('journal', this)"><span class="tab-icon tab-icon-doc"></span>Journal Papers</div>
     <div class="pub-tab" onclick="switchTab('conference', this)"><span class="tab-icon tab-icon-mic"></span>Conference Papers</div>
     <div class="pub-tab" onclick="switchTab('book', this)"><span class="tab-icon tab-icon-book"></span>Book Chapters</div>
+    <div class="pub-tab" onclick="switchTab('patent', this)"><span class="tab-icon tab-icon-patent"></span>Patents</div>
   </div>
 
   <style>
@@ -268,6 +269,7 @@
     .tab-icon-doc { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M6 2h7l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM13 3.5V9h5.5L13 3.5z'/></svg>"); }
     .tab-icon-mic { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2z'/></svg>"); }
     .tab-icon-book { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M18 2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10V2zM6 4H4v16a2 2 0 0 0 2-2V4z'/></svg>"); }
+    .tab-icon-patent { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232e7d32'><path d='M12 2a7 7 0 0 1 7 7c0 2.6-1.4 4.9-3.5 6.2V18h-7v-2.8A7 7 0 0 1 12 2zm-2 19h4v1h-4z'/></svg>"); }
   </style>
 
   <!-- ========== JOURNAL ========== -->
@@ -308,6 +310,20 @@
       </h2>
       <ul class="pub-list" id="book-list">
         <li class="no-pubs-msg">Loading publications…</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== PATENTS ========== -->
+  <div class="tab-panel" id="panel-patent">
+    <div class="pub-section">
+      <h2>
+        <span class="bar" style="background:#8e24aa;"></span>
+        Patents
+        <span class="count-badge" id="patent-count">0</span>
+      </h2>
+      <ul class="pub-list" id="patent-list">
+        <li class="no-pubs-msg">Loading patents…</li>
       </ul>
     </div>
   </div>
@@ -595,10 +611,12 @@ async function loadAllPubs() {
       (p.dept||"Dept. of Electrical Engineering") + ",<br>" +
       (p.institute||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
   }
-  // Always show DEFAULT_PUBLICATIONS — they are the authoritative list.
-  // The API/DB is only used for profile header info, not for publications.
-  ['journal','conference','book'].forEach(type => {
-    renderPubs(type, DEFAULT_PUBLICATIONS[type] || []);
+  // Use API data if it exists, otherwise fall back to DEFAULT_PUBLICATIONS.
+  // API data takes priority — whatever admin saves via dashboard is shown.
+  // Show ONLY what admin has saved in the database.
+  ['journal','conference','book','patent'].forEach(type => {
+    const pubs = Array.isArray(all['pubs_' + type]) ? all['pubs_' + type] : [];
+    renderPubs(type, pubs);
   });
 }
 

@@ -866,6 +866,7 @@ async function saveResearch() {
 // ── RESEARCH LAB META (name, tagline, stats)
 function renderLabStats() {
   const c = document.getElementById('lab_stats_container');
+  if (!c) return; // element not in HTML, skip safely
   const stats = state.researchlab_meta.stats || [];
   if (!stats.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No custom stats. Auto-calculated from publications data.</p>'; return; }
   c.innerHTML = stats.map((s, i) => `<div class="stat-row-item">
