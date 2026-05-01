@@ -56,6 +56,7 @@
     .projects-table tbody td { padding:12px; vertical-align:top; border-bottom:1px solid #f0f0f0; color:var(--muted); }
     .projects-table .col-no { width:48px; text-align:center; color:#bbb; }
     .projects-table .col-dur { width:110px; text-align:right; color:#666; }
+    .projects-table .col-outlay { width:110px; }
 
     .empty-state { text-align:center; padding:40px; color:#bbb; font-size:13px; font-style:italic; }
 
@@ -157,12 +158,13 @@ function renderProjects(list, containerId, isActive) {
         </div>
       </div>`).join('')}</div>`;
   } else {
-    // Table view
+    // Table view — now includes Outlay (₹) column
     el.innerHTML = `<table class="projects-table">
       <thead><tr>
         <td class="col-no">S.No.</td>
         <td>Project Title</td>
         <td>Funding Agency / Sponsor</td>
+        <td class="col-outlay">Outlay (₹)</td>
         <td>Role</td>
         <td class="col-dur">Duration</td>
       </tr></thead>
@@ -171,6 +173,7 @@ function renderProjects(list, containerId, isActive) {
           <td class="col-no">${i+1}</td>
           <td>${esc(p.title)}</td>
           <td>${esc(p.sponsor)}</td>
+          <td class="col-outlay">${p.amount ? esc(p.amount) : '—'}</td>
           <td>${esc(p.role)}</td>
           <td class="col-dur">${esc(p.duration)}</td>
         </tr>`).join('')}
