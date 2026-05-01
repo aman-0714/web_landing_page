@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Research - Sandeep Anand</title>
+  <title>Research – Dr Madan Kumar Das</title>
   <link rel="stylesheet" href="styles.css">
   <style>
   .sub-nav {
@@ -85,7 +85,7 @@
     <a href="publications.html">Publications</a>
     <a href="projects.html">Projects</a>
     <a href="students.html">Students</a>
-    <a href="presentations.html">Presentations &amp; Videos</a>
+    <a href="researchlab.html">Power Electronics Research Lab</a>
     <a href="positions.html">Open Positions</a>
   </div>
 
@@ -105,49 +105,59 @@
   <a href="admin-login.html" style="color:#3a7d1e;">⚙ Admin</a>
 </footer>
 
+<script src="api.js"></script>
 <script>
-// Apply profile header
-const name = localStorage.getItem("admin_prof_name");
-const title = localStorage.getItem("admin_prof_title");
-const dept  = localStorage.getItem("admin_prof_dept");
-const inst  = localStorage.getItem("admin_prof_institute");
-if (name) document.getElementById("hdr_name").textContent = name;
-if (title || dept || inst) {
-  document.getElementById("hdr_title").innerHTML =
-    (title||"Assistant Professor (Grade-II)") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
-    (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
-}
-
-// Research cards
 const DEFAULT_RESEARCH = [
   { imgData: "", imgName: "", desc: "Dynamic Rds-on measurement circuit: 1) start assessing from the 1st cycle, 2) independent control on testing parameters, 3) HS, SS, and RS operation, 4) regenerative operation." },
   { imgData: "", imgName: "", desc: "Zero voltage switched, regenerative snubber based isolated dc-dc converter using GaN switches. Application – Mobile charger, USB-PD, multi-output dc-dc converter etc." },
-  { imgData: "", imgName: "", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." },
-  { imgData: "", imgName: "", desc: "Additional research content." },
-  { imgData: "", imgName: "", desc: "Additional research content." },
-  { imgData: "", imgName: "", desc: "Additional research content." }
+  { imgData: "", imgName: "", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." }
 ];
 
-const raw = localStorage.getItem("admin_research");
-const cards = raw ? JSON.parse(raw) : DEFAULT_RESEARCH;
-
-const grid = document.getElementById("research_grid");
-grid.innerHTML = "";
-cards.forEach(card => {
-  const div = document.createElement("div");
-  div.className = "card";
-  const src = card.imgData || card.img || "";
-  if (src) {
-    div.innerHTML =
-      '<img src="' + src + '" onclick="window.open(this.src)" style="cursor:zoom-in" title="Click to view full size">' +
-      '<p>' + card.desc + '</p>';
-  } else {
-    div.innerHTML =
-      '<div style="display:flex;align-items:center;justify-content:center;height:200px;background:#f5f5f5;color:#aaa;font-size:13px;">No image uploaded</div>' +
-      '<p>' + card.desc + '</p>';
+// Try to load from API; if empty (backend offline) fall back to admin_ localStorage keys
+(async () => {
+  let all = await API.getAll();
+  if (!all || Object.keys(all).length === 0) {
+    try {
+      const prof = JSON.parse(localStorage.getItem('admin_profile') || 'null');
+      const research = JSON.parse(localStorage.getItem('admin_research') || 'null');
+      all = {};
+      if (prof) all.profile = prof;
+      if (research) all.research = research;
+    } catch (e) {
+      // ignore parse errors and keep all as returned
+      console.warn('localStorage fallback parse failed', e);
+    }
   }
-  grid.appendChild(div);
-});
+  // ensure `all` is always an object
+  all = all || {};
+  const p = all.profile || {};
+  if (p.name) document.getElementById("hdr_name").textContent = p.name;
+  if (p.title || p.dept || p.institute) {
+    document.getElementById("hdr_title").innerHTML =
+      (p.title||"Assistant Professor (Grade-II)") + ", " +
+      (p.dept||"Dept. of Electrical Engineering") + ",<br>" +
+      (p.institute||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
+  }
+
+  const cards = (all.research && all.research.length) ? all.research : DEFAULT_RESEARCH;
+  const grid = document.getElementById("research_grid");
+  grid.innerHTML = "";
+  cards.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+    const src = card.imgData || "";
+    if (src) {
+      div.innerHTML =
+        '<img src="' + src + '" onclick="window.open(this.src)" style="cursor:zoom-in" title="Click to view full size">' +
+        '<p>' + card.desc + '</p>';
+    } else {
+      div.innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:center;height:200px;background:#f5f5f5;color:#aaa;font-size:13px;">No image uploaded</div>' +
+        '<p>' + card.desc + '</p>';
+    }
+    grid.appendChild(div);
+  });
+})();
 </script>
 
 </body>

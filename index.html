@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sandeep Anand</title>
+  <title>Dr Madan Kumar Das – NIT Jalandhar</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -30,9 +30,9 @@
 
   <section class="home-grid">
 
-    <!-- LEFT -->
+    <!-- LEFT: Photo + Contact -->
     <div>
-      <img id="prof_photo" class="prof-photo" src="profile.jpg" alt="Profile">
+      <img id="prof_photo" class="prof-photo" src="profile.jpg" alt="Profile Photo">
       <div class="contact-box">
         <strong>Contact</strong><br>
         <span id="contact_info">
@@ -48,31 +48,33 @@
       </a>
     </div>
 
-    <!-- CENTRE -->
+    <!-- CENTRE: About Me -->
     <div>
       <h2 class="sec-heading">
         <span class="sec-bar bar-orange"></span> About Me
       </h2>
-      <p id="about_p1">
-        I am an Assistant Professor (Grade-II) in the Department of Electrical Engineering
-        at Dr B R Ambedkar National Institute of Technology (NIT Jalandhar), Punjab.
-        Prior to this, I was a Post-Doctoral Fellow at the Indian Institute of Technology, Delhi.
-      </p>
-      <br>
-      <p id="about_p2">
-        I received my Ph.D. in Electrical Engineering from IIT (ISM) Dhanbad in 2019,
-        and my B.Tech in Electrical and Electronics Engineering from Vinoba Bhave University (VBU),
-        Hazaribagh, Jharkhand.
-      </p>
-      <br>
-      <p id="about_p3">
-        My research interests are in the area of Power Electronics, including Multilevel Inverters,
-        Renewable Energy (Grid-Connected Systems), Active Power Factor Correction (PFC), and
-        DC-DC Converters for Solar PV and Electric Vehicle applications.
-      </p>
+      <div id="about_content">
+        <p>
+          I am an Assistant Professor (Grade-II) in the Department of Electrical Engineering
+          at Dr B R Ambedkar National Institute of Technology (NIT Jalandhar), Punjab.
+          Prior to this, I was a Post-Doctoral Fellow at the Indian Institute of Technology, Delhi.
+        </p>
+        <br>
+        <p>
+          I received my Ph.D. in Electrical Engineering from IIT (ISM) Dhanbad in 2019,
+          and my B.Tech in Electrical and Electronics Engineering from Vinoba Bhave University (VBU),
+          Hazaribagh, Jharkhand.
+        </p>
+        <br>
+        <p>
+          My research interests are in the area of Power Electronics, including Multilevel Inverters,
+          Renewable Energy (Grid-Connected Systems), Active Power Factor Correction (PFC), and
+          DC-DC Converters for Solar PV and Electric Vehicle applications.
+        </p>
+      </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT: Quick Links -->
     <div class="qlinks">
       <h2 class="sec-heading">
         <span class="sec-bar bar-blue"></span> Quick Links
@@ -87,68 +89,68 @@
   <a href="admin-login.html" style="color:#3a7d1e;">⚙ Admin</a>
 </footer>
 
-<script src="script.js"></script>
+<script src="api.js"></script>
 <script>
-// ─── Load admin data from localStorage and apply to page ──────
-
-function get(key) { return localStorage.getItem("admin_" + key); }
-
-// Profile / Header
-const name = get("prof_name");
-const title = get("prof_title");
-const dept  = get("prof_dept");
-const inst  = get("prof_institute");
-const addr  = get("prof_address");
-const phone = get("prof_phone");
-const email = get("prof_email");
-const cal   = get("prof_cal");
-const img   = get("prof_img");
-
-if (name) document.getElementById("hdr_name").textContent = name;
-if (title || dept || inst) {
-  document.getElementById("hdr_title").innerHTML =
-    (title||"Assistant Professor (Grade-II)") + ", " + (dept||"Dept. of Electrical Engineering") + ",<br>" +
-    (inst||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
-}
-if (img) document.getElementById("prof_photo").src = img;
-if (addr || phone || email) {
-  const lines = [];
-  if (addr)  lines.push(addr.replace(/\n/g,"<br>"));
-  if (phone) lines.push("<strong>Tel:</strong> " + phone);
-  if (email) lines.push("<strong>Email:</strong> " + email);
-  document.getElementById("contact_info").innerHTML = lines.join("<br>");
-}
-if (cal) document.getElementById("cal_link").href = cal;
-
-// About paragraphs
-const p1 = get("about_p1");
-const p2 = get("about_p2");
-const p3 = get("about_p3");
-if (p1) document.getElementById("about_p1").textContent = p1;
-if (p2) document.getElementById("about_p2").textContent = p2;
-if (p3) { const el = document.getElementById("about_p3"); if (el) el.textContent = p3; }
-
-// Quick Links
 const DEFAULT_LINKS = [
-  { label: "Journal Publications", url: "#", isNew: true },
-  { label: "Conference Publications", url: "#", isNew: false },
-  { label: "Book/Chapter Publications", url: "#", isNew: false },
-  { label: "Google Scholar Profile", url: "https://scholar.google.co.in/citations?user=sRbONFIAAAAJ", isNew: false },
-  { label: "Research on Multilevel Inverters & Renewable Energy", url: "#", isNew: false },
-  { label: "Students Achievements / Awards", url: "#", isNew: false },
-  { label: "LinkedIn Profile", url: "#", isNew: false },
-  { label: "NITJ Faculty Profile", url: "https://departments.nitj.ac.in/dept/ee/Faculty/651165b570e72087e9e944c0", isNew: false }
+  { label: "Journal Publications",                url: "publications.html",  isNew: true  },
+  { label: "Conference Publications",             url: "publications.html",  isNew: false },
+  { label: "Book/Chapter Publications",           url: "publications.html",  isNew: false },
+  { label: "Google Scholar Profile",              url: "https://scholar.google.co.in/citations?user=sRbONFIAAAAJ", isNew: false },
+  { label: "Research on Multilevel Inverters & Renewable Energy", url: "research.html", isNew: false },
+  { label: "Students Achievements / Awards",      url: "students.html",      isNew: false },
+  { label: "LinkedIn Profile",                    url: "#",                  isNew: false },
+  { label: "NITJ Faculty Profile",                url: "https://departments.nitj.ac.in/dept/ee/Faculty/651165b570e72087e9e944c0", isNew: false }
 ];
-const rawLinks = localStorage.getItem("admin_quicklinks");
-const quickLinks = rawLinks ? JSON.parse(rawLinks) : DEFAULT_LINKS;
-const ul = document.getElementById("quick_links_list");
-ul.innerHTML = "";
-quickLinks.forEach(lk => {
-  const li = document.createElement("li");
-  li.innerHTML = (lk.isNew ? '<span class="badge-new">New</span> ' : '') +
-    '<a href="' + (lk.url||"#") + '">' + lk.label + '</a>';
-  ul.appendChild(li);
-});
+
+(async () => {
+  const all = await API.getAll();
+
+  // ── Profile Header ────────────────────────────────────────────
+  const p = all.profile || {};
+  if (p.name) document.getElementById("hdr_name").textContent = p.name;
+  if (p.title || p.dept || p.institute) {
+    document.getElementById("hdr_title").innerHTML =
+      (p.title || "Assistant Professor (Grade-II)") + ", " +
+      (p.dept  || "Dept. of Electrical Engineering") + ",<br>" +
+      (p.institute || "Dr B R Ambedkar National Institute of Technology, Jalandhar");
+  }
+  if (p.photo) {
+    const ph = document.getElementById("prof_photo");
+    if (ph) ph.src = p.photo;
+  }
+  if (p.address || p.phone || p.email) {
+    const lines = [];
+    if (p.address) lines.push(p.address.replace(/\n/g, "<br>"));
+    if (p.phone)   lines.push("<strong>Tel:</strong> " + p.phone);
+    if (p.email)   lines.push("<strong>Email:</strong> " + p.email);
+    document.getElementById("contact_info").innerHTML = lines.join("<br>");
+  }
+  if (p.cal) {
+    const calEl = document.getElementById("cal_link");
+    if (calEl) calEl.href = p.cal;
+  }
+
+  // ── About Me ──────────────────────────────────────────────────
+  const aboutText = all.about || '';
+  if (aboutText.trim()) {
+    const container = document.getElementById("about_content");
+    if (container) {
+      const paras = aboutText.split("\n\n").filter(Boolean);
+      container.innerHTML = paras.map(p => "<p>" + p.replace(/\n/g, "<br>") + "</p>").join("<br>");
+    }
+  }
+
+  // ── Quick Links ───────────────────────────────────────────────
+  const quickLinks = (all.quicklinks && all.quicklinks.length) ? all.quicklinks : DEFAULT_LINKS;
+  const ul = document.getElementById("quick_links_list");
+  ul.innerHTML = "";
+  quickLinks.forEach(lk => {
+    const li = document.createElement("li");
+    li.innerHTML = (lk.isNew ? '<span class="badge-new">New</span> ' : '') +
+      '<a href="' + (lk.url || "#") + '">' + lk.label + '</a>';
+    ul.appendChild(li);
+  });
+})();
 </script>
 
 </body>
