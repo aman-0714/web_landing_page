@@ -279,7 +279,7 @@
         <div id="research_container"></div>
         <button class="btn-add" onclick="addResearchCard()">+ Add Card</button>
       </div>
-      <button class="btn-save" onclick="saveResearch()">💾 Save Research Cards</button>
+  <button class="btn-save" onclick="(console.log('Save Research clicked'), saveResearch())">💾 Save Research Cards</button>
     </div>
 
     <!-- ===== PROJECTS ===== -->
@@ -732,20 +732,40 @@ setTimeout(() => {
 
 // ── Save with fallback helper: try API, otherwise persist to localStorage prefixed with admin_
 async function saveOrFallback(key, value) {
+  // Helper: clone value but strip large image/base64/photo fields before writing to localStorage
+  function stripImageData(v) {
+    if (v == null) return v;
+    if (Array.isArray(v)) return v.map(stripImageData);
+    if (typeof v === 'object') {
+      const out = {};
+      for (const k in v) {
+        if (/imgData|photo|image|img/i.test(k)) {
+          // don't store raw image data locally
+          out[k] = '';
+        } else {
+          out[k] = stripImageData(v[k]);
+        }
+      }
+      return out;
+    }
+    return v;
+  }
   try {
     await API.save(key, value);
     // Mirror the saved value locally so public pages can show it even if the backend is down later
     try {
-      localStorage.setItem('admin_' + key, JSON.stringify(value));
-      console.log('saveOrFallback: mirrored admin_' + key + ' after API.save', value);
+      const sanitized = stripImageData(value);
+      localStorage.setItem('admin_' + key, JSON.stringify(sanitized));
+      console.log('saveOrFallback: mirrored admin_' + key + ' after API.save (images stripped)', sanitized);
     } catch (mirrorErr) {
       console.warn('saveOrFallback: mirror to localStorage failed', mirrorErr);
     }
     return { ok: true };
   } catch (e) {
     try {
-      localStorage.setItem('admin_' + key, JSON.stringify(value));
-      console.log('saveOrFallback: wrote to localStorage admin_' + key, value);
+      const sanitized = stripImageData(value);
+      localStorage.setItem('admin_' + key, JSON.stringify(sanitized));
+      console.log('saveOrFallback: wrote to localStorage admin_' + key + ' (images stripped)', sanitized);
       return { ok: false, fallback: true };
     } catch (err) {
       throw new Error('Save failed and fallback also failed');
@@ -895,11 +915,21 @@ async function saveResearch() {
   state.research = updated;
   // Always mirror to localStorage immediately so public pages can read the latest
   try {
-    localStorage.setItem('admin_research', JSON.stringify(updated));
-    console.log('saveResearch: wrote admin_research to localStorage', updated);
+    // reuse stripImageData from saveOrFallback's scope by recreating minimal sanitizer here
+    const sanitize = (arr) => arr.map(item => ({ imgData:'', imgName:item.imgName||'', desc:item.desc||'' }));
+    const sanitized = sanitize(updated);
+    localStorage.setItem('admin_research', JSON.stringify(sanitized));
+    console.log('saveResearch: wrote admin_research to localStorage (images stripped)', sanitized);
   } catch (e) { console.warn('saveResearch: could not write to localStorage', e); }
-  try { const res = await saveOrFallback('research', updated); toast(res && res.ok ? 'Research Cards saved!' : 'Research saved locally (offline)'); }
-  catch(e) { toast(e.message, true); }
+  // Show immediate feedback so the admin knows the save action took effect locally
+  toast('Research saved locally (offline)');
+  // Persist to API/local fallback in background — don't block UI
+  saveOrFallback('research', updated)
+    .then(res => {
+      if (res && res.ok) toast('Research Cards saved');
+      else if (res && res.fallback) console.log('saveResearch: saved to localStorage as fallback');
+    })
+    .catch(err => { console.error('saveResearch: saveOrFallback error', err); toast('Save failed: ' + (err.message||err), true); });
 }
 
 // ── STUDENT GALLERY ──────────────────────────────────────────
