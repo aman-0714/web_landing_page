@@ -734,10 +734,18 @@ setTimeout(() => {
 async function saveOrFallback(key, value) {
   try {
     await API.save(key, value);
+    // Mirror the saved value locally so public pages can show it even if the backend is down later
+    try {
+      localStorage.setItem('admin_' + key, JSON.stringify(value));
+      console.log('saveOrFallback: mirrored admin_' + key + ' after API.save', value);
+    } catch (mirrorErr) {
+      console.warn('saveOrFallback: mirror to localStorage failed', mirrorErr);
+    }
     return { ok: true };
   } catch (e) {
     try {
       localStorage.setItem('admin_' + key, JSON.stringify(value));
+      console.log('saveOrFallback: wrote to localStorage admin_' + key, value);
       return { ok: false, fallback: true };
     } catch (err) {
       throw new Error('Save failed and fallback also failed');

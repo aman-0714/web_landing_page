@@ -85,7 +85,7 @@
     <a href="publications.html">Publications</a>
     <a href="projects.html">Projects</a>
     <a href="students.html">Students</a>
-    <a href="presentations.html">Presentations &amp; Videos</a>
+    <a href="researchlab.html">Power Electronics Research Lab</a>
     <a href="positions.html">Open Positions</a>
   </div>
 
@@ -113,8 +113,23 @@ const DEFAULT_RESEARCH = [
   { imgData: "", imgName: "", desc: "GaN based independently controlled multi output flyback (ICMOFC) with high efficiency and excellent cross-regulation performance." }
 ];
 
+// Try to load from API; if empty (backend offline) fall back to admin_ localStorage keys
 (async () => {
-  const all = await API.getAll();
+  let all = await API.getAll();
+  if (!all || Object.keys(all).length === 0) {
+    try {
+      const prof = JSON.parse(localStorage.getItem('admin_profile') || 'null');
+      const research = JSON.parse(localStorage.getItem('admin_research') || 'null');
+      all = {};
+      if (prof) all.profile = prof;
+      if (research) all.research = research;
+    } catch (e) {
+      // ignore parse errors and keep all as returned
+      console.warn('localStorage fallback parse failed', e);
+    }
+  }
+  // ensure `all` is always an object
+  all = all || {};
   const p = all.profile || {};
   if (p.name) document.getElementById("hdr_name").textContent = p.name;
   if (p.title || p.dept || p.institute) {
