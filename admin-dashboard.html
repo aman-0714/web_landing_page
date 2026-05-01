@@ -985,8 +985,21 @@ function renderPubs(type) {
     </div>`;
   });
 }
-function addPub(type) { state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
-function removePub(type, i) { state[`pubs_${type}`].splice(i,1); renderPubs(type); }
+function syncPubsFromDOM(type) {
+  const pubs = state[`pubs_${type}`] || [];
+  const updated = pubs.map((p, i) => ({
+    title:   document.getElementById(`pub_title_${type}_${i}`)?.value   || p.title || '',
+    authors: document.getElementById(`pub_authors_${type}_${i}`)?.value || p.authors || '',
+    journal: document.getElementById(`pub_journal_${type}_${i}`)?.value || p.journal || '',
+    details: document.getElementById(`pub_details_${type}_${i}`)?.value || p.details || '',
+    year:    document.getElementById(`pub_year_${type}_${i}`)?.value    || p.year || '',
+    url:     document.getElementById(`pub_url_${type}_${i}`)?.value     || p.url || ''
+  }));
+  state[`pubs_${type}`] = updated;
+}
+
+function addPub(type) { syncPubsFromDOM(type); state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
+function removePub(type, i) { syncPubsFromDOM(type); state[`pubs_${type}`].splice(i,1); renderPubs(type); }
 async function savePubs(type) {
   const pubs = state[`pubs_${type}`];
   const updated = pubs.map((_,i) => ({
