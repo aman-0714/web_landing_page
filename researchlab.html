@@ -328,7 +328,13 @@
   }
 
   // ── Lab Photos grid ──────────────────────────────────────────
-  const lab  = all.researchlab || [];
+  // Support both old format (researchlab array) and new per-photo format
+  let lab = [];
+  if (all.researchlab_index && Array.isArray(all.researchlab_index)) {
+    lab = all.researchlab_index.map(i => all['researchlab_photo_' + i] || null).filter(Boolean);
+  } else {
+    lab = all.researchlab || [];
+  }
   const grid = document.getElementById('lab_photo_grid');
 
   if (lab.length > 0) {
