@@ -38,6 +38,7 @@
       font-weight: bold; font-family: Arial, sans-serif; transition: background .2s;
     }
     button:hover { background: #133d80; }
+    button:disabled { background: #93b4e0; cursor: not-allowed; }
     .error { color: #c0392b; font-size: 13px; margin-top: 14px;
              font-family: Arial, sans-serif; display: none; }
     .back { display: block; text-align: center; margin-top: 20px;
@@ -57,24 +58,50 @@
   <label>Password</label>
   <input type="password" id="p" placeholder="Enter password" autocomplete="current-password">
 
-  <button onclick="login()">Login →</button>
+  <button id="login_btn" onclick="login()">Login →</button>
   <p class="error" id="err">Invalid username or password. Please try again.</p>
   <a href="index.html" class="back">← Back to main site</a>
 </div>
 <script>
-  const ADMIN_USER = "admin";
-  const ADMIN_PASS = "iitb2024";
+  // Uses the backend API for authentication — credentials are stored in .env on the server
+  // NOT hardcoded in the browser anymore!
+  async function login() {
+    const u   = document.getElementById("u").value.trim();
+    const p   = document.getElementById("p").value;
+    const btn = document.getElementById("login_btn");
+    const err = document.getElementById("err");
+    err.style.display = "none";
 
-  function login() {
-    const u = document.getElementById("u").value.trim();
-    const p = document.getElementById("p").value;
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-      sessionStorage.setItem("adminLoggedIn", "true");
-      window.location.href = "admin-dashboard.html";
-    } else {
-      document.getElementById("err").style.display = "block";
+    if (!u || !p) { err.textContent = "Please enter username and password."; err.style.display = "block"; return; }
+
+    btn.disabled    = true;
+    btn.textContent = "Logging in...";
+
+    try {
+      const res = await fetch("/api/login", {
+        method  : "POST",
+        headers : { "Content-Type": "application/json" },
+        body    : JSON.stringify({ username: u, password: p }),
+      });
+      const data = await res.json();
+
+      if (data.ok && data.token) {
+        sessionStorage.setItem("adminLoggedIn", "true");
+        sessionStorage.setItem("adminToken", data.token); // saved for API calls
+        window.location.href = "admin-dashboard.html";
+      } else {
+        err.textContent = "Invalid username or password.";
+        err.style.display = "block";
+      }
+    } catch (e) {
+      err.textContent = "Cannot connect to server. Is it running?";
+      err.style.display = "block";
+    } finally {
+      btn.disabled    = false;
+      btn.textContent = "Login →";
     }
   }
+
   document.addEventListener("keydown", e => { if (e.key === "Enter") login(); });
 </script>
 </body>
