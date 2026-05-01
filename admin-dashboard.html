@@ -637,11 +637,10 @@ async function saveQuickLinks() {
 // ── RESEARCH CARDS ───────────────────────────────────────────
 function renderResearch() {
   const c = document.getElementById('research_container');
-  c.innerHTML = '';
   if (!state.research.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No cards yet.</p>'; return; }
-  state.research.forEach((card, i) => {
+  const parts = state.research.map((card, i) => {
     const boxId = `rc_box_${i}`, dataId = `rc_data_${i}`;
-    c.innerHTML += `<div class="research-item">
+    return `<div class="research-item">`
       <button class="btn-del del-btn" onclick="removeResearch(${i})">✕ Remove</button>
       <div class="row" style="margin-right:100px">
         <div class="field"><label>Image</label>
@@ -664,9 +663,17 @@ function renderResearch() {
       </div>
     </div>`;
   });
+  c.innerHTML = parts.join('');
 }
-function addResearchCard() { state.research.push({ imgData:'', imgName:'', desc:'New research description.' }); renderResearch(); }
-function removeResearch(i) { state.research.splice(i,1); renderResearch(); }
+function syncResearchFromDOM() {
+  state.research = state.research.map((_, i) => ({
+    imgData: document.getElementById(`rc_data_${i}`)?.value || '',
+    imgName: document.getElementById(`rc_box_${i}_name`)?.textContent || '',
+    desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
+  }));
+}
+function addResearchCard() { syncResearchFromDOM(); state.research.push({ imgData:'', imgName:'', desc:'New research description.' }); renderResearch(); }
+function removeResearch(i) { syncResearchFromDOM(); state.research.splice(i,1); renderResearch(); }
 async function saveResearch() {
   const updated = state.research.map((_, i) => {
     const boxId = `rc_box_${i}`;
@@ -711,8 +718,15 @@ function renderGallery() {
     </div>`;
   });
 }
-function addGalleryCard() { state.gallery.push({ imgData:'', imgName:'', eventName:'New Event' }); renderGallery(); }
-function removeGallery(i) { state.gallery.splice(i,1); renderGallery(); }
+function syncGalleryFromDOM() {
+  state.gallery = state.gallery.map((_, i) => ({
+    imgData:   document.getElementById(`gal_data_${i}`)?.value || '',
+    imgName:   document.getElementById(`gal_box_${i}`)?.querySelector('.fname')?.textContent || '',
+    eventName: document.getElementById(`gal_event_${i}`)?.value || ''
+  }));
+}
+function addGalleryCard() { syncGalleryFromDOM(); state.gallery.push({ imgData:'', imgName:'', eventName:'New Event' }); renderGallery(); }
+function removeGallery(i) { syncGalleryFromDOM(); state.gallery.splice(i,1); renderGallery(); }
 async function saveGallery() {
   const updated = state.gallery.map((_, i) => {
     const boxId = `gal_box_${i}`;
@@ -741,8 +755,14 @@ function renderPositions() {
     </div>`;
   });
 }
-function addPosition() { state.positions.push({ title:'New Position', note:'' }); renderPositions(); }
-function removePosition(i) { state.positions.splice(i,1); renderPositions(); }
+function syncPositionsFromDOM() {
+  state.positions = state.positions.map((_, i) => ({
+    title: document.getElementById(`pos_title_${i}`)?.value || '',
+    note:  document.getElementById(`pos_note_${i}`)?.value  || ''
+  }));
+}
+function addPosition() { syncPositionsFromDOM(); state.positions.push({ title:'New Position', note:'' }); renderPositions(); }
+function removePosition(i) { syncPositionsFromDOM(); state.positions.splice(i,1); renderPositions(); }
 async function savePositions() {
   const updated = state.positions.map((_,i) => ({
     title: document.getElementById(`pos_title_${i}`)?.value || '',
@@ -776,8 +796,19 @@ function renderPubs(type) {
     </div>`;
   });
 }
-function addPub(type) { state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
-function removePub(type, i) { state[`pubs_${type}`].splice(i,1); renderPubs(type); }
+function syncPubsFromDOM(type) {
+  const pubs = state[`pubs_${type}`];
+  state[`pubs_${type}`] = pubs.map((_,i) => ({
+    title:   document.getElementById(`pub_title_${type}_${i}`)?.value   || '',
+    authors: document.getElementById(`pub_authors_${type}_${i}`)?.value || '',
+    journal: document.getElementById(`pub_journal_${type}_${i}`)?.value || '',
+    details: document.getElementById(`pub_details_${type}_${i}`)?.value || '',
+    year:    document.getElementById(`pub_year_${type}_${i}`)?.value    || '',
+    url:     document.getElementById(`pub_url_${type}_${i}`)?.value     || ''
+  }));
+}
+function addPub(type) { syncPubsFromDOM(type); state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
+function removePub(type, i) { syncPubsFromDOM(type); state[`pubs_${type}`].splice(i,1); renderPubs(type); }
 async function savePubs(type) {
   const pubs = state[`pubs_${type}`];
   const updated = pubs.map((_,i) => ({
@@ -812,8 +843,17 @@ function renderProjects(type) {
     </div>`;
   });
 }
-function addProject(type) { state[`proj_${type}`].push({ title:'',sponsor:'',role:'',duration:'' }); renderProjects(type); }
-function removeProject(type, i) { state[`proj_${type}`].splice(i,1); renderProjects(type); }
+function syncProjectsFromDOM(type) {
+  const list = state[`proj_${type}`];
+  state[`proj_${type}`] = list.map((_,i) => ({
+    title:    document.getElementById(`proj_title_${type}_${i}`)?.value   || '',
+    sponsor:  document.getElementById(`proj_sponsor_${type}_${i}`)?.value || '',
+    role:     document.getElementById(`proj_role_${type}_${i}`)?.value    || '',
+    duration: document.getElementById(`proj_dur_${type}_${i}`)?.value     || ''
+  }));
+}
+function addProject(type) { syncProjectsFromDOM(type); state[`proj_${type}`].push({ title:'',sponsor:'',role:'',duration:'' }); renderProjects(type); }
+function removeProject(type, i) { syncProjectsFromDOM(type); state[`proj_${type}`].splice(i,1); renderProjects(type); }
 async function saveProjects(type) {
   const list = state[`proj_${type}`];
   const updated = list.map((_,i) => ({
@@ -845,8 +885,16 @@ function renderStudents(type) {
     </div>`;
   });
 }
-function addStudent(type) { state[`stu_${type}`].push({ name:'',role:'',note:'' }); renderStudents(type); }
-function removeStudent(type, i) { state[`stu_${type}`].splice(i,1); renderStudents(type); }
+function syncStudentsFromDOM(type) {
+  const list = state[`stu_${type}`];
+  state[`stu_${type}`] = list.map((_,i) => ({
+    name: document.getElementById(`stu_name_${type}_${i}`)?.value || '',
+    role: document.getElementById(`stu_role_${type}_${i}`)?.value || '',
+    note: document.getElementById(`stu_note_${type}_${i}`)?.value || ''
+  }));
+}
+function addStudent(type) { syncStudentsFromDOM(type); state[`stu_${type}`].push({ name:'',role:'',note:'' }); renderStudents(type); }
+function removeStudent(type, i) { syncStudentsFromDOM(type); state[`stu_${type}`].splice(i,1); renderStudents(type); }
 async function saveStudents(type) {
   const list = state[`stu_${type}`];
   const updated = list.map((_,i) => ({
@@ -874,8 +922,15 @@ function renderCourses(type) {
     </div>`;
   });
 }
-function addCourse(type) { state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
-function removeCourse(type, i) { state[`courses_${type}`].splice(i,1); renderCourses(type); }
+function syncCoursesFromDOM(type) {
+  const list = state[`courses_${type}`];
+  state[`courses_${type}`] = list.map((_,i) => ({
+    name: document.getElementById(`course_name_${type}_${i}`)?.value || '',
+    meta: document.getElementById(`course_meta_${type}_${i}`)?.value || ''
+  }));
+}
+function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
+function removeCourse(type, i) { syncCoursesFromDOM(type); state[`courses_${type}`].splice(i,1); renderCourses(type); }
 async function saveCourses(type) {
   const list = state[`courses_${type}`];
   const updated = list.map((_,i) => ({
