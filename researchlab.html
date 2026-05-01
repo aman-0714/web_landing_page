@@ -228,10 +228,7 @@
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="lab-stats" id="lab_stats">
-      <!-- populated by JS -->
-    </div>
+   
 
     <!-- Lab Photos / Equipment Setups -->
     <div class="lab-section-title">
@@ -265,37 +262,10 @@
 <script src="api.js"></script>
 <script>
 // Default fallbacks (used when admin has not set data yet)
-const DEFAULT_STATS = [
-  { num: '440+', label: 'Citations' },
-  { num: '6+',   label: 'Journal Papers' },
-  { num: '3',    label: 'Patents Filed' },
-  { num: '3+',   label: 'Active Projects' }
-];
 
-const DEFAULT_EQUIPMENT = [
-  'MATLAB / SIMULINK', 'dSPACE (DS1103, 1104)', 'PSIM', 'OPAL-RT',
-  'Typhoon HIL', 'STM32F407VG MCU', 'TI F28335 / F28379 DSP',
-  '10 kW Single-Phase Inverter', '81-Level MLI Prototype'
-];
 
-const DEFAULT_FOCUS = [
-  {
-    title: 'Multilevel Inverter Topologies',
-    desc: 'Novel asymmetrical and symmetrical MLI designs with reduced switch count for PV grid integration.'
-  },
-  {
-    title: 'DC Fast Charging for EVs',
-    desc: 'Hardware prototype development of multi-vehicle simultaneous DC fast chargers.'
-  },
-  {
-    title: 'AC Microgrid Control',
-    desc: 'Master-slave organized AC microgrid with robust control, islanding detection & grid sync.'
-  },
-  {
-    title: 'BLDC Motor Drives',
-    desc: 'Regenerative drive design with robust intelligent control strategies (FOPI, Hysteresis).'
-  }
-];
+
+
 
 (async () => {
   let all = {};
