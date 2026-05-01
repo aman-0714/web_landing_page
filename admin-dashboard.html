@@ -444,7 +444,6 @@ function esc(s) {
     .replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── Image upload helpers ─────────────────────────────────────
 function compressImage(file, maxW, maxH, quality, callback) {
   const reader = new FileReader();
   reader.onload = e => {

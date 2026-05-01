@@ -4,8 +4,9 @@ const mongoose   = require('mongoose');
 const cors       = require('cors');
 const path       = require('path');
 
-const authRouter = require('./routes/auth');
-const dataRouter = require('./routes/data');
+const authRouter   = require('./routes/auth');
+const dataRouter   = require('./routes/data');
+const uploadRouter = require('./routes/upload');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -42,6 +43,7 @@ app.use(express.static(path.join(__dirname, '..')));
 // ── Routes ───────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/data', dataRouter);
+app.use('/api/upload', uploadRouter);
 
 // Health-check — Render pings this to confirm the service is up
 app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
