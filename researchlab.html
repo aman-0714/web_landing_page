@@ -262,6 +262,20 @@
 <script src="api.js"></script>
 <script>
 // Default fallbacks (used when admin has not set data yet)
+const DEFAULT_EQUIPMENT = [
+  'MATLAB / SIMULINK', 'dSPACE (DS1103, DS1104)', 'PSIM', 'OPAL-RT',
+  'Typhoon HIL', 'STM32F407VG MCU', 'TI F28335 / F28379 DSP',
+  '10 kW Single-Phase Inverter', '81-Level MLI Prototype'
+];
+
+const DEFAULT_FOCUS = [
+  { title: 'Multilevel Inverter Topologies', desc: 'Design and development of reduced-switch asymmetrical multilevel inverters for improved efficiency and lower cost.' },
+  { title: 'Grid-Connected PV Systems', desc: 'Control strategies for photovoltaic inverters interfaced with the utility grid for distributed power generation.' },
+  { title: 'Microgrid Control', desc: 'Seamless operation, islanding detection, and grid synchronization of AC/DC microgrids.' },
+  { title: 'Hardware Prototyping', desc: 'Experimental verification of novel inverter topologies using dSPACE, STM32, and TI DSP controllers.' },
+  { title: 'EV Fast Charging', desc: 'Hardware prototype development of DC fast chargers for simultaneous charging of multiple electric vehicles.' },
+  { title: 'Power Quality Improvement', desc: 'Vienna rectifier-based solutions and capacitor placement techniques for distribution system power quality.' }
+];
 
 
 
@@ -292,40 +306,7 @@
     document.getElementById('lab_tagline').textContent = labMeta.tagline;
   }
 
-  // ── Stats ────────────────────────────────────────────────────
-  const statsEl = document.getElementById('lab_stats');
-
-  // Use admin-configured stats if available
-  if (labMeta.stats && labMeta.stats.length > 0) {
-    statsEl.innerHTML = labMeta.stats.map(s =>
-      `<div class="stat-card">
-        <div class="stat-num">${escHtml(s.num)}</div>
-        <div class="stat-label">${escHtml(s.label)}</div>
-      </div>`
-    ).join('');
-  } else {
-    // Auto-build stats from publications/projects + cv data
-    const cv = all.cv || {};
-    const journals  = all.pubs_journal     || [];
-    const confs     = all.pubs_conference  || [];
-    const books     = all.pubs_book        || [];
-    const patents   = all.pubs_patent      || [];
-    const totalPubs = journals.length + confs.length + books.length;
-    const totalProj = (all.proj_current||[]).length + (all.proj_closed||[]).length;
-
-    const autoStats = [
-      { num: cv.citations     || '440+', label: 'Citations' },
-      { num: totalPubs > 0    ? totalPubs + '+' : (cv.journals || '6+'), label: 'Publications' },
-      { num: cv.patents_count || (patents.length > 0 ? patents.length : '3'), label: 'Patents Filed' },
-      { num: cv.projects_count|| (totalProj > 0  ? totalProj  : '3+'), label: 'Active Projects' }
-    ];
-    statsEl.innerHTML = autoStats.map(s =>
-      `<div class="stat-card">
-        <div class="stat-num">${escHtml(String(s.num))}</div>
-        <div class="stat-label">${escHtml(s.label)}</div>
-      </div>`
-    ).join('');
-  }
+  // ── Stats: skipped (no #lab_stats element in this page) ────────
 
   // ── Lab Photos grid ──────────────────────────────────────────
   const lab  = all.researchlab || [];
