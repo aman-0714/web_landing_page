@@ -994,8 +994,22 @@ function renderProjects(type) {
     </div>`;
   });
 }
-function addProject(type) { state[`proj_${type}`].push({ title:'',sponsor:'',role:'',duration:'' }); renderProjects(type); }
-function removeProject(type, i) { state[`proj_${type}`].splice(i,1); renderProjects(type); }
+// Sync current DOM inputs into state for projects (to avoid losing unsaved edits on add/remove)
+function syncProjectsFromDOM(type) {
+  const list = state[`proj_${type}`] || [];
+  for (let i = 0; i < list.length; i++) {
+    list[i] = {
+      title:   document.getElementById(`proj_title_${type}_${i}`)?.value || '',
+      sponsor: document.getElementById(`proj_sponsor_${type}_${i}`)?.value || '',
+      role:    document.getElementById(`proj_role_${type}_${i}`)?.value || '',
+      duration:document.getElementById(`proj_dur_${type}_${i}`)?.value || ''
+    };
+  }
+  state[`proj_${type}`] = list;
+}
+
+function addProject(type) { syncProjectsFromDOM(type); state[`proj_${type}`].push({ title:'',sponsor:'',role:'',duration:'' }); renderProjects(type); }
+function removeProject(type, i) { syncProjectsFromDOM(type); state[`proj_${type}`].splice(i,1); renderProjects(type); }
 async function saveProjects(type) {
   const list = state[`proj_${type}`];
   const updated = list.map((_,i) => ({
@@ -1004,7 +1018,7 @@ async function saveProjects(type) {
     role:     document.getElementById(`proj_role_${type}_${i}`)?.value    || '',
     duration: document.getElementById(`proj_dur_${type}_${i}`)?.value     || ''
   }));
-  try { const res = await saveOrFallback(`proj_${type}`, updated); toast(res.ok ? 'Projects saved!' : 'Projects saved locally (offline)'); }
+  try { const res = await saveOrFallback(`proj_${type}`, updated); state[`proj_${type}`] = updated; renderProjects(type); toast(res.ok ? 'Projects saved!' : 'Projects saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
