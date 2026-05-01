@@ -951,7 +951,17 @@ function renderPositions() {
   });
 }
 function addPosition() { state.positions.push({ title:'New Position', note:'' }); renderPositions(); }
-function removePosition(i) { state.positions.splice(i,1); renderPositions(); }
+function syncPositionsFromDOM() {
+  const list = state.positions || [];
+  const updated = list.map((p, i) => ({
+    title: document.getElementById(`pos_title_${i}`)?.value || p.title || '',
+    note:  document.getElementById(`pos_note_${i}`)?.value  || p.note  || ''
+  }));
+  state.positions = updated;
+}
+
+function addPosition() { syncPositionsFromDOM(); state.positions.push({ title:'New Position', note:'' }); renderPositions(); }
+function removePosition(i) { syncPositionsFromDOM(); state.positions.splice(i,1); renderPositions(); }
 async function savePositions() {
   const updated = state.positions.map((_,i) => ({
     title: document.getElementById(`pos_title_${i}`)?.value || '',
