@@ -893,6 +893,11 @@ async function saveResearch() {
     };
   });
   state.research = updated;
+  // Always mirror to localStorage immediately so public pages can read the latest
+  try {
+    localStorage.setItem('admin_research', JSON.stringify(updated));
+    console.log('saveResearch: wrote admin_research to localStorage', updated);
+  } catch (e) { console.warn('saveResearch: could not write to localStorage', e); }
   try { const res = await saveOrFallback('research', updated); toast(res && res.ok ? 'Research Cards saved!' : 'Research saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
