@@ -170,6 +170,14 @@
   </div>
 </div>
 
+<!-- admin status / debug bar -->
+<div style="background:#fff6e6;border-top:1px solid #ffe0b2;padding:8px 30px;font-size:13px;color:#6b4a00;display:flex;align-items:center;gap:12px;">
+  <div id="admin_status_text">Initializing…</div>
+  <button class="btn-add" onclick="checkApiAndShow()" style="padding:6px 12px;font-size:12px;">Check API</button>
+  <button class="btn-add" onclick="forceLoadOffline()" style="padding:6px 12px;font-size:12px;">Load offline data</button>
+  <button class="btn-add" onclick="showLocalStorageSnapshot()" style="padding:6px 12px;font-size:12px;">Show storage</button>
+</div>
+
 <div class="layout">
   <div class="sidebar">
     <div class="section-label">Home Page</div>
@@ -480,8 +488,71 @@ const state = {
 };
 
 // ── Load all data from DB on startup ────────────────────────
+// Attempt to build an "all" object from localStorage when the API/backend is unreachable.
+function getOfflineAll() {
+  const parse = (k) => {
+    try { return JSON.parse(localStorage.getItem(k) || 'null') || null; } catch (e) { return null; }
+  };
+  const profile = {
+    name: localStorage.getItem('admin_prof_name') || localStorage.getItem('prof_name') || '',
+    title: localStorage.getItem('admin_prof_title') || '',
+    dept: localStorage.getItem('admin_prof_dept') || '',
+    institute: localStorage.getItem('admin_prof_institute') || '',
+    address: localStorage.getItem('admin_prof_address') || '',
+    phone: localStorage.getItem('admin_prof_phone') || '',
+    email: localStorage.getItem('admin_prof_email') || '',
+    cal: localStorage.getItem('admin_prof_cal') || '',
+    photo: localStorage.getItem('admin_prof_photo_data') || localStorage.getItem('admin_prof_img') || '',
+    photoName: localStorage.getItem('admin_prof_photo_name') || ''
+  };
+  return {
+    profile,
+    about: localStorage.getItem('admin_about') || localStorage.getItem('about') || '',
+    quicklinks: parse('admin_quicklinks') || [],
+    research: parse('admin_research') || [],
+    gallery: parse('admin_gallery') || parse('admin_students') || [],
+    positions: parse('admin_positions') || parse('admin_positions_list') || [],
+    pubs_journal: parse('admin_pubs_journal') || [],
+    pubs_conference: parse('admin_pubs_conference') || [],
+    pubs_book: parse('admin_pubs_book') || [],
+    proj_current: parse('admin_projects_current') || parse('admin_proj_current') || [],
+    proj_closed: parse('admin_projects_closed') || parse('admin_proj_closed') || [],
+    stu_phd: parse('admin_students_phd') || [],
+    stu_mtech: parse('admin_students_mtech') || [],
+    stu_btech: parse('admin_students_btech') || [],
+    stu_alumni: parse('admin_students_alumni') || [],
+    courses_current: parse('admin_courses_current') || [],
+    courses_prev: parse('admin_courses_prev') || [],
+    cv: {
+      awards: localStorage.getItem('admin_cv_awards') || '',
+      experience: localStorage.getItem('admin_cv_experience') || '',
+      education: localStorage.getItem('admin_cv_education') || '',
+      memberships: localStorage.getItem('admin_cv_memberships') || '',
+      linkedin: localStorage.getItem('admin_cv_linkedin') || '',
+      scholar: localStorage.getItem('admin_cv_scholar') || '',
+      nitj: localStorage.getItem('admin_cv_nitj') || '',
+      other: localStorage.getItem('admin_cv_other') || ''
+    }
+  };
+}
+
 async function loadAll() {
-  const all = await API.getAll();
+  let all = {};
+  try {
+    all = await API.getAll();
+  } catch (e) {
+    console.warn('API.getAll failed, falling back to offline data', e);
+    all = {};
+  }
+  // if backend returned empty object or failed, fall back to offline/localStorage data
+  if (!all || Object.keys(all).length === 0) {
+    const off = getOfflineAll();
+    // use offline only if it has some meaningful data (profile name or about or quicklinks)
+    if ((off.profile && off.profile.name) || off.about || (off.quicklinks && off.quicklinks.length)) {
+      all = off;
+      toast('Loaded offline data');
+    }
+  }
 
   // Profile
   const p = all.profile || {};
@@ -560,6 +631,120 @@ async function loadAll() {
 
 loadAll().catch(e => toast('Could not load data: ' + e.message, true));
 
+// Reusable population logic so we can manually force-load offline data too
+function populateFrom(all) {
+  // Profile
+  const p = all.profile || {};
+  state.profile = p;
+  document.getElementById('prof_name').value      = p.name || '';
+  document.getElementById('prof_title').value     = p.title || '';
+  document.getElementById('prof_dept').value      = p.dept || '';
+  document.getElementById('prof_institute').value = p.institute || '';
+  document.getElementById('prof_address').value   = p.address || '';
+  document.getElementById('prof_phone').value     = p.phone || '';
+  document.getElementById('prof_email').value     = p.email || '';
+  document.getElementById('prof_cal').value       = p.cal || '';
+  if (p.photo) { document.getElementById('prof_photo_data').value = p.photo; showImgBox('profile_box', p.photo, p.photoName || 'profile photo'); }
+
+  // About
+  state.about = all.about || '';
+  document.getElementById('about_text').value = state.about;
+
+  // Quick Links
+  state.quicklinks = all.quicklinks || [];
+  renderLinks();
+
+  // Research
+  state.research = all.research || [];
+  renderResearch();
+
+  // Gallery
+  state.gallery = all.gallery || [];
+  renderGallery();
+
+  // Positions
+  state.positions = all.positions || [];
+  renderPositions();
+
+  // Publications
+  state['pubs_journal']     = all['pubs_journal']     || [];
+  state['pubs_conference']  = all['pubs_conference']  || [];
+  state['pubs_book']        = all['pubs_book']        || [];
+  renderPubs('journal'); renderPubs('conference'); renderPubs('book');
+
+  // Projects
+  state['proj_current'] = all['proj_current'] || [];
+  state['proj_closed']  = all['proj_closed']  || [];
+  renderProjects('current'); renderProjects('closed');
+
+  // Students
+  ['phd','mtech','btech','alumni'].forEach(t => { state['stu_'+t] = all['stu_'+t] || []; renderStudents(t); });
+
+  // Courses
+  state['courses_current'] = all['courses_current'] || [];
+  state['courses_prev']    = all['courses_prev']    || [];
+  renderCourses('current'); renderCourses('prev');
+
+  // CV
+  const cv = all.cv || {};
+  state.cv = cv;
+  document.getElementById('cv_awards').value      = cv.awards      || '';
+  document.getElementById('cv_experience').value  = cv.experience  || '';
+  document.getElementById('cv_education').value   = cv.education   || '';
+  document.getElementById('cv_memberships').value = cv.memberships || '';
+  document.getElementById('cv_linkedin').value    = cv.linkedin    || '';
+  document.getElementById('cv_scholar').value     = cv.scholar     || '';
+  document.getElementById('cv_nitj').value        = cv.nitj        || '';
+  document.getElementById('cv_other').value       = cv.other       || '';
+}
+
+// Check API reachability and show status
+async function checkApiAndShow() {
+  const statusEl = document.getElementById('admin_status_text');
+  try {
+    const res = await fetch(API.BASE + '/api/health', {cache:'no-store'});
+    if (res.ok) {
+      statusEl.textContent = 'API reachable — online';
+    } else statusEl.textContent = 'API responded with ' + res.status;
+  } catch (e) { statusEl.textContent = 'API unreachable — using offline/localStorage'; }
+}
+
+function forceLoadOffline() {
+  const off = getOfflineAll();
+  populateFrom(off);
+  document.getElementById('admin_status_text').textContent = 'Loaded offline data (manual)';
+}
+
+function showLocalStorageSnapshot() {
+  const keys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i));
+  const sample = keys.slice(0,50).map(k => ({ k, v: localStorage.getItem(k) }));
+  const win = window.open('', '_blank', 'width=700,height=600,scrollbars=yes');
+  win.document.write('<pre style="font-family:monospace;white-space:pre-wrap">' + JSON.stringify(sample, null, 2) + '</pre>');
+}
+
+// Update status after loadAll completes with a small summary
+setTimeout(() => {
+  const p = localStorage.getItem('admin_prof_name') || '';
+  const stat = document.getElementById('admin_status_text');
+  if (p) stat.textContent = 'Loaded profile for: ' + p;
+  else stat.textContent = 'No profile found in localStorage / offline';
+}, 800);
+
+// ── Save with fallback helper: try API, otherwise persist to localStorage prefixed with admin_
+async function saveOrFallback(key, value) {
+  try {
+    await API.save(key, value);
+    return { ok: true };
+  } catch (e) {
+    try {
+      localStorage.setItem('admin_' + key, JSON.stringify(value));
+      return { ok: false, fallback: true };
+    } catch (err) {
+      throw new Error('Save failed and fallback also failed');
+    }
+  }
+}
+
 // ── PROFILE ──────────────────────────────────────────────────
 async function saveProfile() {
   const value = {
@@ -575,16 +760,16 @@ async function saveProfile() {
     photoName: document.getElementById('profile_box_name')?.textContent || ''
   };
   try {
-    await API.save('profile', value);
-    toast('Profile saved!');
+    const res = await saveOrFallback('profile', value);
+    toast(res.ok ? 'Profile saved!' : 'Profile saved locally (offline)');
   } catch(e) { toast(e.message, true); }
 }
 
 // ── ABOUT ────────────────────────────────────────────────────
 async function saveAbout() {
   try {
-    await API.save('about', document.getElementById('about_text').value);
-    toast('About Me saved!');
+    const res = await saveOrFallback('about', document.getElementById('about_text').value);
+    toast(res.ok ? 'About Me saved!' : 'About Me saved locally (offline)');
   } catch(e) { toast(e.message, true); }
 }
 
@@ -627,7 +812,7 @@ async function saveQuickLinks() {
     url:   document.getElementById(`lk_url_${i}`)?.value   || '#',
     isNew: document.getElementById(`lk_new_${i}`)?.checked || false
   }));
-  try { await API.save('quicklinks', updated); toast('Quick Links saved!'); }
+  try { const res = await saveOrFallback('quicklinks', updated); toast(res.ok ? 'Quick Links saved!' : 'Quick Links saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -673,7 +858,7 @@ async function saveResearch() {
       desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
     };
   });
-  try { await API.save('research', updated); toast('Research Cards saved!'); }
+  try { const res = await saveOrFallback('research', updated); toast(res.ok ? 'Research Cards saved!' : 'Research saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -719,7 +904,7 @@ async function saveGallery() {
       eventName: document.getElementById(`gal_event_${i}`)?.value || ''
     };
   });
-  try { await API.save('gallery', updated); toast('Gallery saved!'); }
+  try { const res = await saveOrFallback('gallery', updated); toast(res.ok ? 'Gallery saved!' : 'Gallery saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -745,7 +930,7 @@ async function savePositions() {
     title: document.getElementById(`pos_title_${i}`)?.value || '',
     note:  document.getElementById(`pos_note_${i}`)?.value  || ''
   }));
-  try { await API.save('positions', updated); toast('Positions saved!'); }
+  try { const res = await saveOrFallback('positions', updated); toast(res.ok ? 'Positions saved!' : 'Positions saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -785,7 +970,7 @@ async function savePubs(type) {
     year:    document.getElementById(`pub_year_${type}_${i}`)?.value    || '',
     url:     document.getElementById(`pub_url_${type}_${i}`)?.value     || ''
   }));
-  try { await API.save(`pubs_${type}`, updated); toast('Saved!'); }
+  try { const res = await saveOrFallback(`pubs_${type}`, updated); toast(res.ok ? 'Saved!' : 'Saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -819,7 +1004,7 @@ async function saveProjects(type) {
     role:     document.getElementById(`proj_role_${type}_${i}`)?.value    || '',
     duration: document.getElementById(`proj_dur_${type}_${i}`)?.value     || ''
   }));
-  try { await API.save(`proj_${type}`, updated); toast('Projects saved!'); }
+  try { const res = await saveOrFallback(`proj_${type}`, updated); toast(res.ok ? 'Projects saved!' : 'Projects saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -851,7 +1036,7 @@ async function saveStudents(type) {
     role: document.getElementById(`stu_role_${type}_${i}`)?.value || '',
     note: document.getElementById(`stu_note_${type}_${i}`)?.value || ''
   }));
-  try { await API.save(`stu_${type}`, updated); toast('Saved!'); }
+  try { const res = await saveOrFallback(`stu_${type}`, updated); toast(res.ok ? 'Saved!' : 'Saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -879,7 +1064,7 @@ async function saveCourses(type) {
     name: document.getElementById(`course_name_${type}_${i}`)?.value || '',
     meta: document.getElementById(`course_meta_${type}_${i}`)?.value || ''
   }));
-  try { await API.save(`courses_${type}`, updated); toast('Courses saved!'); }
+  try { const res = await saveOrFallback(`courses_${type}`, updated); toast(res.ok ? 'Courses saved!' : 'Courses saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -895,7 +1080,7 @@ async function saveCV() {
     nitj:        document.getElementById('cv_nitj').value,
     other:       document.getElementById('cv_other').value
   };
-  try { await API.save('cv', value); toast('CV saved!'); }
+  try { const res = await saveOrFallback('cv', value); toast(res.ok ? 'CV saved!' : 'CV saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
