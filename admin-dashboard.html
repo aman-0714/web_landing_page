@@ -591,24 +591,39 @@ async function saveAbout() {
 // ── QUICK LINKS ──────────────────────────────────────────────
 function renderLinks() {
   const c = document.getElementById('links_container');
-  c.innerHTML = '';
   if (!state.quicklinks.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No links yet.</p>'; return; }
-  state.quicklinks.forEach((lk, i) => {
-    c.innerHTML += `<div class="link-item">
+  const parts = state.quicklinks.map((lk, i) => `<div class="link-item">
       <input type="text" style="flex:2" id="lk_label_${i}" value="${esc(lk.label)}" placeholder="Link label">
       <input type="text" style="flex:1" id="lk_url_${i}" value="${esc(lk.url)}" placeholder="URL">
       <label style="display:flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap;margin:0">
         <input type="checkbox" id="lk_new_${i}" ${lk.isNew?'checked':''}> New
       </label>
       <button class="btn-del" onclick="removeLink(${i})">✕</button>
-    </div>`;
+    </div>`);
+  c.innerHTML = parts.join('');
+}
+function syncLinksFromDOM() {
+  state.quicklinks = state.quicklinks.map((lk, i) => {
+    const labelEl = document.getElementById(`lk_label_${i}`);
+    const urlEl   = document.getElementById(`lk_url_${i}`);
+    const newEl   = document.getElementById(`lk_new_${i}`);
+    return {
+      label: labelEl !== null ? labelEl.value : lk.label,
+      url:   urlEl   !== null ? urlEl.value   : lk.url,
+      isNew: newEl   !== null ? newEl.checked : lk.isNew
+    };
   });
 }
 function addLink() {
+  syncLinksFromDOM();  // save what's currently typed before re-rendering
   state.quicklinks.push({ label: 'New Link', url: '#', isNew: false });
   renderLinks();
 }
-function removeLink(i) { state.quicklinks.splice(i,1); renderLinks(); }
+function removeLink(i) {
+  syncLinksFromDOM();  // save what's currently typed before re-rendering
+  state.quicklinks.splice(i, 1);
+  renderLinks();
+}
 async function saveQuickLinks() {
   const updated = state.quicklinks.map((_, i) => ({
     label: document.getElementById(`lk_label_${i}`)?.value || '',
