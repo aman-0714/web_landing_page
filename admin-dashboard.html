@@ -1123,8 +1123,17 @@ function renderCourses(type) {
     </div>`;
   });
 }
-function addCourse(type) { state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
-function removeCourse(type, i) { state[`courses_${type}`].splice(i,1); renderCourses(type); }
+function syncCoursesFromDOM(type) {
+  const list = state[`courses_${type}`] || [];
+  const updated = list.map((c, i) => ({
+    name: document.getElementById(`course_name_${type}_${i}`)?.value || c.name || '',
+    meta: document.getElementById(`course_meta_${type}_${i}`)?.value || c.meta || ''
+  }));
+  state[`courses_${type}`] = updated;
+}
+
+function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
+function removeCourse(type, i) { syncCoursesFromDOM(type); state[`courses_${type}`].splice(i,1); renderCourses(type); }
 async function saveCourses(type) {
   const list = state[`courses_${type}`];
   const updated = list.map((_,i) => ({
