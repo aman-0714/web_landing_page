@@ -140,6 +140,32 @@
     }
     .equip-card::before { content: '⚙️'; font-size: 16px; }
 
+    /* Research Focus cards */
+    .focus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .focus-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+    .focus-card strong {
+      color: var(--green);
+      font-size: 14px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .focus-card p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
     /* Empty state */
     .empty-state {
       text-align: center; padding: 40px 20px;
@@ -197,17 +223,14 @@
     <div class="lab-hero">
       <div class="lab-hero-icon">⚡</div>
       <div class="lab-hero-text">
-        <h2>Power Electronics Research Lab</h2>
+        <h2 id="lab_name">Power Electronics Research Lab</h2>
         <p id="lab_tagline">Advancing the frontiers of power electronics through innovative multilevel inverter topologies, hardware prototyping, and grid-connected renewable energy systems.</p>
       </div>
     </div>
 
     <!-- Stats -->
     <div class="lab-stats" id="lab_stats">
-      <div class="stat-card"><div class="stat-num">440+</div><div class="stat-label">Citations</div></div>
-      <div class="stat-card"><div class="stat-num">6+</div><div class="stat-label">Journal Papers</div></div>
-      <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Patents Filed</div></div>
-      <div class="stat-card"><div class="stat-num">3+</div><div class="stat-label">Active Projects</div></div>
+      <!-- populated by JS -->
     </div>
 
     <!-- Lab Photos / Equipment Setups -->
@@ -215,7 +238,7 @@
       <span class="dot"></span> Lab Equipment &amp; Project Setups
     </div>
     <div class="lab-photo-grid" id="lab_photo_grid">
-      <div class="empty-state" style="grid-column:1/-1">No lab photos added yet. Admin can add photos from the dashboard.</div>
+      <div class="empty-state" style="grid-column:1/-1">Loading lab photos…</div>
     </div>
 
     <!-- Technical Equipment -->
@@ -223,38 +246,15 @@
       <span class="dot"></span> Technical Knowledge &amp; Equipment
     </div>
     <div class="equipment-grid" id="equip_grid">
-      <div class="equip-card">MATLAB / SIMULINK</div>
-      <div class="equip-card">dSPACE (DS1103, 1104)</div>
-      <div class="equip-card">PSIM</div>
-      <div class="equip-card">OPAL-RT</div>
-      <div class="equip-card">Typhoon HIL</div>
-      <div class="equip-card">STM32F407VG MCU</div>
-      <div class="equip-card">TI F28335 / F28379 DSP</div>
-      <div class="equip-card">10 kW Single-Phase Inverter</div>
-      <div class="equip-card">81-Level MLI Prototype</div>
+      <!-- populated by JS -->
     </div>
 
     <!-- Research Focus -->
     <div class="lab-section-title">
       <span class="dot"></span> Research Focus Areas
     </div>
-    <div id="lab_focus_areas" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:12px">
-      <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 18px">
-        <strong style="color:var(--green);font-size:14px">Multilevel Inverter Topologies</strong>
-        <p style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">Novel asymmetrical and symmetrical MLI designs with reduced switch count for PV grid integration.</p>
-      </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 18px">
-        <strong style="color:var(--green);font-size:14px">DC Fast Charging for EVs</strong>
-        <p style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">Hardware prototype development of multi-vehicle simultaneous DC fast chargers.</p>
-      </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 18px">
-        <strong style="color:var(--green);font-size:14px">AC Microgrid Control</strong>
-        <p style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">Master-slave organized AC microgrid with robust control, islanding detection &amp; grid sync.</p>
-      </div>
-      <div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:16px 18px">
-        <strong style="color:var(--green);font-size:14px">BLDC Motor Drives</strong>
-        <p style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">Regenerative drive design with robust intelligent control strategies (FOPI, Hysteresis).</p>
-      </div>
+    <div class="focus-grid" id="lab_focus_areas">
+      <!-- populated by JS -->
     </div>
 
   </div>
@@ -264,11 +264,45 @@
 
 <script src="api.js"></script>
 <script>
+// Default fallbacks (used when admin has not set data yet)
+const DEFAULT_STATS = [
+  { num: '440+', label: 'Citations' },
+  { num: '6+',   label: 'Journal Papers' },
+  { num: '3',    label: 'Patents Filed' },
+  { num: '3+',   label: 'Active Projects' }
+];
+
+const DEFAULT_EQUIPMENT = [
+  'MATLAB / SIMULINK', 'dSPACE (DS1103, 1104)', 'PSIM', 'OPAL-RT',
+  'Typhoon HIL', 'STM32F407VG MCU', 'TI F28335 / F28379 DSP',
+  '10 kW Single-Phase Inverter', '81-Level MLI Prototype'
+];
+
+const DEFAULT_FOCUS = [
+  {
+    title: 'Multilevel Inverter Topologies',
+    desc: 'Novel asymmetrical and symmetrical MLI designs with reduced switch count for PV grid integration.'
+  },
+  {
+    title: 'DC Fast Charging for EVs',
+    desc: 'Hardware prototype development of multi-vehicle simultaneous DC fast chargers.'
+  },
+  {
+    title: 'AC Microgrid Control',
+    desc: 'Master-slave organized AC microgrid with robust control, islanding detection & grid sync.'
+  },
+  {
+    title: 'BLDC Motor Drives',
+    desc: 'Regenerative drive design with robust intelligent control strategies (FOPI, Hysteresis).'
+  }
+];
+
 (async () => {
-  // Load profile header
-  let all = await API.getAll();
+  let all = {};
+  try { all = await API.getAll(); } catch(e) {}
   all = all || {};
 
+  // ── Header ──────────────────────────────────────────────────
   const p = all.profile || {};
   if (p.name) document.getElementById('hdr_name').textContent = p.name;
   if (p.title || p.dept || p.institute) {
@@ -278,8 +312,53 @@
       (p.institute || 'Dr B R Ambedkar National Institute of Technology, Jalandhar');
   }
 
-  // Load lab items (stored under 'researchlab' key)
-  const lab = all.researchlab || [];
+  // ── Lab hero section ─────────────────────────────────────────
+  const labMeta = all.researchlab_meta || {};
+
+  if (labMeta.name && labMeta.name.trim()) {
+    document.getElementById('lab_name').textContent = labMeta.name;
+  }
+  if (labMeta.tagline && labMeta.tagline.trim()) {
+    document.getElementById('lab_tagline').textContent = labMeta.tagline;
+  }
+
+  // ── Stats ────────────────────────────────────────────────────
+  const statsEl = document.getElementById('lab_stats');
+
+  // Use admin-configured stats if available
+  if (labMeta.stats && labMeta.stats.length > 0) {
+    statsEl.innerHTML = labMeta.stats.map(s =>
+      `<div class="stat-card">
+        <div class="stat-num">${escHtml(s.num)}</div>
+        <div class="stat-label">${escHtml(s.label)}</div>
+      </div>`
+    ).join('');
+  } else {
+    // Auto-build stats from publications/projects + cv data
+    const cv = all.cv || {};
+    const journals  = all.pubs_journal     || [];
+    const confs     = all.pubs_conference  || [];
+    const books     = all.pubs_book        || [];
+    const patents   = all.pubs_patent      || [];
+    const totalPubs = journals.length + confs.length + books.length;
+    const totalProj = (all.proj_current||[]).length + (all.proj_closed||[]).length;
+
+    const autoStats = [
+      { num: cv.citations     || '440+', label: 'Citations' },
+      { num: totalPubs > 0    ? totalPubs + '+' : (cv.journals || '6+'), label: 'Publications' },
+      { num: cv.patents_count || (patents.length > 0 ? patents.length : '3'), label: 'Patents Filed' },
+      { num: cv.projects_count|| (totalProj > 0  ? totalProj  : '3+'), label: 'Active Projects' }
+    ];
+    statsEl.innerHTML = autoStats.map(s =>
+      `<div class="stat-card">
+        <div class="stat-num">${escHtml(String(s.num))}</div>
+        <div class="stat-label">${escHtml(s.label)}</div>
+      </div>`
+    ).join('');
+  }
+
+  // ── Lab Photos grid ──────────────────────────────────────────
+  const lab  = all.researchlab || [];
   const grid = document.getElementById('lab_photo_grid');
 
   if (lab.length > 0) {
@@ -288,30 +367,54 @@
       const card = document.createElement('div');
       card.className = 'lab-photo-card';
       const imgHtml = item.imgData
-        ? `<img src="${item.imgData}" alt="${item.title || 'Lab photo'}" onclick="window.open(this.src)" title="Click to enlarge">`
+        ? `<img src="${item.imgData}" alt="${escHtml(item.title || 'Lab photo')}" onclick="window.open(this.src)" title="Click to enlarge">`
         : `<div class="no-photo-placeholder"><span>🔬</span><div>No image</div></div>`;
       card.innerHTML = `${imgHtml}
         <div class="lab-photo-info">
-          <div class="lab-photo-title">${item.title || ''}</div>
-          <div class="lab-photo-desc">${item.desc || ''}</div>
+          <div class="lab-photo-title">${escHtml(item.title || '')}</div>
+          <div class="lab-photo-desc">${escHtml(item.desc || '')}</div>
         </div>`;
       grid.appendChild(card);
     });
+  } else {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No lab photos added yet. Admin can add photos from the dashboard.</div>';
   }
 
-  // Load publications count for stats
-  const journals = all.pubs_journal || [];
-  const confs = all.pubs_conference || [];
-  const books = all.pubs_book || [];
-  const totalPubs = journals.length + confs.length + books.length;
-  if (totalPubs > 0) {
-    const statCards = document.querySelectorAll('.stat-card');
-    if (statCards[1]) {
-      statCards[1].querySelector('.stat-num').textContent = totalPubs + '+';
-      statCards[1].querySelector('.stat-label').textContent = 'Publications';
-    }
+  // ── Equipment grid ───────────────────────────────────────────
+  const equipEl = document.getElementById('equip_grid');
+  const equipment = (labMeta.equipment && labMeta.equipment.length > 0)
+    ? labMeta.equipment
+    : DEFAULT_EQUIPMENT;
+
+  if (equipment.length > 0) {
+    equipEl.innerHTML = equipment.map(e =>
+      `<div class="equip-card">${escHtml(typeof e === 'string' ? e : e.name || '')}</div>`
+    ).join('');
+  } else {
+    equipEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No equipment listed yet.</div>';
+  }
+
+  // ── Research Focus Areas ─────────────────────────────────────
+  const focusEl = document.getElementById('lab_focus_areas');
+  const focus = (labMeta.focus && labMeta.focus.length > 0)
+    ? labMeta.focus
+    : DEFAULT_FOCUS;
+
+  if (focus.length > 0) {
+    focusEl.innerHTML = focus.map(f =>
+      `<div class="focus-card">
+        <strong>${escHtml(f.title || '')}</strong>
+        <p>${escHtml(f.desc || '')}</p>
+      </div>`
+    ).join('');
+  } else {
+    focusEl.innerHTML = '<div class="empty-state" style="grid-column:1/-1">No research focus areas listed yet.</div>';
   }
 })();
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 </script>
 </body>
 </html>

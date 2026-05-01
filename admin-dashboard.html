@@ -69,6 +69,7 @@
     .hint-text { font-size: 11px; color: #aaa; margin-top: 4px; font-style: italic; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .row4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
     /* Image upload */
     .img-upload-box {
       border: 2px dashed #c8d8b8; border-radius: 6px; padding: 0;
@@ -149,6 +150,13 @@
       color: #888; transition: all .15s; margin-bottom: -2px; white-space: nowrap;
     }
     .sub-tab.active { color: #3a7d1e; border-bottom-color: #3a7d1e; }
+    /* Stat row item */
+    .stat-row-item {
+      display: flex; gap: 10px; align-items: center;
+      margin-bottom: 10px; padding: 10px 12px; background: #fafafa;
+      border: 1px solid #eee; border-radius: 4px;
+    }
+    .stat-row-item input { margin: 0; }
     /* Responsive */
     @media (max-width: 768px) {
       .layout { flex-direction: column; }
@@ -162,6 +170,7 @@
       .main { padding: 16px; }
       .row { grid-template-columns: 1fr; }
       .row3 { grid-template-columns: 1fr; }
+      .row4 { grid-template-columns: 1fr 1fr; }
       .topbar h1 { font-size: 15px; }
     }
   </style>
@@ -308,12 +317,56 @@
     <!-- ===== RESEARCH LAB ===== -->
     <div class="page" id="page-lab">
       <h2 class="page-title">⚡ Power Electronics Research Lab</h2>
-      <p class="page-desc">Add photos and details of lab equipment, project setups, and experiments shown on the Research Lab page.</p>
+      <p class="page-desc">Manage all sections of the Research Lab page — hero text, stats, equipment list, focus areas, and lab photos.</p>
+
+      <!-- Hero / Meta -->
       <div class="form-card">
+        <h3>🏷 Lab Identity (Hero Section)</h3>
+        <div class="field">
+          <label>Lab Name</label>
+          <input type="text" id="lab_meta_name" placeholder="Power Electronics Research Lab">
+        </div>
+        <div class="field">
+          <label>Tagline / Description</label>
+          <textarea id="lab_meta_tagline" rows="3" placeholder="Advancing the frontiers of power electronics through innovative multilevel inverter topologies…"></textarea>
+        </div>
+      </div>
+
+      <!-- Stats override -->
+      <div class="form-card">
+        <h3>📊 Lab Stats Cards</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:14px">Shown as the four stat cards on the lab page. If empty, numbers are auto-calculated from CV &amp; Publications data.</p>
+        <div id="lab_stats_container"></div>
+        <button class="btn-add" onclick="addLabStat()">+ Add Stat Card</button>
+      </div>
+      <button class="btn-save" onclick="saveLabMeta()" style="margin-bottom:20px">💾 Save Lab Identity &amp; Stats</button>
+
+      <!-- Equipment -->
+      <div class="form-card">
+        <h3>⚙️ Technical Knowledge &amp; Equipment</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:12px">One item per line. Each becomes a chip on the Research Lab page.</p>
+        <div class="field">
+          <textarea id="lab_equipment_text" rows="10" placeholder="MATLAB / SIMULINK&#10;dSPACE (DS1103, DS1104)&#10;PSIM&#10;OPAL-RT&#10;Typhoon HIL&#10;STM32F407VG MCU&#10;TI F28335 / F28379 DSP&#10;10 kW Single-Phase Inverter&#10;81-Level MLI Prototype"></textarea>
+        </div>
+        <button class="btn-save" onclick="saveLabEquipment()">💾 Save Equipment List</button>
+      </div>
+
+      <!-- Research Focus Areas -->
+      <div class="form-card">
+        <h3>🎯 Research Focus Areas</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:12px">Each entry appears as a card on the Research Lab page.</p>
+        <div id="lab_focus_container"></div>
+        <button class="btn-add" onclick="addFocusArea()">+ Add Focus Area</button>
+      </div>
+      <button class="btn-save" onclick="saveLabFocus()">💾 Save Focus Areas</button>
+
+      <!-- Lab Photos -->
+      <div class="form-card" style="margin-top:20px">
+        <h3>📷 Lab Photos &amp; Project Setups</h3>
         <div id="lab_container"></div>
         <button class="btn-add" onclick="addLabItem()">+ Add Photo / Setup</button>
       </div>
-      <button class="btn-save" onclick="saveLab()">💾 Save Lab Content</button>
+      <button class="btn-save" onclick="saveLab()">💾 Save Lab Photos</button>
     </div>
 
     <!-- ===== STUDENTS ===== -->
@@ -375,28 +428,17 @@
       <div class="sub-tabs">
         <button class="sub-tab active" id="teachtab-current" onclick="showTab('teach','current')">📚 Current Semester</button>
         <button class="sub-tab" id="teachtab-prev" onclick="showTab('teach','prev')">📖 Previous Courses</button>
-        <button class="sub-tab" id="teachtab-workshops" onclick="showTab('teach','workshops')">🎙 Talks & Workshops</button>
+        <button class="sub-tab" id="teachtab-workshops" onclick="showTab('teach','workshops')">🎙 Talks &amp; Workshops</button>
         <button class="sub-tab" id="teachtab-philosophy" onclick="showTab('teach','philosophy')">💡 Teaching Philosophy</button>
       </div>
-      <!-- Current -->
       <div id="teachpanel-current">
-        <div class="form-card">
-          <h3>Current Semester Courses</h3>
-          <div id="teach_current_container"></div>
-          <button class="btn-add" onclick="addCourse('current')">+ Add Course</button>
-        </div>
+        <div class="form-card"><h3>Current Semester Courses</h3><div id="teach_current_container"></div><button class="btn-add" onclick="addCourse('current')">+ Add Course</button></div>
         <button class="btn-save" onclick="saveCourses('current')">💾 Save Current Courses</button>
       </div>
-      <!-- Previous -->
       <div id="teachpanel-prev" style="display:none">
-        <div class="form-card">
-          <h3>Previous Courses</h3>
-          <div id="teach_prev_container"></div>
-          <button class="btn-add" onclick="addCourse('prev')">+ Add Course</button>
-        </div>
+        <div class="form-card"><h3>Previous Courses</h3><div id="teach_prev_container"></div><button class="btn-add" onclick="addCourse('prev')">+ Add Course</button></div>
         <button class="btn-save" onclick="saveCourses('prev')">💾 Save Previous Courses</button>
       </div>
-      <!-- Workshops / Expert Talks -->
       <div id="teachpanel-workshops" style="display:none">
         <div class="form-card">
           <h3>Expert Talks / FDP / Workshops Delivered</h3>
@@ -404,15 +446,12 @@
           <div id="teach_workshops_container"></div>
           <button class="btn-add" onclick="addWorkshop()">+ Add Entry</button>
         </div>
-        <button class="btn-save" onclick="saveWorkshops()">💾 Save Talks & Workshops</button>
+        <button class="btn-save" onclick="saveWorkshops()">💾 Save Talks &amp; Workshops</button>
       </div>
-      <!-- Teaching Philosophy -->
       <div id="teachpanel-philosophy" style="display:none">
         <div class="form-card">
           <h3>Teaching Philosophy / Statement</h3>
-          <div class="field">
-            <textarea id="teach_philosophy" rows="10" placeholder="Describe your teaching approach, philosophy, and goals..."></textarea>
-          </div>
+          <div class="field"><textarea id="teach_philosophy" rows="10" placeholder="Describe your teaching approach, philosophy, and goals..."></textarea></div>
         </div>
         <button class="btn-save" onclick="saveTeachingPhilosophy()">💾 Save Philosophy</button>
       </div>
@@ -422,11 +461,9 @@
     <div class="page" id="page-cv">
       <h2 class="page-title">CV</h2>
       <p class="page-desc">Edit all sections of the CV page. Data entered here will appear live on <a href="cv.html" target="_blank">cv.html</a>.</p>
-
-      <!-- Stats -->
       <div class="form-card">
         <h3>📊 Stats / Key Numbers</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:12px">These appear as the stat cards at the top of the CV page. Leave blank to auto-calculate from publications/projects data.</p>
+        <p style="font-size:12px;color:#aaa;margin-bottom:12px">Leave blank to auto-calculate from publications/projects data.</p>
         <div class="row3">
           <div class="field"><label>Citations (e.g. 440+)</label><input type="text" id="cv_citations" placeholder="440+"></div>
           <div class="field"><label>Journal Papers</label><input type="text" id="cv_journals" placeholder="7"></div>
@@ -438,116 +475,26 @@
           <div class="field"><label>Students Guided</label><input type="text" id="cv_students_count" placeholder="2+"></div>
         </div>
       </div>
-
-      <!-- Awards -->
-      <div class="form-card">
-        <h3>🏆 Awards &amp; Fellowships</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
-        <div class="field">
-          <textarea id="cv_awards" rows="6" placeholder="Cited 440+ times on Google Scholar&#10;Post-Doctoral Fellow, IIT Delhi (2020–2022)&#10;GATE 2013 Qualified (Electrical Engineering)"></textarea>
-        </div>
-      </div>
-
-      <!-- Experience -->
-      <div class="form-card">
-        <h3>💼 Work Experience</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Role | Institution | Duration | Tag (optional, e.g. Current)</em></p>
-        <div class="field">
-          <textarea id="cv_experience" rows="8" placeholder="Assistant Professor (Level-II) | Dr B R Ambedkar NIT, Jalandhar | 4 Sep 2023 – Till date | Current&#10;Post-Doctoral Fellow | IIT Delhi | 2020–2022"></textarea>
-        </div>
-      </div>
-
-      <!-- Education -->
-      <div class="form-card">
-        <h3>🎓 Education</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Degree | Institution | Year/Details</em></p>
-        <div class="field">
-          <textarea id="cv_education" rows="7" placeholder="PhD – Electrical Engineering | IIT (ISM) Dhanbad | Jan 2014 – Feb 2020, Guide: Dr Kartick Chandra Jana&#10;Post-Doctoral Fellow | IIT Delhi | Oct 2020 – Oct 2022, Guide: Prof. Sukumar Mishra&#10;B.Tech – EEE | Vinoba Bhave University | 2011, 65.8% (First Div.)"></textarea>
-        </div>
-      </div>
-
-      <!-- Professional Memberships -->
-      <div class="form-card">
-        <h3>🤝 Professional Memberships</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
-        <div class="field">
-          <textarea id="cv_memberships" rows="4" placeholder="IEEE Member&#10;ISTE Member"></textarea>
-        </div>
-      </div>
-
-      <!-- Technical Skills -->
-      <div class="form-card">
-        <h3>🔧 Technical Skills</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
-        <div class="field">
-          <textarea id="cv_skills" rows="6" placeholder="MATLAB / SIMULINK&#10;dSPACE (DS1103, DS1104)&#10;PSIM, OPAL-RT, Typhoon HIL&#10;STM32F407VG, TI F28335/F28379"></textarea>
-        </div>
-      </div>
-
-      <!-- Admin / Lab Responsibilities -->
-      <div class="form-card">
-        <h3>🏛 Admin &amp; Lab Responsibilities</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
-        <div class="field">
-          <textarea id="cv_admin" rows="6" placeholder="Power Electronics Lab In-Charge (2023–Till date)&#10;Project Implementation Team – CoE for EVs Lab (2025–)&#10;DUGC Secretary, Dept. of EE (2025–2026)&#10;Major Project (Faculty) Coordinator (B.Tech 2021–25)&#10;Coordinator, B.Tech Batch 2022–2026"></textarea>
-        </div>
-      </div>
-
-      <!-- Patents (CV Section) -->
-      <div class="form-card">
-        <h3>🔒 Patents (for CV listing)</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line. These appear in the CV Patents section. (Full patent details are in Publications → Patents.)</p>
-        <div class="field">
-          <textarea id="cv_patents_list" rows="6" placeholder="Asymmetrical 31-Level Inverter System — Indian Patent 202211023058 (IIT Delhi, 2022)&#10;Automated Turn Signal Control — NITJ, App No. 202511041328A (2025)&#10;DC Fast Charging for Multiple EVs — NITJ, App No. 202511103607A (2025)"></textarea>
-        </div>
-      </div>
-
-      <!-- Thesis Guided -->
-      <div class="form-card">
-        <h3>📝 Thesis / Projects Guided</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Student Name (Degree, Institute) — Project Title [Status]</em></p>
-        <div class="field">
-          <textarea id="cv_thesis" rows="6" placeholder="Shivani Arora (M.Tech, NIT Hamirpur) — Speed Control of BLDC Motor using Intelligent Control [Co-guide, Completed]&#10;Zaheen Javid (M.Tech, NITJ) — Modeling of Multiport DC Fast Charger for EVs [Main guide, Ongoing]"></textarea>
-        </div>
-      </div>
-
-      <!-- Research IDs -->
+      <div class="form-card"><h3>🏆 Awards &amp; Fellowships</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_awards" rows="6" placeholder="Cited 440+ times on Google Scholar&#10;Post-Doctoral Fellow, IIT Delhi (2020–2022)&#10;GATE 2013 Qualified (Electrical Engineering)"></textarea></div></div>
+      <div class="form-card"><h3>💼 Work Experience</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Role | Institution | Duration | Tag (optional)</em></p><div class="field"><textarea id="cv_experience" rows="8" placeholder="Assistant Professor (Level-II) | Dr B R Ambedkar NIT, Jalandhar | 4 Sep 2023 – Till date | Current&#10;Post-Doctoral Fellow | IIT Delhi | 2020–2022"></textarea></div></div>
+      <div class="form-card"><h3>🎓 Education</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Degree | Institution | Year/Details</em></p><div class="field"><textarea id="cv_education" rows="7" placeholder="PhD – Electrical Engineering | IIT (ISM) Dhanbad | Jan 2014 – Feb 2020, Guide: Dr Kartick Chandra Jana&#10;B.Tech – EEE | Vinoba Bhave University | 2011, 65.8% (First Div.)"></textarea></div></div>
+      <div class="form-card"><h3>🤝 Professional Memberships</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_memberships" rows="4" placeholder="IEEE Member&#10;ISTE Member"></textarea></div></div>
+      <div class="form-card"><h3>🔧 Technical Skills</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_skills" rows="6" placeholder="MATLAB / SIMULINK&#10;dSPACE (DS1103, DS1104)&#10;PSIM, OPAL-RT, Typhoon HIL&#10;STM32F407VG, TI F28335/F28379"></textarea></div></div>
+      <div class="form-card"><h3>🏛 Admin &amp; Lab Responsibilities</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_admin" rows="6" placeholder="Power Electronics Lab In-Charge (2023–Till date)&#10;DUGC Secretary, Dept. of EE (2025–2026)"></textarea></div></div>
+      <div class="form-card"><h3>🔒 Patents (for CV listing)</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p><div class="field"><textarea id="cv_patents_list" rows="6" placeholder="Asymmetrical 31-Level Inverter System — Indian Patent 202211023058 (IIT Delhi, 2022)&#10;DC Fast Charging for Multiple EVs — NITJ, App No. 202511103607A (2025)"></textarea></div></div>
+      <div class="form-card"><h3>📝 Thesis / Projects Guided</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Student Name (Degree, Institute) — Project Title [Status]</em></p><div class="field"><textarea id="cv_thesis" rows="6" placeholder="Shivani Arora (M.Tech, NIT Hamirpur) — Speed Control of BLDC Motor [Co-guide, Completed]&#10;Zaheen Javid (M.Tech, NITJ) — Multiport DC Fast Charger for EVs [Main guide, Ongoing]"></textarea></div></div>
       <div class="form-card">
         <h3>🆔 Research IDs</h3>
-        <div class="row">
-          <div class="field"><label>Web of Science ResearcherID</label><input type="text" id="cv_wos" placeholder="L-7323-2018"></div>
-          <div class="field"><label>Scopus Author ID</label><input type="text" id="cv_scopus_id" placeholder="57192159406"></div>
-        </div>
-        <div class="row">
-          <div class="field"><label>Vidwan ID</label><input type="text" id="cv_vidwan_id" placeholder="201032"></div>
-          <div class="field"><label>ORCID</label><input type="text" id="cv_orcid" placeholder="0000-0000-0000-0000"></div>
-        </div>
+        <div class="row"><div class="field"><label>Web of Science ResearcherID</label><input type="text" id="cv_wos" placeholder="L-7323-2018"></div><div class="field"><label>Scopus Author ID</label><input type="text" id="cv_scopus_id" placeholder="57192159406"></div></div>
+        <div class="row"><div class="field"><label>Vidwan ID</label><input type="text" id="cv_vidwan_id" placeholder="201032"></div><div class="field"><label>ORCID</label><input type="text" id="cv_orcid" placeholder="0000-0000-0000-0000"></div></div>
       </div>
-
-      <!-- Profile Links -->
       <div class="form-card">
         <h3>🔗 Profile Links</h3>
-        <div class="row">
-          <div class="field"><label>LinkedIn URL</label><input type="text" id="cv_linkedin" placeholder="https://www.linkedin.com/in/..."></div>
-          <div class="field"><label>Google Scholar URL</label><input type="text" id="cv_scholar" placeholder="https://scholar.google.co.in/..."></div>
-        </div>
-        <div class="row">
-          <div class="field"><label>Scopus Profile URL</label><input type="text" id="cv_scopus_url" placeholder="https://www.scopus.com/authid/..."></div>
-          <div class="field"><label>Vidwan Profile URL</label><input type="text" id="cv_vidwan_url" placeholder="https://vidwan.inflibnet.ac.in/..."></div>
-        </div>
-        <div class="row">
-          <div class="field"><label>NITJ Faculty Profile URL</label><input type="text" id="cv_nitj" placeholder="https://departments.nitj.ac.in/..."></div>
-          <div class="field"><label>Other Link (e.g. ResearchGate)</label><input type="text" id="cv_other" placeholder="https://..."></div>
-        </div>
+        <div class="row"><div class="field"><label>LinkedIn URL</label><input type="text" id="cv_linkedin" placeholder="https://www.linkedin.com/in/..."></div><div class="field"><label>Google Scholar URL</label><input type="text" id="cv_scholar" placeholder="https://scholar.google.co.in/..."></div></div>
+        <div class="row"><div class="field"><label>Scopus Profile URL</label><input type="text" id="cv_scopus_url" placeholder="https://www.scopus.com/authid/..."></div><div class="field"><label>Vidwan Profile URL</label><input type="text" id="cv_vidwan_url" placeholder="https://vidwan.inflibnet.ac.in/..."></div></div>
+        <div class="row"><div class="field"><label>NITJ Faculty Profile URL</label><input type="text" id="cv_nitj" placeholder="https://departments.nitj.ac.in/..."></div><div class="field"><label>Other Link (e.g. ResearchGate)</label><input type="text" id="cv_other" placeholder="https://..."></div></div>
       </div>
-
-      <!-- Download CV -->
-      <div class="form-card">
-        <h3>📥 CV PDF Download</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">Paste a direct link to the CV PDF (Google Drive, Dropbox, etc.) so visitors can download it.</p>
-        <div class="field"><label>CV PDF URL</label><input type="text" id="cv_pdf_url" placeholder="https://drive.google.com/file/d/..."></div>
-      </div>
-
+      <div class="form-card"><h3>📥 CV PDF Download</h3><p style="font-size:12px;color:#aaa;margin-bottom:10px">Paste a direct link to the CV PDF.</p><div class="field"><label>CV PDF URL</label><input type="text" id="cv_pdf_url" placeholder="https://drive.google.com/file/d/..."></div></div>
       <button class="btn-save" onclick="saveCV()">💾 Save All CV Data</button>
     </div>
 
@@ -607,7 +554,7 @@ function esc(s) {
     .replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── Image compression + upload helpers
+// ── Image helpers
 function compressImage(file, maxW, maxH, quality, callback) {
   const reader = new FileReader();
   reader.onload = e => {
@@ -625,7 +572,6 @@ function compressImage(file, maxW, maxH, quality, callback) {
   };
   reader.readAsDataURL(file);
 }
-
 function handleImg(input, boxId, hiddenId) {
   const file = input.files[0];
   if (!file) return;
@@ -668,6 +614,7 @@ const state = {
   courses_current: [], courses_prev: [],
   workshops: [], teach_philosophy: '',
   researchlab: [],
+  researchlab_meta: { name: '', tagline: '', stats: [], equipment: [], focus: [] },
   cv: {}
 };
 
@@ -675,17 +622,7 @@ const state = {
 function getOfflineAll() {
   const parse = k => { try { return JSON.parse(localStorage.getItem(k)||'null'); } catch(e) { return null; } };
   return {
-    profile: parse('admin_profile') || {
-      name: localStorage.getItem('admin_prof_name')||'',
-      title: localStorage.getItem('admin_prof_title')||'',
-      dept: localStorage.getItem('admin_prof_dept')||'',
-      institute: localStorage.getItem('admin_prof_institute')||'',
-      address: localStorage.getItem('admin_prof_address')||'',
-      phone: localStorage.getItem('admin_prof_phone')||'',
-      email: localStorage.getItem('admin_prof_email')||'',
-      cal: localStorage.getItem('admin_prof_cal')||'',
-      photo: localStorage.getItem('admin_prof_photo_data')||'',
-    },
+    profile: parse('admin_profile') || {},
     about: localStorage.getItem('admin_about')||'',
     quicklinks: parse('admin_quicklinks')||[],
     research: parse('admin_research')||[],
@@ -695,8 +632,8 @@ function getOfflineAll() {
     pubs_conference: parse('admin_pubs_conference')||[],
     pubs_book: parse('admin_pubs_book')||[],
     pubs_patent: parse('admin_pubs_patent')||[],
-    proj_current: parse('admin_proj_current')||parse('admin_projects_current')||[],
-    proj_closed: parse('admin_proj_closed')||parse('admin_projects_closed')||[],
+    proj_current: parse('admin_proj_current')||[],
+    proj_closed: parse('admin_proj_closed')||[],
     stu_phd: parse('admin_stu_phd')||[],
     stu_mtech: parse('admin_stu_mtech')||[],
     stu_btech: parse('admin_stu_btech')||[],
@@ -705,6 +642,7 @@ function getOfflineAll() {
     workshops: parse('admin_workshops')||[],
     teach_philosophy: localStorage.getItem('admin_teach_philosophy')||'',
     researchlab: parse('admin_researchlab')||[],
+    researchlab_meta: parse('admin_researchlab_meta')||{ name:'',tagline:'',stats:[],equipment:[],focus:[] },
     cv: parse('admin_cv') || {}
   };
 }
@@ -739,6 +677,25 @@ function populateFrom(all) {
   setValue('teach_philosophy', state.teach_philosophy);
   state.researchlab = all.researchlab || []; renderLab();
 
+  // Research Lab Meta
+  const meta = all.researchlab_meta || {};
+  state.researchlab_meta = {
+    name: meta.name || '',
+    tagline: meta.tagline || '',
+    stats: meta.stats || [],
+    equipment: meta.equipment || [],
+    focus: meta.focus || []
+  };
+  setValue('lab_meta_name', state.researchlab_meta.name);
+  setValue('lab_meta_tagline', state.researchlab_meta.tagline);
+  // Equipment — join to textarea
+  const equipText = Array.isArray(state.researchlab_meta.equipment)
+    ? state.researchlab_meta.equipment.join('\n')
+    : (state.researchlab_meta.equipment || '');
+  setValue('lab_equipment_text', equipText);
+  renderLabStats();
+  renderLabFocus();
+
   const cv = all.cv || {};
   state.cv = cv;
   setValue('cv_awards', cv.awards); setValue('cv_experience', cv.experience);
@@ -766,7 +723,7 @@ async function loadAll() {
   try { all = await API.getAll(); } catch(e) { console.warn('API.getAll failed', e); }
   if (!all || Object.keys(all).length === 0) {
     all = getOfflineAll();
-    if (all.profile && (all.profile.name || all.about)) toast('Loaded offline data');
+    if (all.profile && all.profile.name) toast('Loaded offline data');
   }
   populateFrom(all);
 }
@@ -783,7 +740,7 @@ async function checkApiAndShow() {
     document.getElementById('admin_status_text').textContent = res.ok ? 'API reachable ✓' : 'API error: ' + res.status;
   } catch(e) { document.getElementById('admin_status_text').textContent = 'API unreachable – offline mode'; }
 }
-function forceLoadOffline() { const off = getOfflineAll(); populateFrom(off); document.getElementById('admin_status_text').textContent = 'Loaded offline data'; }
+function forceLoadOffline() { populateFrom(getOfflineAll()); document.getElementById('admin_status_text').textContent = 'Loaded offline data'; }
 function showLocalStorageSnapshot() {
   const keys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i));
   const sample = keys.slice(0, 50).map(k => ({ k, v: (localStorage.getItem(k)||'').slice(0,200) }));
@@ -791,7 +748,6 @@ function showLocalStorageSnapshot() {
   win.document.write('<pre style="font-family:monospace;white-space:pre-wrap;font-size:12px">' + JSON.stringify(sample, null, 2) + '</pre>');
 }
 
-// ── Save with localStorage fallback
 async function saveOrFallback(key, value) {
   try { await API.save(key, value); return { ok: true }; }
   catch(e) {
@@ -901,7 +857,92 @@ async function saveResearch() {
   catch(e) { toast(e.message, true); }
 }
 
-// ── RESEARCH LAB
+// ── RESEARCH LAB META (name, tagline, stats)
+function renderLabStats() {
+  const c = document.getElementById('lab_stats_container');
+  const stats = state.researchlab_meta.stats || [];
+  if (!stats.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No custom stats. Auto-calculated from publications data.</p>'; return; }
+  c.innerHTML = stats.map((s, i) => `<div class="stat-row-item">
+    <input type="text" style="width:120px;flex-shrink:0" id="ls_num_${i}" value="${esc(s.num||'')}" placeholder="440+">
+    <input type="text" style="flex:1" id="ls_label_${i}" value="${esc(s.label||'')}" placeholder="Citations">
+    <button class="btn-del" onclick="removeLabStat(${i})">✕</button>
+  </div>`).join('');
+}
+function syncLabStatsFromDOM() {
+  const stats = state.researchlab_meta.stats || [];
+  state.researchlab_meta.stats = stats.map((_, i) => ({
+    num:   document.getElementById(`ls_num_${i}`)?.value   || '',
+    label: document.getElementById(`ls_label_${i}`)?.value || ''
+  }));
+}
+function addLabStat() {
+  syncLabStatsFromDOM();
+  state.researchlab_meta.stats.push({ num: '', label: '' });
+  renderLabStats();
+}
+function removeLabStat(i) {
+  syncLabStatsFromDOM();
+  state.researchlab_meta.stats.splice(i, 1);
+  renderLabStats();
+}
+
+async function saveLabMeta() {
+  syncLabStatsFromDOM();
+  state.researchlab_meta.name    = document.getElementById('lab_meta_name').value;
+  state.researchlab_meta.tagline = document.getElementById('lab_meta_tagline').value;
+  try { const r = await saveOrFallback('researchlab_meta', state.researchlab_meta); toast(r.ok ? 'Lab identity & stats saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+async function saveLabEquipment() {
+  const raw = document.getElementById('lab_equipment_text').value;
+  const list = raw.split('\n').map(s => s.trim()).filter(Boolean);
+  state.researchlab_meta.equipment = list;
+  try { const r = await saveOrFallback('researchlab_meta', state.researchlab_meta); toast(r.ok ? 'Equipment saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+// ── RESEARCH FOCUS AREAS
+function renderLabFocus() {
+  const c = document.getElementById('lab_focus_container');
+  const focus = state.researchlab_meta.focus || [];
+  if (!focus.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No focus areas yet.</p>'; return; }
+  c.innerHTML = focus.map((f, i) => `<div class="research-item">
+    <button class="btn-del del-btn" onclick="removeFocusArea(${i})">✕ Remove</button>
+    <div style="margin-right:100px">
+      <div class="field"><label>Focus Area Title</label>
+        <input type="text" id="fa_title_${i}" value="${esc(f.title||'')}" placeholder="Multilevel Inverter Topologies">
+      </div>
+      <div class="field"><label>Description</label>
+        <textarea id="fa_desc_${i}" rows="3">${esc(f.desc||'')}</textarea>
+      </div>
+    </div>
+  </div>`).join('');
+}
+function syncFocusFromDOM() {
+  const focus = state.researchlab_meta.focus || [];
+  state.researchlab_meta.focus = focus.map((_, i) => ({
+    title: document.getElementById(`fa_title_${i}`)?.value || '',
+    desc:  document.getElementById(`fa_desc_${i}`)?.value  || ''
+  }));
+}
+function addFocusArea() {
+  syncFocusFromDOM();
+  state.researchlab_meta.focus.push({ title: '', desc: '' });
+  renderLabFocus();
+}
+function removeFocusArea(i) {
+  syncFocusFromDOM();
+  state.researchlab_meta.focus.splice(i, 1);
+  renderLabFocus();
+}
+async function saveLabFocus() {
+  syncFocusFromDOM();
+  try { const r = await saveOrFallback('researchlab_meta', state.researchlab_meta); toast(r.ok ? 'Focus Areas saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+// ── RESEARCH LAB PHOTOS
 function renderLab() {
   const c = document.getElementById('lab_container');
   if (!state.researchlab.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No lab items yet.</p>'; return; }
@@ -947,7 +988,7 @@ function addLabItem() { syncLabFromDOM(); state.researchlab.push({ imgData:'', i
 function removeLabItem(i) { syncLabFromDOM(); state.researchlab.splice(i,1); renderLab(); }
 async function saveLab() {
   syncLabFromDOM();
-  try { const r = await saveOrFallback('researchlab', state.researchlab); toast(r.ok ? 'Lab content saved!' : 'Saved locally'); }
+  try { const r = await saveOrFallback('researchlab', state.researchlab); toast(r.ok ? 'Lab photos saved!' : 'Saved locally'); }
   catch(e) { toast(e.message, true); }
 }
 
@@ -1181,7 +1222,7 @@ async function saveStudents(type) {
   catch(e) { toast(e.message, true); }
 }
 
-// ── COURSES (enhanced)
+// ── COURSES
 function renderCourses(type) {
   const c = document.getElementById(`teach_${type}_container`);
   const list = state[`courses_${type}`] || [];
@@ -1205,9 +1246,9 @@ function renderCourses(type) {
         </div>
       </div>
       <div class="field"><label>Short Description (optional)</label>
-        <textarea id="course_desc_${type}_${i}" rows="3" placeholder="Brief overview of course content...">${esc(course.desc||'')}</textarea>
+        <textarea id="course_desc_${type}_${i}" rows="3" placeholder="Brief overview...">${esc(course.desc||'')}</textarea>
       </div>
-      <div class="field"><label>Resources URL (optional, e.g. course page, slides link)</label>
+      <div class="field"><label>Resources URL (optional)</label>
         <input type="text" id="course_url_${type}_${i}" value="${esc(course.url||'')}" placeholder="https://...">
       </div>
     </div>
@@ -1233,7 +1274,7 @@ async function saveCourses(type) {
   catch(e) { toast(e.message, true); }
 }
 
-// ── WORKSHOPS / EXPERT TALKS
+// ── WORKSHOPS
 function renderWorkshops() {
   const c = document.getElementById('teach_workshops_container');
   const list = state.workshops || [];
@@ -1286,35 +1327,19 @@ async function saveTeachingPhilosophy() {
   catch(e) { toast(e.message, true); }
 }
 
-// ── CV (full)
+// ── CV
 async function saveCV() {
   const g = id => document.getElementById(id)?.value || '';
   const value = {
-    awards:         g('cv_awards'),
-    experience:     g('cv_experience'),
-    education:      g('cv_education'),
-    memberships:    g('cv_memberships'),
-    skills:         g('cv_skills'),
-    admin:          g('cv_admin'),
-    patents_list:   g('cv_patents_list'),
-    thesis:         g('cv_thesis'),
-    linkedin:       g('cv_linkedin'),
-    scholar:        g('cv_scholar'),
-    nitj:           g('cv_nitj'),
-    other:          g('cv_other'),
-    scopus_url:     g('cv_scopus_url'),
-    vidwan_url:     g('cv_vidwan_url'),
-    wos:            g('cv_wos'),
-    scopus_id:      g('cv_scopus_id'),
-    vidwan_id:      g('cv_vidwan_id'),
-    orcid:          g('cv_orcid'),
-    citations:      g('cv_citations'),
-    journals:       g('cv_journals'),
-    conf:           g('cv_conf'),
-    patents_count:  g('cv_patents_count'),
-    projects_count: g('cv_projects_count'),
-    students_count: g('cv_students_count'),
-    pdf_url:        g('cv_pdf_url')
+    awards: g('cv_awards'), experience: g('cv_experience'), education: g('cv_education'),
+    memberships: g('cv_memberships'), skills: g('cv_skills'), admin: g('cv_admin'),
+    patents_list: g('cv_patents_list'), thesis: g('cv_thesis'),
+    linkedin: g('cv_linkedin'), scholar: g('cv_scholar'), nitj: g('cv_nitj'), other: g('cv_other'),
+    scopus_url: g('cv_scopus_url'), vidwan_url: g('cv_vidwan_url'),
+    wos: g('cv_wos'), scopus_id: g('cv_scopus_id'), vidwan_id: g('cv_vidwan_id'), orcid: g('cv_orcid'),
+    citations: g('cv_citations'), journals: g('cv_journals'), conf: g('cv_conf'),
+    patents_count: g('cv_patents_count'), projects_count: g('cv_projects_count'), students_count: g('cv_students_count'),
+    pdf_url: g('cv_pdf_url')
   };
   try { const r = await saveOrFallback('cv', value); toast(r.ok ? 'CV saved!' : 'CV saved locally'); }
   catch(e) { toast(e.message, true); }
