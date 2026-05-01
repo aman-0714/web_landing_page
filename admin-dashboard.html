@@ -1150,6 +1150,8 @@ async function saveCourses(type) {
     name: document.getElementById(`course_name_${type}_${i}`)?.value || '',
     meta: document.getElementById(`course_meta_${type}_${i}`)?.value || ''
   }));
+  // Mirror courses to localStorage so public teaching page (which reads admin_courses_*) shows them
+  try { localStorage.setItem('admin_courses_' + type, JSON.stringify(updated)); } catch(e) { console.warn('Could not mirror courses to localStorage', e); }
   try { const res = await saveOrFallback(`courses_${type}`, updated); toast(res.ok ? 'Courses saved!' : 'Courses saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
