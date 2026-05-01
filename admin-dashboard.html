@@ -1018,9 +1018,22 @@ async function saveProjects(type) {
     role:     document.getElementById(`proj_role_${type}_${i}`)?.value    || '',
     duration: document.getElementById(`proj_dur_${type}_${i}`)?.value     || ''
   }));
-  try { const res = await saveOrFallback(`proj_${type}`, updated); state[`proj_${type}`] = updated; renderProjects(type); toast(res.ok ? 'Projects saved!' : 'Projects saved locally (offline)'); }
-  catch(e) { toast(e.message, true); }
+  try {
+    const res = await saveOrFallback(`proj_${type}`, updated);
+    state[`proj_${type}`] = updated;
+    // publish HTML rows for the public projects page
+    let rows = '';
+    updated.forEach((p, idx) => {
+      rows += `<tr><td class="col-no">${idx+1}</td><td>${esc(p.title)}</td><td>${esc(p.sponsor)}</td><td>${esc(p.role)}</td><td class="col-duration">${esc(p.duration)}</td></tr>`;
+    });
+    if (type === 'current') localStorage.setItem('projects_current_html', rows);
+    else localStorage.setItem('projects_closed_html', rows);
+    renderProjects(type);
+    toast(res.ok ? 'Projects saved!' : 'Projects saved locally (offline)');
+  } catch(e) { toast(e.message, true); }
 }
+
+
 
 // ── STUDENTS ─────────────────────────────────────────────────
 function renderStudents(type) {
