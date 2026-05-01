@@ -49,6 +49,15 @@ router.put('/:key', requireAuth, async (req, res) => {
   if (value === undefined) {
     return res.status(400).json({ error: '"value" field is required in request body.' });
   }
+  // If value is null, treat as delete
+  if (value === null) {
+    try {
+      await SiteData.deleteOne({ key });
+      return res.json({ ok: true, deleted: true, key });
+    } catch (err) {
+      return res.status(500).json({ error: 'Server error.' });
+    }
+  }
   try {
     const doc = await SiteData.findOneAndUpdate(
       { key },

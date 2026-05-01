@@ -177,6 +177,8 @@
 </head>
 <body>
 
+<div id="db-save-warning" style="display:none;background:#fff3cd;color:#856404;border:1px solid #ffc107;padding:12px 20px;font-size:13px;position:sticky;top:0;z-index:9999;"></div>
+
 <div class="topbar">
   <h1>🛠 Admin Dashboard <span style="font-weight:normal;font-size:14px;opacity:.8">– Dr Madan Kumar Das</span></h1>
   <div class="right">
@@ -666,7 +668,13 @@ function populateFrom(all) {
   state.workshops = all.workshops || []; renderWorkshops();
   state.teach_philosophy = all.teach_philosophy || '';
   setValue('teach_philosophy', state.teach_philosophy);
-  state.researchlab = all.researchlab || []; renderLab();
+  // Support both old format (researchlab array) and new per-photo format
+  if (all.researchlab_index && Array.isArray(all.researchlab_index)) {
+    state.researchlab = all.researchlab_index.map(i => all['researchlab_photo_' + i] || { imgData:'', imgName:'', title:'', desc:'' });
+  } else {
+    state.researchlab = all.researchlab || [];
+  }
+  renderLab();
 
   // Research Lab Meta
   const meta = all.researchlab_meta || {};
@@ -742,6 +750,13 @@ function showLocalStorageSnapshot() {
 async function saveOrFallback(key, value) {
   try { await API.save(key, value); return { ok: true }; }
   catch(e) {
+    console.error('API.save failed for key:', key, '| Error:', e.message);
+    // Show a visible warning so admin knows data is NOT persisted to DB
+    const banner = document.getElementById('db-save-warning');
+    if (banner) {
+      banner.textContent = '⚠️ Could not reach server — data saved to browser only and will NOT appear on the public site. Error: ' + e.message;
+      banner.style.display = 'block';
+    }
     try { localStorage.setItem('admin_' + key, JSON.stringify(value)); return { ok: false, fallback: true }; }
     catch(err) { throw new Error('Save failed: ' + e.message); }
   }
@@ -979,8 +994,21 @@ function addLabItem() { syncLabFromDOM(); state.researchlab.push({ imgData:'', i
 function removeLabItem(i) { syncLabFromDOM(); state.researchlab.splice(i,1); renderLab(); }
 async function saveLab() {
   syncLabFromDOM();
-  try { const r = await saveOrFallback('researchlab', state.researchlab); toast(r.ok ? 'Lab photos saved!' : 'Saved locally'); }
-  catch(e) { toast(e.message, true); }
+  try {
+    // Save each lab photo as its own key to avoid MongoDB 16MB document limit
+    // Also save an index so the public page knows how many photos exist
+    const index = state.researchlab.map((_, i) => i);
+    await saveOrFallback('researchlab_index', index);
+    for (let i = 0; i < state.researchlab.length; i++) {
+      await saveOrFallback('researchlab_photo_' + i, state.researchlab[i]);
+    }
+    // Clean up any old extra photos beyond current count
+    // (attempt delete keys that might exist from a previous larger set)
+    for (let i = state.researchlab.length; i < state.researchlab.length + 10; i++) {
+      try { await API.save('researchlab_photo_' + i, null); } catch(e) { break; }
+    }
+    toast('Lab photos saved!');
+  } catch(e) { toast(e.message, true); }
 }
 
 // ── STUDENT GALLERY
