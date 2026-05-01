@@ -847,9 +847,8 @@ function renderResearch() {
     </div>`;
   });
 }
-function addResearchCard() { state.research.push({ imgData:'', imgName:'', desc:'New research description.' }); renderResearch(); }
-function removeResearch(i) { state.research.splice(i,1); renderResearch(); }
-async function saveResearch() {
+function syncResearchFromDOM() {
+  // Read current DOM values into state.research so unsaved edits are preserved
   const updated = state.research.map((_, i) => {
     const boxId = `rc_box_${i}`;
     return {
@@ -858,7 +857,35 @@ async function saveResearch() {
       desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
     };
   });
-  try { const res = await saveOrFallback('research', updated); toast(res.ok ? 'Research Cards saved!' : 'Research saved locally (offline)'); }
+  state.research = updated;
+}
+
+function addResearchCard() { 
+  // preserve current inputs before adding a new card
+  syncResearchFromDOM();
+  state.research.push({ imgData:'', imgName:'', desc:'New research description.' });
+  renderResearch();
+}
+
+function removeResearch(i) { 
+  // preserve current inputs, then remove the requested index and re-render
+  syncResearchFromDOM();
+  state.research.splice(i,1); 
+  renderResearch(); 
+}
+
+async function saveResearch() {
+  // Collect current DOM values, update state, then persist
+  const updated = state.research.map((_, i) => {
+    const boxId = `rc_box_${i}`;
+    return {
+      imgData: document.getElementById(`rc_data_${i}`)?.value || '',
+      imgName: document.getElementById(`${boxId}_name`)?.textContent || '',
+      desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
+    };
+  });
+  state.research = updated;
+  try { const res = await saveOrFallback('research', updated); toast(res && res.ok ? 'Research Cards saved!' : 'Research saved locally (offline)'); }
   catch(e) { toast(e.message, true); }
 }
 
