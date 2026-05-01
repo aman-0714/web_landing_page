@@ -56,7 +56,8 @@
                     padding-bottom: 8px; border-bottom: 1px solid #eee; }
     label { display: block; font-size: 12px; color: #666; font-weight: bold;
             letter-spacing: 0.3px; margin-bottom: 5px; }
-    input[type=text], input[type=email], input[type=tel], input[type=password], input[type=number], textarea, select {
+    input[type=text], input[type=email], input[type=tel], input[type=password],
+    input[type=number], input[type=url], textarea, select {
       width: 100%; padding: 9px 12px; border: 1px solid #ccc;
       border-radius: 4px; font-size: 14px; font-family: Arial, sans-serif;
       transition: border-color .2s; background: #fafafa;
@@ -65,6 +66,7 @@
     input:focus, textarea:focus, select:focus { outline: none; border-color: #3a7d1e; background: #fff; }
     textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
     .field { margin-bottom: 16px; }
+    .hint-text { font-size: 11px; color: #aaa; margin-top: 4px; font-style: italic; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
     /* Image upload */
@@ -140,11 +142,11 @@
     }
     .link-item input { margin: 0; }
     /* Sub-tabs */
-    .sub-tabs { display: flex; gap: 0; border-bottom: 2px solid #dde8d0; margin-bottom: 20px; }
+    .sub-tabs { display: flex; gap: 0; border-bottom: 2px solid #dde8d0; margin-bottom: 20px; overflow-x: auto; }
     .sub-tab {
       padding: 8px 18px; font-size: 13px; font-weight: bold; border: none;
       background: none; cursor: pointer; border-bottom: 3px solid transparent;
-      color: #888; transition: all .15s; margin-bottom: -2px;
+      color: #888; transition: all .15s; margin-bottom: -2px; white-space: nowrap;
     }
     .sub-tab.active { color: #3a7d1e; border-bottom-color: #3a7d1e; }
     /* Responsive */
@@ -160,6 +162,7 @@
       .main { padding: 16px; }
       .row { grid-template-columns: 1fr; }
       .row3 { grid-template-columns: 1fr; }
+      .topbar h1 { font-size: 15px; }
     }
   </style>
 </head>
@@ -341,7 +344,7 @@
     <!-- ===== POSITIONS ===== -->
     <div class="page" id="page-positions">
       <h2 class="page-title">Open Positions</h2>
-      <p class="page-desc">Manage open position announcements shown on the Open Positions page. Each position has a title and a description/eligibility text.</p>
+      <p class="page-desc">Manage open position announcements shown on the Open Positions page.</p>
       <div class="form-card">
         <div id="positions_container"></div>
         <button class="btn-add" onclick="addPosition()">+ Add Position</button>
@@ -368,51 +371,184 @@
     <!-- ===== TEACHING ===== -->
     <div class="page" id="page-teaching">
       <h2 class="page-title">Teaching</h2>
-      <p class="page-desc">Manage courses shown on the Teaching page.</p>
+      <p class="page-desc">Manage courses shown on the Teaching page. Each course can include a code, semester, credits, description, and resource links.</p>
       <div class="sub-tabs">
-        <button class="sub-tab active" id="teachtab-current" onclick="showTab('teach','current')">Current Semester</button>
-        <button class="sub-tab" id="teachtab-prev" onclick="showTab('teach','prev')">Previous Courses</button>
+        <button class="sub-tab active" id="teachtab-current" onclick="showTab('teach','current')">📚 Current Semester</button>
+        <button class="sub-tab" id="teachtab-prev" onclick="showTab('teach','prev')">📖 Previous Courses</button>
+        <button class="sub-tab" id="teachtab-workshops" onclick="showTab('teach','workshops')">🎙 Talks & Workshops</button>
+        <button class="sub-tab" id="teachtab-philosophy" onclick="showTab('teach','philosophy')">💡 Teaching Philosophy</button>
       </div>
-      <div id="teachpanel-current"><div class="form-card"><h3>Current Semester Courses</h3><div id="teach_current_container"></div><button class="btn-add" onclick="addCourse('current')">+ Add Course</button></div><button class="btn-save" onclick="saveCourses('current')">💾 Save</button></div>
-      <div id="teachpanel-prev" style="display:none"><div class="form-card"><h3>Previous Courses</h3><div id="teach_prev_container"></div><button class="btn-add" onclick="addCourse('prev')">+ Add Course</button></div><button class="btn-save" onclick="saveCourses('prev')">💾 Save</button></div>
+      <!-- Current -->
+      <div id="teachpanel-current">
+        <div class="form-card">
+          <h3>Current Semester Courses</h3>
+          <div id="teach_current_container"></div>
+          <button class="btn-add" onclick="addCourse('current')">+ Add Course</button>
+        </div>
+        <button class="btn-save" onclick="saveCourses('current')">💾 Save Current Courses</button>
+      </div>
+      <!-- Previous -->
+      <div id="teachpanel-prev" style="display:none">
+        <div class="form-card">
+          <h3>Previous Courses</h3>
+          <div id="teach_prev_container"></div>
+          <button class="btn-add" onclick="addCourse('prev')">+ Add Course</button>
+        </div>
+        <button class="btn-save" onclick="saveCourses('prev')">💾 Save Previous Courses</button>
+      </div>
+      <!-- Workshops / Expert Talks -->
+      <div id="teachpanel-workshops" style="display:none">
+        <div class="form-card">
+          <h3>Expert Talks / FDP / Workshops Delivered</h3>
+          <p style="font-size:12px;color:#aaa;margin-bottom:12px">Each entry shows as a card on the Teaching page.</p>
+          <div id="teach_workshops_container"></div>
+          <button class="btn-add" onclick="addWorkshop()">+ Add Entry</button>
+        </div>
+        <button class="btn-save" onclick="saveWorkshops()">💾 Save Talks & Workshops</button>
+      </div>
+      <!-- Teaching Philosophy -->
+      <div id="teachpanel-philosophy" style="display:none">
+        <div class="form-card">
+          <h3>Teaching Philosophy / Statement</h3>
+          <div class="field">
+            <textarea id="teach_philosophy" rows="10" placeholder="Describe your teaching approach, philosophy, and goals..."></textarea>
+          </div>
+        </div>
+        <button class="btn-save" onclick="saveTeachingPhilosophy()">💾 Save Philosophy</button>
+      </div>
     </div>
 
     <!-- ===== CV ===== -->
     <div class="page" id="page-cv">
       <h2 class="page-title">CV</h2>
-      <p class="page-desc">Edit awards, experience, education, memberships, and links. The CV page will automatically populate from the Profile &amp; Contact section.</p>
+      <p class="page-desc">Edit all sections of the CV page. Data entered here will appear live on <a href="cv.html" target="_blank">cv.html</a>.</p>
+
+      <!-- Stats -->
       <div class="form-card">
-        <h3>Awards &amp; Fellowships</h3>
-        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
-        <div class="field"><textarea id="cv_awards" rows="6" placeholder="Cited 440+ times on Google Scholar&#10;Post-Doctoral Fellow, IIT Delhi&#10;GATE 2013 Qualified"></textarea></div>
+        <h3>📊 Stats / Key Numbers</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:12px">These appear as the stat cards at the top of the CV page. Leave blank to auto-calculate from publications/projects data.</p>
+        <div class="row3">
+          <div class="field"><label>Citations (e.g. 440+)</label><input type="text" id="cv_citations" placeholder="440+"></div>
+          <div class="field"><label>Journal Papers</label><input type="text" id="cv_journals" placeholder="7"></div>
+          <div class="field"><label>Conference Papers</label><input type="text" id="cv_conf" placeholder="16+"></div>
+        </div>
+        <div class="row3">
+          <div class="field"><label>Patents Filed</label><input type="text" id="cv_patents_count" placeholder="3"></div>
+          <div class="field"><label>Research Projects</label><input type="text" id="cv_projects_count" placeholder="3"></div>
+          <div class="field"><label>Students Guided</label><input type="text" id="cv_students_count" placeholder="2+"></div>
+        </div>
       </div>
+
+      <!-- Awards -->
       <div class="form-card">
-        <h3>Work Experience</h3>
+        <h3>🏆 Awards &amp; Fellowships</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
+        <div class="field">
+          <textarea id="cv_awards" rows="6" placeholder="Cited 440+ times on Google Scholar&#10;Post-Doctoral Fellow, IIT Delhi (2020–2022)&#10;GATE 2013 Qualified (Electrical Engineering)"></textarea>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="form-card">
+        <h3>💼 Work Experience</h3>
         <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Role | Institution | Duration | Tag (optional, e.g. Current)</em></p>
-        <div class="field"><textarea id="cv_experience" rows="8" placeholder="Assistant Professor (Level-II) | Dr B R Ambedkar NIT, Jalandhar | 4 Sep 2023 – Till date | Current&#10;Post-Doctoral Fellow | IIT Delhi | 2020–2022"></textarea></div>
+        <div class="field">
+          <textarea id="cv_experience" rows="8" placeholder="Assistant Professor (Level-II) | Dr B R Ambedkar NIT, Jalandhar | 4 Sep 2023 – Till date | Current&#10;Post-Doctoral Fellow | IIT Delhi | 2020–2022"></textarea>
+        </div>
       </div>
+
+      <!-- Education -->
       <div class="form-card">
-        <h3>Education</h3>
+        <h3>🎓 Education</h3>
         <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Degree | Institution | Year/Details</em></p>
-        <div class="field"><textarea id="cv_education" rows="6" placeholder="PhD – Electrical Engineering | IIT (ISM) Dhanbad | Jan 2014 – Feb 2020&#10;B.Tech – EEE | Vinoba Bhave University | 2011, 65.8%"></textarea></div>
+        <div class="field">
+          <textarea id="cv_education" rows="7" placeholder="PhD – Electrical Engineering | IIT (ISM) Dhanbad | Jan 2014 – Feb 2020, Guide: Dr Kartick Chandra Jana&#10;Post-Doctoral Fellow | IIT Delhi | Oct 2020 – Oct 2022, Guide: Prof. Sukumar Mishra&#10;B.Tech – EEE | Vinoba Bhave University | 2011, 65.8% (First Div.)"></textarea>
+        </div>
       </div>
+
+      <!-- Professional Memberships -->
       <div class="form-card">
-        <h3>Professional Memberships</h3>
+        <h3>🤝 Professional Memberships</h3>
         <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
-        <div class="field"><textarea id="cv_memberships" rows="4" placeholder="IEEE Member&#10;ISTE Member"></textarea></div>
+        <div class="field">
+          <textarea id="cv_memberships" rows="4" placeholder="IEEE Member&#10;ISTE Member"></textarea>
+        </div>
       </div>
+
+      <!-- Technical Skills -->
       <div class="form-card">
-        <h3>Profile Links</h3>
+        <h3>🔧 Technical Skills</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
+        <div class="field">
+          <textarea id="cv_skills" rows="6" placeholder="MATLAB / SIMULINK&#10;dSPACE (DS1103, DS1104)&#10;PSIM, OPAL-RT, Typhoon HIL&#10;STM32F407VG, TI F28335/F28379"></textarea>
+        </div>
+      </div>
+
+      <!-- Admin / Lab Responsibilities -->
+      <div class="form-card">
+        <h3>🏛 Admin &amp; Lab Responsibilities</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line.</p>
+        <div class="field">
+          <textarea id="cv_admin" rows="6" placeholder="Power Electronics Lab In-Charge (2023–Till date)&#10;Project Implementation Team – CoE for EVs Lab (2025–)&#10;DUGC Secretary, Dept. of EE (2025–2026)&#10;Major Project (Faculty) Coordinator (B.Tech 2021–25)&#10;Coordinator, B.Tech Batch 2022–2026"></textarea>
+        </div>
+      </div>
+
+      <!-- Patents (CV Section) -->
+      <div class="form-card">
+        <h3>🔒 Patents (for CV listing)</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line. These appear in the CV Patents section. (Full patent details are in Publications → Patents.)</p>
+        <div class="field">
+          <textarea id="cv_patents_list" rows="6" placeholder="Asymmetrical 31-Level Inverter System — Indian Patent 202211023058 (IIT Delhi, 2022)&#10;Automated Turn Signal Control — NITJ, App No. 202511041328A (2025)&#10;DC Fast Charging for Multiple EVs — NITJ, App No. 202511103607A (2025)"></textarea>
+        </div>
+      </div>
+
+      <!-- Thesis Guided -->
+      <div class="form-card">
+        <h3>📝 Thesis / Projects Guided</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">One per line: <em>Student Name (Degree, Institute) — Project Title [Status]</em></p>
+        <div class="field">
+          <textarea id="cv_thesis" rows="6" placeholder="Shivani Arora (M.Tech, NIT Hamirpur) — Speed Control of BLDC Motor using Intelligent Control [Co-guide, Completed]&#10;Zaheen Javid (M.Tech, NITJ) — Modeling of Multiport DC Fast Charger for EVs [Main guide, Ongoing]"></textarea>
+        </div>
+      </div>
+
+      <!-- Research IDs -->
+      <div class="form-card">
+        <h3>🆔 Research IDs</h3>
+        <div class="row">
+          <div class="field"><label>Web of Science ResearcherID</label><input type="text" id="cv_wos" placeholder="L-7323-2018"></div>
+          <div class="field"><label>Scopus Author ID</label><input type="text" id="cv_scopus_id" placeholder="57192159406"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Vidwan ID</label><input type="text" id="cv_vidwan_id" placeholder="201032"></div>
+          <div class="field"><label>ORCID</label><input type="text" id="cv_orcid" placeholder="0000-0000-0000-0000"></div>
+        </div>
+      </div>
+
+      <!-- Profile Links -->
+      <div class="form-card">
+        <h3>🔗 Profile Links</h3>
         <div class="row">
           <div class="field"><label>LinkedIn URL</label><input type="text" id="cv_linkedin" placeholder="https://www.linkedin.com/in/..."></div>
           <div class="field"><label>Google Scholar URL</label><input type="text" id="cv_scholar" placeholder="https://scholar.google.co.in/..."></div>
         </div>
         <div class="row">
+          <div class="field"><label>Scopus Profile URL</label><input type="text" id="cv_scopus_url" placeholder="https://www.scopus.com/authid/..."></div>
+          <div class="field"><label>Vidwan Profile URL</label><input type="text" id="cv_vidwan_url" placeholder="https://vidwan.inflibnet.ac.in/..."></div>
+        </div>
+        <div class="row">
           <div class="field"><label>NITJ Faculty Profile URL</label><input type="text" id="cv_nitj" placeholder="https://departments.nitj.ac.in/..."></div>
-          <div class="field"><label>Other Link (e.g. Scopus, ResearchGate)</label><input type="text" id="cv_other" placeholder="https://..."></div>
+          <div class="field"><label>Other Link (e.g. ResearchGate)</label><input type="text" id="cv_other" placeholder="https://..."></div>
         </div>
       </div>
-      <button class="btn-save" onclick="saveCV()">💾 Save CV</button>
+
+      <!-- Download CV -->
+      <div class="form-card">
+        <h3>📥 CV PDF Download</h3>
+        <p style="font-size:12px;color:#aaa;margin-bottom:10px">Paste a direct link to the CV PDF (Google Drive, Dropbox, etc.) so visitors can download it.</p>
+        <div class="field"><label>CV PDF URL</label><input type="text" id="cv_pdf_url" placeholder="https://drive.google.com/file/d/..."></div>
+      </div>
+
+      <button class="btn-save" onclick="saveCV()">💾 Save All CV Data</button>
     </div>
 
     <!-- ===== PASSWORD ===== -->
@@ -471,7 +607,7 @@ function esc(s) {
     .replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ── Image upload helpers ─────────────────────────────────────
+// ── Image compression + upload helpers
 function compressImage(file, maxW, maxH, quality, callback) {
   const reader = new FileReader();
   reader.onload = e => {
@@ -490,43 +626,13 @@ function compressImage(file, maxW, maxH, quality, callback) {
   reader.readAsDataURL(file);
 }
 
-// ── Image upload helpers
 function handleImg(input, boxId, hiddenId) {
   const file = input.files[0];
   if (!file) return;
-  // Compress: max 800x800px, 70% quality — keeps file small for fast loading
-  compressImage(file, 800, 800, 0.70, b64 => {
+  compressImage(file, 900, 900, 0.78, b64 => {
     showImgBox(boxId, b64, file.name);
     document.getElementById(hiddenId).value = b64;
   });
-  // Compress if very large
-  const reader = new FileReader();
-  reader.onload = e => {
-    const b64 = e.target.result;
-    // If > 1MB, compress via canvas
-    if (b64.length > 1_000_000) {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const maxDim = 900;
-        let w = img.width, h = img.height;
-        if (w > maxDim || h > maxDim) {
-          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-          else { w = Math.round(w * maxDim / h); h = maxDim; }
-        }
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/jpeg', 0.82);
-        showImgBox(boxId, compressed, file.name);
-        document.getElementById(hiddenId).value = compressed;
-      };
-      img.src = b64;
-    } else {
-      showImgBox(boxId, b64, file.name);
-      document.getElementById(hiddenId).value = b64;
-    }
-  };
-  reader.readAsDataURL(file);
 }
 function showImgBox(boxId, b64, fname) {
   const box = document.getElementById(boxId);
@@ -560,6 +666,7 @@ const state = {
   proj_current: [], proj_closed: [],
   stu_phd: [], stu_mtech: [], stu_btech: [],
   courses_current: [], courses_prev: [],
+  workshops: [], teach_philosophy: '',
   researchlab: [],
   cv: {}
 };
@@ -595,17 +702,10 @@ function getOfflineAll() {
     stu_btech: parse('admin_stu_btech')||[],
     courses_current: parse('admin_courses_current')||[],
     courses_prev: parse('admin_courses_prev')||[],
+    workshops: parse('admin_workshops')||[],
+    teach_philosophy: localStorage.getItem('admin_teach_philosophy')||'',
     researchlab: parse('admin_researchlab')||[],
-    cv: parse('admin_cv') || {
-      awards: localStorage.getItem('admin_cv_awards')||'',
-      experience: localStorage.getItem('admin_cv_experience')||'',
-      education: localStorage.getItem('admin_cv_education')||'',
-      memberships: localStorage.getItem('admin_cv_memberships')||'',
-      linkedin: localStorage.getItem('admin_cv_linkedin')||'',
-      scholar: localStorage.getItem('admin_cv_scholar')||'',
-      nitj: localStorage.getItem('admin_cv_nitj')||'',
-      other: localStorage.getItem('admin_cv_other')||''
-    }
+    cv: parse('admin_cv') || {}
   };
 }
 
@@ -634,14 +734,26 @@ function populateFrom(all) {
   ['phd','mtech','btech'].forEach(t => { state['stu_'+t] = all['stu_'+t]||[]; renderStudents(t); });
   state.courses_current = all.courses_current || []; renderCourses('current');
   state.courses_prev = all.courses_prev || []; renderCourses('prev');
+  state.workshops = all.workshops || []; renderWorkshops();
+  state.teach_philosophy = all.teach_philosophy || '';
+  setValue('teach_philosophy', state.teach_philosophy);
   state.researchlab = all.researchlab || []; renderLab();
 
   const cv = all.cv || {};
   state.cv = cv;
   setValue('cv_awards', cv.awards); setValue('cv_experience', cv.experience);
   setValue('cv_education', cv.education); setValue('cv_memberships', cv.memberships);
+  setValue('cv_skills', cv.skills); setValue('cv_admin', cv.admin);
+  setValue('cv_patents_list', cv.patents_list); setValue('cv_thesis', cv.thesis);
   setValue('cv_linkedin', cv.linkedin); setValue('cv_scholar', cv.scholar);
   setValue('cv_nitj', cv.nitj); setValue('cv_other', cv.other);
+  setValue('cv_scopus_url', cv.scopus_url); setValue('cv_vidwan_url', cv.vidwan_url);
+  setValue('cv_wos', cv.wos); setValue('cv_scopus_id', cv.scopus_id);
+  setValue('cv_vidwan_id', cv.vidwan_id); setValue('cv_orcid', cv.orcid);
+  setValue('cv_citations', cv.citations); setValue('cv_journals', cv.journals);
+  setValue('cv_conf', cv.conf); setValue('cv_patents_count', cv.patents_count);
+  setValue('cv_projects_count', cv.projects_count); setValue('cv_students_count', cv.students_count);
+  setValue('cv_pdf_url', cv.pdf_url);
 }
 
 function setValue(id, val) {
@@ -671,10 +783,7 @@ async function checkApiAndShow() {
     document.getElementById('admin_status_text').textContent = res.ok ? 'API reachable ✓' : 'API error: ' + res.status;
   } catch(e) { document.getElementById('admin_status_text').textContent = 'API unreachable – offline mode'; }
 }
-function forceLoadOffline() {
-  const off = getOfflineAll(); populateFrom(off);
-  document.getElementById('admin_status_text').textContent = 'Loaded offline data';
-}
+function forceLoadOffline() { const off = getOfflineAll(); populateFrom(off); document.getElementById('admin_status_text').textContent = 'Loaded offline data'; }
 function showLocalStorageSnapshot() {
   const keys = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i));
   const sample = keys.slice(0, 50).map(k => ({ k, v: (localStorage.getItem(k)||'').slice(0,200) }));
@@ -684,17 +793,10 @@ function showLocalStorageSnapshot() {
 
 // ── Save with localStorage fallback
 async function saveOrFallback(key, value) {
-  try {
-    await API.save(key, value);
-    return { ok: true };
-  } catch(e) {
-    try {
-      const str = JSON.stringify(value);
-      localStorage.setItem('admin_' + key, str);
-      return { ok: false, fallback: true };
-    } catch(err) {
-      throw new Error('Save failed and fallback also failed: ' + e.message);
-    }
+  try { await API.save(key, value); return { ok: true }; }
+  catch(e) {
+    try { localStorage.setItem('admin_' + key, JSON.stringify(value)); return { ok: false, fallback: true }; }
+    catch(err) { throw new Error('Save failed: ' + e.message); }
   }
 }
 
@@ -766,7 +868,7 @@ function renderResearch() {
         <div class="field"><label>Image</label>
           <div class="img-upload-box" id="${boxId}">
             <div class="img-upload-area" ${card.imgData?'style="display:none"':''}>
-              <div class="icon">📷</div><div class="label-text">Browse image</div><div class="hint">JPG, PNG, WEBP · auto-compressed</div>
+              <div class="icon">📷</div><div class="label-text">Browse image</div><div class="hint">JPG, PNG, WEBP</div>
             </div>
             <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
             <img class="img-upload-preview" ${card.imgData?`src="${card.imgData}" style="display:block"`:''}> 
@@ -791,7 +893,7 @@ function syncResearchFromDOM() {
     desc:    document.getElementById(`rc_desc_${i}`)?.value || ''
   }));
 }
-function addResearchCard() { syncResearchFromDOM(); state.research.push({ imgData:'', imgName:'', desc:'Research description.' }); renderResearch(); }
+function addResearchCard() { syncResearchFromDOM(); state.research.push({ imgData:'', imgName:'', desc:'' }); renderResearch(); }
 function removeResearch(i) { syncResearchFromDOM(); state.research.splice(i,1); renderResearch(); }
 async function saveResearch() {
   syncResearchFromDOM();
@@ -802,7 +904,7 @@ async function saveResearch() {
 // ── RESEARCH LAB
 function renderLab() {
   const c = document.getElementById('lab_container');
-  if (!state.researchlab.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No lab items yet. Add photos of your equipment and project setups.</p>'; return; }
+  if (!state.researchlab.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No lab items yet.</p>'; return; }
   c.innerHTML = state.researchlab.map((item, i) => {
     const boxId = `lab_box_${i}`, dataId = `lab_data_${i}`;
     return `<div class="research-item">
@@ -811,7 +913,7 @@ function renderLab() {
         <div class="field"><label>Photo</label>
           <div class="img-upload-box" id="${boxId}">
             <div class="img-upload-area" ${item.imgData?'style="display:none"':''}>
-              <div class="icon">🔬</div><div class="label-text">Browse lab photo</div><div class="hint">JPG, PNG, WEBP · auto-compressed</div>
+              <div class="icon">🔬</div><div class="label-text">Browse lab photo</div><div class="hint">JPG, PNG, WEBP</div>
             </div>
             <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
             <img class="img-upload-preview" ${item.imgData?`src="${item.imgData}" style="display:block"`:''}> 
@@ -827,7 +929,7 @@ function renderLab() {
             <input type="text" id="lab_title_${i}" value="${esc(item.title||'')}" placeholder="e.g. 13-level MLI Prototype Setup">
           </div>
           <label>Description</label>
-          <textarea id="lab_desc_${i}" rows="5" placeholder="Describe the setup, equipment, or experiment...">${esc(item.desc||'')}</textarea>
+          <textarea id="lab_desc_${i}" rows="5">${esc(item.desc||'')}</textarea>
         </div>
       </div>
     </div>`;
@@ -879,7 +981,7 @@ function renderGallery() {
     </div>`;
   }).join('');
 }
-function addGalleryCard() { state.gallery.push({ imgData:'', imgName:'', eventName:'New Event' }); renderGallery(); }
+function addGalleryCard() { state.gallery.push({ imgData:'', imgName:'', eventName:'' }); renderGallery(); }
 function removeGallery(i) { state.gallery.splice(i,1); renderGallery(); }
 async function saveGallery() {
   const updated = state.gallery.map((_,i) => ({
@@ -902,15 +1004,15 @@ function renderPositions() {
         <input type="text" id="pos_title_${i}" value="${esc(p.title||'')}" placeholder="e.g. PhD Position in Power Electronics">
       </div>
       <div class="field"><label>Description / Eligibility</label>
-        <textarea id="pos_note_${i}" rows="5" placeholder="Describe the position, requirements, stipend, etc...">${esc(p.note||'')}</textarea>
+        <textarea id="pos_note_${i}" rows="5">${esc(p.note||'')}</textarea>
       </div>
     </div>
   </div>`).join('');
 }
 function syncPositionsFromDOM() {
   state.positions = state.positions.map((p,i) => ({
-    title: document.getElementById(`pos_title_${i}`)?.value || p.title || '',
-    note:  document.getElementById(`pos_note_${i}`)?.value || p.note || ''
+    title: document.getElementById(`pos_title_${i}`)?.value || '',
+    note:  document.getElementById(`pos_note_${i}`)?.value || ''
   }));
 }
 function addPosition() { syncPositionsFromDOM(); state.positions.push({ title:'', note:'' }); renderPositions(); }
@@ -921,7 +1023,7 @@ async function savePositions() {
   catch(e) { toast(e.message, true); }
 }
 
-// ── PUBLICATIONS (journal, conference, book, patent)
+// ── PUBLICATIONS
 function renderPubs(type) {
   const c = document.getElementById(`pubs_${type}_container`);
   const pubs = state[`pubs_${type}`] || [];
@@ -961,7 +1063,7 @@ async function savePubs(type) {
   catch(e) { toast(e.message, true); }
 }
 
-// ── PROJECTS (with image upload)
+// ── PROJECTS
 function renderProjects(type) {
   const c = document.getElementById(`proj_${type}_container`);
   const list = state[`proj_${type}`] || [];
@@ -974,11 +1076,11 @@ function renderProjects(type) {
         <div class="field"><label>Project Title</label><input type="text" id="proj_title_${type}_${i}" value="${esc(p.title||'')}"></div>
         <div class="row">
           <div class="field"><label>Funding Agency / Sponsor</label><input type="text" id="proj_sponsor_${type}_${i}" value="${esc(p.sponsor||'')}"></div>
-          <div class="field"><label>Outlay (₹)</label><input type="text" id="proj_amount_${type}_${i}" value="${esc(p.amount||'')}" placeholder="e.g. 5,00,000"></div>
+          <div class="field"><label>Outlay (₹)</label><input type="text" id="proj_amount_${type}_${i}" value="${esc(p.amount||'')}"></div>
         </div>
         <div class="row">
           <div class="field"><label>Role (PI / Co-PI etc.)</label><input type="text" id="proj_role_${type}_${i}" value="${esc(p.role||'')}"></div>
-          <div class="field"><label>Duration</label><input type="text" id="proj_dur_${type}_${i}" value="${esc(p.duration||'')}" placeholder="e.g. 2023 – Ongoing"></div>
+          <div class="field"><label>Duration</label><input type="text" id="proj_dur_${type}_${i}" value="${esc(p.duration||'')}"></div>
         </div>
         <div class="field"><label>Project Photo (optional)</label>
           <div class="img-upload-box" id="${boxId}">
@@ -1027,7 +1129,7 @@ function renderStudents(type) {
     const hasImg = s.photo && s.photo.length > 100;
     const btechFields = type === 'btech' ? `<div class="field"><label>Programme Type</label>
       <select id="stu_programme_${type}_${i}">
-        <option value="" ${!s.programme?'selected':''}>-- Select --</option>
+        <option value="">-- Select --</option>
         <option value="Major" ${s.programme==='Major'?'selected':''}>Major</option>
         <option value="Minor" ${s.programme==='Minor'?'selected':''}>Minor</option>
       </select></div>` : '';
@@ -1079,26 +1181,50 @@ async function saveStudents(type) {
   catch(e) { toast(e.message, true); }
 }
 
-// ── COURSES
+// ── COURSES (enhanced)
 function renderCourses(type) {
   const c = document.getElementById(`teach_${type}_container`);
   const list = state[`courses_${type}`] || [];
   if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No courses yet.</p>'; return; }
   c.innerHTML = list.map((course,i) => `<div class="research-item">
     <button class="btn-del del-btn" onclick="removeCourse('${type}',${i})">✕ Remove</button>
-    <div class="row" style="margin-right:100px">
-      <div class="field"><label>Course Name</label><input type="text" id="course_name_${type}_${i}" value="${esc(course.name||'')}"></div>
-      <div class="field"><label>Code / Semester</label><input type="text" id="course_meta_${type}_${i}" value="${esc(course.meta||'')}"></div>
+    <div style="margin-right:100px">
+      <div class="row">
+        <div class="field"><label>Course Name</label><input type="text" id="course_name_${type}_${i}" value="${esc(course.name||'')}" placeholder="Power Electronics"></div>
+        <div class="field"><label>Course Code</label><input type="text" id="course_code_${type}_${i}" value="${esc(course.code||'')}" placeholder="EE401"></div>
+      </div>
+      <div class="row3">
+        <div class="field"><label>Semester / Year</label><input type="text" id="course_sem_${type}_${i}" value="${esc(course.semester||'')}" placeholder="Even Sem 2024-25"></div>
+        <div class="field"><label>Credits</label><input type="text" id="course_credits_${type}_${i}" value="${esc(course.credits||'')}" placeholder="3-1-0 (4)"></div>
+        <div class="field"><label>Level (UG/PG)</label>
+          <select id="course_level_${type}_${i}">
+            <option value="">-- Select --</option>
+            <option value="UG" ${course.level==='UG'?'selected':''}>UG</option>
+            <option value="PG" ${course.level==='PG'?'selected':''}>PG</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Short Description (optional)</label>
+        <textarea id="course_desc_${type}_${i}" rows="3" placeholder="Brief overview of course content...">${esc(course.desc||'')}</textarea>
+      </div>
+      <div class="field"><label>Resources URL (optional, e.g. course page, slides link)</label>
+        <input type="text" id="course_url_${type}_${i}" value="${esc(course.url||'')}" placeholder="https://...">
+      </div>
     </div>
   </div>`).join('');
 }
 function syncCoursesFromDOM(type) {
   state[`courses_${type}`] = (state[`courses_${type}`]||[]).map((_,i) => ({
-    name: document.getElementById(`course_name_${type}_${i}`)?.value || '',
-    meta: document.getElementById(`course_meta_${type}_${i}`)?.value || ''
+    name:     document.getElementById(`course_name_${type}_${i}`)?.value    || '',
+    code:     document.getElementById(`course_code_${type}_${i}`)?.value    || '',
+    semester: document.getElementById(`course_sem_${type}_${i}`)?.value     || '',
+    credits:  document.getElementById(`course_credits_${type}_${i}`)?.value || '',
+    level:    document.getElementById(`course_level_${type}_${i}`)?.value   || '',
+    desc:     document.getElementById(`course_desc_${type}_${i}`)?.value    || '',
+    url:      document.getElementById(`course_url_${type}_${i}`)?.value     || ''
   }));
 }
-function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
+function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',code:'',semester:'',credits:'',level:'',desc:'',url:'' }); renderCourses(type); }
 function removeCourse(type,i) { syncCoursesFromDOM(type); state[`courses_${type}`].splice(i,1); renderCourses(type); }
 async function saveCourses(type) {
   syncCoursesFromDOM(type);
@@ -1107,17 +1233,88 @@ async function saveCourses(type) {
   catch(e) { toast(e.message, true); }
 }
 
-// ── CV
+// ── WORKSHOPS / EXPERT TALKS
+function renderWorkshops() {
+  const c = document.getElementById('teach_workshops_container');
+  const list = state.workshops || [];
+  if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No entries yet.</p>'; return; }
+  c.innerHTML = list.map((w,i) => `<div class="research-item">
+    <button class="btn-del del-btn" onclick="removeWorkshop(${i})">✕ Remove</button>
+    <div style="margin-right:100px">
+      <div class="field"><label>Title / Topic</label><input type="text" id="ws_title_${i}" value="${esc(w.title||'')}" placeholder="Expert Talk on Multilevel Inverters"></div>
+      <div class="row">
+        <div class="field"><label>Type</label>
+          <select id="ws_type_${i}">
+            <option value="">-- Type --</option>
+            <option value="Expert Talk" ${w.type==='Expert Talk'?'selected':''}>Expert Talk</option>
+            <option value="FDP" ${w.type==='FDP'?'selected':''}>FDP (Faculty Development)</option>
+            <option value="Workshop" ${w.type==='Workshop'?'selected':''}>Workshop</option>
+            <option value="Webinar" ${w.type==='Webinar'?'selected':''}>Webinar</option>
+            <option value="Session Chair" ${w.type==='Session Chair'?'selected':''}>Session Chair</option>
+            <option value="STC" ${w.type==='STC'?'selected':''}>Short Term Course (STC)</option>
+          </select>
+        </div>
+        <div class="field"><label>Date</label><input type="text" id="ws_date_${i}" value="${esc(w.date||'')}" placeholder="15 Dec 2023"></div>
+      </div>
+      <div class="field"><label>Organising Institute / Event</label><input type="text" id="ws_org_${i}" value="${esc(w.org||'')}" placeholder="VIT Vellore, Tamil Nadu"></div>
+      <div class="field"><label>Notes (optional)</label><textarea id="ws_notes_${i}" rows="2">${esc(w.notes||'')}</textarea></div>
+    </div>
+  </div>`).join('');
+}
+function syncWorkshopsFromDOM() {
+  state.workshops = (state.workshops||[]).map((_,i) => ({
+    title: document.getElementById(`ws_title_${i}`)?.value || '',
+    type:  document.getElementById(`ws_type_${i}`)?.value  || '',
+    date:  document.getElementById(`ws_date_${i}`)?.value  || '',
+    org:   document.getElementById(`ws_org_${i}`)?.value   || '',
+    notes: document.getElementById(`ws_notes_${i}`)?.value || ''
+  }));
+}
+function addWorkshop() { syncWorkshopsFromDOM(); state.workshops.push({ title:'',type:'',date:'',org:'',notes:'' }); renderWorkshops(); }
+function removeWorkshop(i) { syncWorkshopsFromDOM(); state.workshops.splice(i,1); renderWorkshops(); }
+async function saveWorkshops() {
+  syncWorkshopsFromDOM();
+  try { const r = await saveOrFallback('workshops', state.workshops); toast(r.ok ? 'Talks & Workshops saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+// ── TEACHING PHILOSOPHY
+async function saveTeachingPhilosophy() {
+  const val = document.getElementById('teach_philosophy').value;
+  try { localStorage.setItem('admin_teach_philosophy', val); } catch(e) {}
+  try { const r = await saveOrFallback('teach_philosophy', val); toast(r.ok ? 'Philosophy saved!' : 'Saved locally'); }
+  catch(e) { toast(e.message, true); }
+}
+
+// ── CV (full)
 async function saveCV() {
+  const g = id => document.getElementById(id)?.value || '';
   const value = {
-    awards:      document.getElementById('cv_awards').value,
-    experience:  document.getElementById('cv_experience').value,
-    education:   document.getElementById('cv_education').value,
-    memberships: document.getElementById('cv_memberships').value,
-    linkedin:    document.getElementById('cv_linkedin').value,
-    scholar:     document.getElementById('cv_scholar').value,
-    nitj:        document.getElementById('cv_nitj').value,
-    other:       document.getElementById('cv_other').value
+    awards:         g('cv_awards'),
+    experience:     g('cv_experience'),
+    education:      g('cv_education'),
+    memberships:    g('cv_memberships'),
+    skills:         g('cv_skills'),
+    admin:          g('cv_admin'),
+    patents_list:   g('cv_patents_list'),
+    thesis:         g('cv_thesis'),
+    linkedin:       g('cv_linkedin'),
+    scholar:        g('cv_scholar'),
+    nitj:           g('cv_nitj'),
+    other:          g('cv_other'),
+    scopus_url:     g('cv_scopus_url'),
+    vidwan_url:     g('cv_vidwan_url'),
+    wos:            g('cv_wos'),
+    scopus_id:      g('cv_scopus_id'),
+    vidwan_id:      g('cv_vidwan_id'),
+    orcid:          g('cv_orcid'),
+    citations:      g('cv_citations'),
+    journals:       g('cv_journals'),
+    conf:           g('cv_conf'),
+    patents_count:  g('cv_patents_count'),
+    projects_count: g('cv_projects_count'),
+    students_count: g('cv_students_count'),
+    pdf_url:        g('cv_pdf_url')
   };
   try { const r = await saveOrFallback('cv', value); toast(r.ok ? 'CV saved!' : 'CV saved locally'); }
   catch(e) { toast(e.message, true); }

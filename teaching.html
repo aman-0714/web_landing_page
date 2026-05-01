@@ -6,46 +6,99 @@
   <title>Teaching – Dr Madan Kumar Das</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .course-list { padding-bottom: 48px; }
+    .teach-wrap { max-width: 960px; margin: 0 auto; padding: 0 24px 56px; }
+
+    .section-title {
+      font-family: 'EB Garamond', serif; font-size: 22px; font-weight: 500;
+      color: var(--text); margin: 36px 0 16px; padding-bottom: 10px;
+      border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 10px;
+    }
+    .section-title .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+    /* Course cards */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 18px; margin-bottom: 12px;
+    }
+    .course-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 8px;
+      padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow .2s;
+    }
+    .course-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+    .course-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .course-name { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; }
+    .course-code-badge {
+      background: #eef5e8; color: var(--green); border-radius: 4px;
+      font-size: 11px; font-weight: 700; padding: 3px 8px; white-space: nowrap; flex-shrink: 0;
+    }
+    .course-meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .course-chip {
+      font-size: 11.5px; color: var(--muted); background: #f5f5f5;
+      border-radius: 3px; padding: 2px 8px;
+    }
+    .course-chip.level-ug { background: #e8f4fd; color: #1976d2; }
+    .course-chip.level-pg { background: #fce8fd; color: #7b1fa2; }
+    .course-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 10px; }
+    .course-link {
+      display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px;
+      color: var(--blue); text-decoration: none; transition: color .15s;
+    }
+    .course-link:hover { color: var(--green); }
+
+    /* Legacy simple list (fallback) */
     .course-year {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 28px 0 10px;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin: 28px 0 10px;
     }
     .course-row {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 10px 0;
-      border-bottom: 1px solid #278f23;
-      font-size: 14px;
+      display: flex; align-items: baseline; justify-content: space-between;
+      gap: 16px; padding: 10px 0; border-bottom: 1px solid #e8e8e8; font-size: 14px;
     }
     .course-row:last-child { border-bottom: none; }
-    .course-name { color: var(--text); }
-    .course-meta { color: #999; font-size: 13px; white-space: nowrap; }
-    .course-tag {
-      display: inline-block;
-      font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: var(--green-light);
-      color: var(--green);
-      font-weight: 500;
-      margin-left: 8px;
+    .course-row-name { color: var(--text); }
+    .course-row-meta { color: #999; font-size: 13px; white-space: nowrap; }
+
+    /* Workshops table */
+    .ws-grid { display: flex; flex-direction: column; gap: 14px; }
+    .ws-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 7px;
+      padding: 16px 20px; display: grid;
+      grid-template-columns: auto 1fr; gap: 14px; align-items: start;
     }
-    .site-footer { color: var(--green); }
-    .site-footer a { color: var(--green); }
+    .ws-type-badge {
+      background: #fff8e1; color: #b8720a; border: 1px solid #ffe082;
+      border-radius: 4px; font-size: 11px; font-weight: 700;
+      padding: 3px 9px; white-space: nowrap;
+    }
+    .ws-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .ws-meta { font-size: 12.5px; color: var(--muted); }
+
+    /* Philosophy */
+    .philosophy-box {
+      background: #f8fbf5; border: 1px solid #d4ebc0; border-radius: 8px;
+      padding: 24px 28px; font-size: 14px; color: var(--muted);
+      line-height: 1.85; margin-bottom: 12px;
+    }
+    .philosophy-box p { margin-bottom: 12px; }
+    .philosophy-box p:last-child { margin-bottom: 0; }
+
+    /* Empty state */
+    .empty-msg { color: #aaa; font-style: italic; font-size: 13px; padding: 20px 0; }
+
+    @media (max-width: 600px) {
+      .teach-wrap { padding: 0 12px 40px; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .ws-card { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
 <header class="site-header">
   <div>
-    <div class="hdr-name">Dr Madan Kumar Das</div>
+    <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
     <div class="hdr-sub">
       Assistant Professor, Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
@@ -62,77 +115,140 @@
 
 <div class="page-wrap">
   <div class="page-bar">Teaching</div>
+</div>
 
-  <div class="course-list">
-    <div class="course-year">Current Semester</div>
-    <div id="current_courses_area"></div>
+<div class="teach-wrap">
 
-    <div class="course-year">Previous Courses</div>
-    <div id="previous_courses_area"></div>
+  <!-- Teaching Philosophy -->
+  <div id="philosophy_section" style="display:none">
+    <div class="section-title"><span class="dot"></span> Teaching Philosophy</div>
+    <div class="philosophy-box" id="philosophy_box"></div>
   </div>
+
+  <!-- Current Courses -->
+  <div class="section-title"><span class="dot"></span> Current Semester</div>
+  <div id="current_courses_area" class="courses-grid"></div>
+
+  <!-- Previous Courses -->
+  <div class="section-title"><span class="dot" style="background:var(--orange)"></span> Previous Courses</div>
+  <div id="previous_courses_area" class="courses-grid"></div>
+
+  <!-- Talks / Workshops -->
+  <div id="workshops_section" style="display:none">
+    <div class="section-title"><span class="dot" style="background:var(--blue)"></span> Expert Talks &amp; Workshops</div>
+    <div class="ws-grid" id="workshops_area"></div>
+  </div>
+
 </div>
 
 <footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
 
+<script src="api.js"></script>
 <script>
-// Default courses shown when admin hasn't saved anything yet
-var DEFAULT_CURRENT = [
-  { name: "Database Management System", meta: "CS301" }
-];
-var DEFAULT_PREV = [];
-
-function renderCourseRows(list) {
-  if (!list || list.length === 0) return '<p style="color:#777;font-style:italic">No courses listed.</p>';
-  return list.map(function(c) {
-    return '<div class="course-row">'
-      + '<span class="course-name">' + escHtml(c.name || '') + '</span>'
-      + (c.meta ? '<span class="course-meta">' + escHtml(c.meta) + '</span>' : '')
-      + '</div>';
-  }).join('');
-}
-
 function escHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// Load from admin_courses_* (set by admin dashboard)
-var rawCurrent = localStorage.getItem('admin_courses_current');
-var rawPrev    = localStorage.getItem('admin_courses_prev');
+function renderCourseCard(c) {
+  const levelClass = c.level === 'UG' ? 'level-ug' : c.level === 'PG' ? 'level-pg' : '';
+  return `<div class="course-card">
+    <div class="course-card-top">
+      <div class="course-name">${escHtml(c.name||'Untitled Course')}</div>
+      ${c.code ? `<div class="course-code-badge">${escHtml(c.code)}</div>` : ''}
+    </div>
+    <div class="course-meta-row">
+      ${c.semester ? `<span class="course-chip">📅 ${escHtml(c.semester)}</span>` : ''}
+      ${c.credits  ? `<span class="course-chip">📊 ${escHtml(c.credits)}</span>` : ''}
+      ${c.level    ? `<span class="course-chip ${levelClass}">${escHtml(c.level)}</span>` : ''}
+    </div>
+    ${c.desc ? `<div class="course-desc">${escHtml(c.desc)}</div>` : ''}
+    ${c.url  ? `<a href="${escHtml(c.url)}" target="_blank" class="course-link">📁 Course Resources ↗</a>` : ''}
+  </div>`;
+}
 
-// Also fall back to legacy teaching_current_html / teaching_prev_html if present
-var legacyCurrent = localStorage.getItem('teaching_current_html');
-var legacyPrev    = localStorage.getItem('teaching_prev_html');
+// Legacy simple row render (for old-format data without detailed fields)
+function renderSimpleRow(c) {
+  return `<div class="course-row">
+    <span class="course-row-name">${escHtml(c.name||c)}</span>
+    ${c.meta ? `<span class="course-row-meta">${escHtml(c.meta)}</span>` : ''}
+  </div>`;
+}
 
-var currentArea = document.getElementById('current_courses_area');
-var prevArea    = document.getElementById('previous_courses_area');
-
-if (rawCurrent) {
-  try {
-    currentArea.innerHTML = renderCourseRows(JSON.parse(rawCurrent));
-  } catch(e) {
-    currentArea.innerHTML = legacyCurrent || renderCourseRows(DEFAULT_CURRENT);
+function renderCourses(list, containerId) {
+  const el = document.getElementById(containerId);
+  if (!list || !list.length) {
+    el.innerHTML = '<p class="empty-msg">No courses listed.</p>';
+    return;
   }
-} else if (legacyCurrent) {
-  currentArea.innerHTML = legacyCurrent;
-} else {
-  currentArea.innerHTML = renderCourseRows(DEFAULT_CURRENT);
+  // Detect if rich format (has 'code' or 'semester') or legacy (just name+meta)
+  const isRich = list.some(c => c.code || c.semester || c.credits || c.desc || c.level);
+  if (isRich) {
+    el.innerHTML = list.map(renderCourseCard).join('');
+  } else {
+    // Render as simple list inside a single card-like wrapper
+    el.style.display = 'block';
+    el.innerHTML = `<div style="background:#fff;border:1px solid var(--border);border-radius:8px;padding:4px 12px">` +
+      list.map(renderSimpleRow).join('') + `</div>`;
+  }
 }
 
-if (rawPrev) {
-  try {
-    prevArea.innerHTML = renderCourseRows(JSON.parse(rawPrev));
-  } catch(e) {
-    prevArea.innerHTML = legacyPrev || renderCourseRows(DEFAULT_PREV);
-  }
-} else if (legacyPrev) {
-  prevArea.innerHTML = legacyPrev;
-} else {
-  prevArea.innerHTML = renderCourseRows(DEFAULT_PREV);
+function renderWorkshops(list) {
+  const section = document.getElementById('workshops_section');
+  const area    = document.getElementById('workshops_area');
+  if (!list || !list.length) return;
+  section.style.display = '';
+  area.innerHTML = list.map(w => `<div class="ws-card">
+    <div><span class="ws-type-badge">${escHtml(w.type||'Talk')}</span></div>
+    <div>
+      <div class="ws-title">${escHtml(w.title||'')}</div>
+      <div class="ws-meta">
+        ${w.org  ? escHtml(w.org)  : ''}
+        ${w.date ? ' · ' + escHtml(w.date) : ''}
+        ${w.notes ? '<br><span style="font-size:12px;color:#bbb">' + escHtml(w.notes) + '</span>' : ''}
+      </div>
+    </div>
+  </div>`).join('');
 }
+
+// Load from API
+(async () => {
+  let all = {};
+  try { all = await API.getAll(); } catch(e) {}
+  all = all || {};
+
+  // Header name
+  const pName = all.profile && all.profile.name;
+  if (pName) document.getElementById('hdr_name').textContent = pName;
+
+  // Teaching philosophy
+  const phil = all.teach_philosophy || localStorage.getItem('admin_teach_philosophy') || '';
+  if (phil && phil.trim()) {
+    document.getElementById('philosophy_section').style.display = '';
+    const paras = phil.split(/\n\n+/).filter(Boolean);
+    document.getElementById('philosophy_box').innerHTML = paras.map(p => `<p>${escHtml(p).replace(/\n/g,'<br>')}</p>`).join('');
+  }
+
+  // Current courses — try API first, fall back to localStorage
+  let current = all.courses_current;
+  if (!current || !current.length) {
+    try { current = JSON.parse(localStorage.getItem('admin_courses_current') || 'null'); } catch(e) {}
+  }
+  renderCourses(current || [], 'current_courses_area');
+
+  // Previous courses
+  let prev = all.courses_prev;
+  if (!prev || !prev.length) {
+    try { prev = JSON.parse(localStorage.getItem('admin_courses_prev') || 'null'); } catch(e) {}
+  }
+  renderCourses(prev || [], 'previous_courses_area');
+
+  // Workshops / expert talks
+  let workshops = all.workshops;
+  if (!workshops || !workshops.length) {
+    try { workshops = JSON.parse(localStorage.getItem('admin_workshops') || 'null'); } catch(e) {}
+  }
+  renderWorkshops(workshops || []);
+})();
 </script>
 </body>
 </html>
