@@ -1,4 +1,17 @@
-.env
+# Mac system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V3
+.Trashes
+
+# Environment secrets — NEVER commit this
+backend/.env
+
+# Node modules — install fresh on server
+backend/node_modules/
 node_modules/
-uploads/
+
+# Logs
 *.log
+npm-debug.log*

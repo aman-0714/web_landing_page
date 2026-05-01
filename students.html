@@ -6,36 +6,68 @@
   <title>Students – Dr Madan Kumar Das</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; padding-bottom: 48px; }
-    .student-card { border: 1px solid var(--border); border-radius: 8px; background: #fff; overflow: hidden; transition: box-shadow 0.2s; position: relative; }
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      padding-bottom: 48px;
+    }
+    .student-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
     .student-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-    .student-card h3 { font-size: 15px; color: var(--green); margin: 0; padding: 14px 16px 6px; border-bottom: 1px solid #f0f0f0; min-height: 52px; }
-    .student-card img { width: 100%; display: block; object-fit: cover; max-height: 260px; cursor: zoom-in; }
-    .student-card .placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 220px; background: #f5f5f5; color: #aaa; font-size: 13px; text-align: center; padding: 24px; gap: 8px; }
-    .student-card .card-desc { margin: 0; padding: 10px 16px 14px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .empty-msg { grid-column: 1/-1; color: #888; font-size: 14px; text-align: center; padding: 40px 0; font-style: italic; }
-    .delete-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.55); color: #fff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity .2s; z-index: 2; }
-    .student-card:hover .delete-btn { opacity: 1; }
-
-    /* Upload section (admin only) */
-    .upload-section { background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%); border: 1px solid #c8e6c9; border-radius: 8px; padding: 20px 24px; margin-bottom: 28px; }
-    .upload-title { font-size: 14px; font-weight: 600; color: #2e7d32; margin-bottom: 14px; }
-    .upload-fields { display: flex; flex-direction: column; gap: 10px; }
-    .upload-fields input[type="text"] { padding: 10px 14px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 14px; color: #333; background: #fff; width: 100%; box-sizing: border-box; font-family: inherit; }
-    .upload-fields input[type="text"]:focus { outline: none; border-color: #2e7d32; }
-    .upload-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-    .btn-choose { border: 1.5px solid #2e7d32; background: #fff; color: #2e7d32; border-radius: 6px; padding: 9px 18px; cursor: pointer; font-size: 14px; font-family: inherit; transition: background .2s; white-space: nowrap; }
-    .btn-choose:hover { background: #e8f5e9; }
-    .selected-file-label { color: #555; font-size: 13px; flex: 1; min-width: 100px; }
-    .btn-add-photo { background: #2e7d32; color: #fff; border: none; border-radius: 6px; padding: 9px 20px; cursor: pointer; font-size: 14px; font-weight: bold; font-family: inherit; transition: background .2s; white-space: nowrap; }
-    .btn-add-photo:hover { background: #1b5e20; }
-    .btn-add-photo:disabled { background: #a5d6a7; cursor: not-allowed; }
-    .upload-note { font-size: 12px; color: #666; margin-top: 10px; padding: 8px 12px; background: #fff; border-radius: 4px; border-left: 3px solid #a5d6a7; line-height: 1.5; }
-    .loading-msg { color: #888; font-style: italic; font-size: 14px; padding: 20px 0; }
-    @media (max-width: 600px) { .student-grid { grid-template-columns: 1fr; } .upload-row { flex-direction: column; align-items: flex-start; } }
+    .student-card h3 {
+      font-size: 15px;
+      color: var(--green);
+      margin: 0;
+      padding: 14px 16px 6px;
+      border-bottom: 1px solid #f0f0f0;
+      min-height: 52px;
+    }
+    .student-card img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      max-height: 260px;
+      cursor: zoom-in;
+    }
+    .student-card .placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 220px;
+      background: #f5f5f5;
+      color: #aaa;
+      font-size: 13px;
+      text-align: center;
+      padding: 24px;
+    }
+    .student-card .card-desc {
+      margin: 0;
+      padding: 10px 16px 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .empty-msg {
+      grid-column: 1/-1;
+      color: #888;
+      font-size: 14px;
+      text-align: center;
+      padding: 40px 0;
+      font-style: italic;
+    }
+    @media (max-width: 600px) {
+      .student-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
+
 <header class="site-header">
   <div>
     <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
@@ -55,183 +87,63 @@
 
 <div class="page-wrap">
   <div class="page-bar">Students</div>
+
   <div class="sub-nav">
     <a href="research.html">Overview</a>
     <a href="publications.html">Publications</a>
     <a href="projects.html">Projects</a>
     <a href="students.html" class="active">Students</a>
-    <a href="perl.html">Power Electronics Research Lab (PERL)</a>
+    <a href="researchlab.html">Power Electronics Research Lab</a>
     <a href="positions.html">Open Positions</a>
   </div>
 
-  <!-- Admin-only upload section -->
-  <div class="upload-section" id="upload_section" style="display:none;">
-    <div class="upload-title">📷 Add Student Event Photo</div>
-    <div class="upload-fields">
-      <input type="text" id="event_name_input" placeholder="Event name (e.g. Group Outing, May 2024)">
-      <input type="text" id="event_desc_input" placeholder="Short description (optional)">
-      <div class="upload-row">
-        <button type="button" class="btn-choose" onclick="document.getElementById('photo_file_input').click()">Choose Photo</button>
-        <span class="selected-file-label" id="selected_file_label">No file selected</span>
-        <button type="button" class="btn-add-photo" id="add_photo_btn" onclick="addPhoto()">Upload Photo</button>
-      </div>
-    </div>
-    <div class="upload-note">
-      ✅ <strong>Cloud storage:</strong> Photo is saved to MongoDB + Cloudinary.
-      Anyone who opens this website link will see it instantly — on any device, any browser.
-    </div>
-    <input type="file" id="photo_file_input" accept="image/*" style="display:none" onchange="onFileChosen(this)">
+  <div class="highlight-box">
+    Student Event Photo Gallery
   </div>
 
-  <div id="loading_msg" class="loading-msg">Loading photos...</div>
+  <p class="note" style="margin-bottom:24px;">Click any photo to open it full size. Photos are managed via the Admin dashboard.</p>
+
   <div class="student-grid" id="student_grid"></div>
+
 </div>
 
 <footer class="site-footer">
-  <a href="admin-login.html" style="color:#3a7d1e;">Admin</a>
+  <a href="admin-login.html" style="color:#3a7d1e;">⚙ Admin</a>
 </footer>
 
 <script src="api.js"></script>
 <script>
-  // ── Config ─────────────────────────────────────────────────
-  // When running locally: http://localhost:3000
-  // When deployed on Render: your Render URL (same origin, so just use "" = relative)
-  const API = "";  // empty = same origin (works both locally and on Render)
-
-  // ── Auth state ─────────────────────────────────────────────
-  const isAdmin  = sessionStorage.getItem("adminLoggedIn") === "true";
-  const adminToken = sessionStorage.getItem("adminToken") || "";
-
-  if (isAdmin) {
-    document.getElementById("upload_section").style.display = "block";
-  }
-
-  // ── Load header from localStorage (set by admin dashboard) ─
-  const pn = localStorage.getItem("admin_prof_name");
-  const pt = localStorage.getItem("admin_prof_title");
-  const pd = localStorage.getItem("admin_prof_dept");
-  const pi = localStorage.getItem("admin_prof_institute");
-  if (pn) document.getElementById("hdr_name").textContent = pn;
-  if (pt || pd || pi) {
+(async () => {
+  const all = await API.getAll();
+  const p = all.profile || {};
+  if (p.name) document.getElementById("hdr_name").textContent = p.name;
+  if (p.title || p.dept || p.institute) {
     document.getElementById("hdr_title").innerHTML =
-      (pt || "Assistant Professor (Grade-II)") + ", " +
-      (pd || "Dept. of Electrical Engineering") + "<br>" +
-      (pi || "Dr B R Ambedkar National Institute of Technology, Jalandhar");
+      (p.title||"Assistant Professor (Grade-II)") + ", " +
+      (p.dept||"Dept. of Electrical Engineering") + ",<br>" +
+      (p.institute||"Dr B R Ambedkar National Institute of Technology, Jalandhar");
   }
 
-  // ── Escape HTML ────────────────────────────────────────────
-  function esc(s) {
-    return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const gallery = all.gallery || [];
+  const grid = document.getElementById("student_grid");
+  grid.innerHTML = "";
+  if (gallery.length === 0) {
+    grid.innerHTML = '<div class="empty-msg">No student event photos uploaded yet.<br>Use Admin Dashboard → Student Gallery to add photos.</div>';
+    return;
   }
-
-  // ── Render the photo grid ──────────────────────────────────
-  function renderGrid(photos) {
-    const grid = document.getElementById("student_grid");
-    document.getElementById("loading_msg").style.display = "none";
-    grid.innerHTML = "";
-
-    if (!photos || photos.length === 0) {
-      grid.innerHTML = `<div class="empty-msg">No student event photos yet.${isAdmin ? " Use the upload box above." : ""}</div>`;
-      return;
-    }
-
-    photos.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "student-card";
-      const delBtn = isAdmin
-        ? `<button class="delete-btn" onclick="deletePhoto('${p._id}', this)">✕ Remove</button>`
-        : "";
-      card.innerHTML =
-        delBtn +
-        `<h3>${esc(p.eventName || "Event")}</h3>` +
-        `<img src="${esc(p.imageUrl)}" onclick="window.open(this.src)" title="Click to view full size" onerror="this.outerHTML='<div class=placeholder>Image not available</div>'">` +
-        (p.desc ? `<p class="card-desc">${esc(p.desc)}</p>` : "");
-      grid.appendChild(card);
-    });
-  }
-
-  // ── Fetch photos from MongoDB via API ──────────────────────
-  async function loadPhotos() {
-    try {
-      const res = await fetch(`${API}/api/photos`);
-      if (!res.ok) throw new Error("Server error");
-      const data = await res.json();
-      renderGrid(data.photos || []);
-    } catch (e) {
-      document.getElementById("loading_msg").textContent = "Could not load photos. Make sure the server is running.";
-      console.error("Load photos error:", e);
-    }
-  }
-
-  // ── File chosen ────────────────────────────────────────────
-  let chosenFile = null;
-  function onFileChosen(inp) {
-    chosenFile = inp.files[0] || null;
-    document.getElementById("selected_file_label").textContent =
-      chosenFile ? chosenFile.name : "No file selected";
-  }
-
-  // ── Upload photo to server → MongoDB + Cloudinary ─────────
-  async function addPhoto() {
-    const eventName = document.getElementById("event_name_input").value.trim() || "Student Event";
-    const desc      = document.getElementById("event_desc_input").value.trim();
-
-    if (!chosenFile) { alert("Please choose a photo first."); return; }
-
-    const btn = document.getElementById("add_photo_btn");
-    btn.disabled    = true;
-    btn.textContent = "Uploading...";
-
-    try {
-      const formData = new FormData();
-      formData.append("image",     chosenFile);
-      formData.append("eventName", eventName);
-      formData.append("desc",      desc);
-
-      const res = await fetch(`${API}/api/photos`, {
-        method  : "POST",
-        headers : { "x-admin-token": adminToken },
-        body    : formData,
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Upload failed");
-      }
-
-      // Reset form and reload
-      document.getElementById("event_name_input").value = "";
-      document.getElementById("event_desc_input").value = "";
-      document.getElementById("selected_file_label").textContent = "No file selected";
-      document.getElementById("photo_file_input").value = "";
-      chosenFile = null;
-      await loadPhotos();
-      alert("✅ Photo uploaded! It is now visible to everyone.");
-    } catch (e) {
-      alert("Upload failed: " + e.message);
-    } finally {
-      btn.disabled    = false;
-      btn.textContent = "Upload Photo";
-    }
-  }
-
-  // ── Delete photo ───────────────────────────────────────────
-  async function deletePhoto(id, btn) {
-    if (!confirm("Remove this photo? This cannot be undone.")) return;
-    try {
-      const res = await fetch(`${API}/api/photos/${id}`, {
-        method  : "DELETE",
-        headers : { "x-admin-token": adminToken },
-      });
-      if (!res.ok) throw new Error("Delete failed");
-      await loadPhotos();
-    } catch (e) {
-      alert("Delete failed: " + e.message);
-    }
-  }
-
-  // ── Init ───────────────────────────────────────────────────
-  loadPhotos();
+  gallery.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "student-card";
+    const hasImg = card.imgData && card.imgData.length > 100;
+    const titleHtml = `<h3>${card.eventName ? card.eventName : 'Event'}</h3>`;
+    const imageHtml = hasImg
+      ? `<img src="${card.imgData}" onclick="window.open(this.src)" title="Click to view full size">`
+      : `<div class="placeholder">📷<br>No photo for this event yet.</div>`;
+    div.innerHTML = titleHtml + imageHtml;
+    grid.appendChild(div);
+  });
+})();
 </script>
+
 </body>
 </html>
