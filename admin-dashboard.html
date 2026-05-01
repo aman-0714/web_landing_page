@@ -56,15 +56,17 @@
                     padding-bottom: 8px; border-bottom: 1px solid #eee; }
     label { display: block; font-size: 12px; color: #666; font-weight: bold;
             letter-spacing: 0.3px; margin-bottom: 5px; }
-    input[type=text], input[type=email], input[type=tel], input[type=password], textarea {
+    input[type=text], input[type=email], input[type=tel], input[type=password], textarea, select {
       width: 100%; padding: 9px 12px; border: 1px solid #ccc;
       border-radius: 4px; font-size: 14px; font-family: Arial, sans-serif;
       transition: border-color .2s; background: #fafafa;
     }
-    input:focus, textarea:focus { outline: none; border-color: #3a7d1e; background: #fff; }
+    select { cursor: pointer; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #3a7d1e; background: #fff; }
     textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
     .field { margin-bottom: 16px; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
     /* Image upload */
     .img-upload-box {
       border: 2px dashed #c8d8b8; border-radius: 6px; padding: 0;
@@ -157,6 +159,7 @@
       .sidebar a.active { border-bottom-color: #3a7d1e; border-left: none; }
       .main { padding: 16px; }
       .row { grid-template-columns: 1fr; }
+      .row3 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -303,17 +306,15 @@
     <!-- ===== STUDENTS ===== -->
     <div class="page" id="page-students">
       <h2 class="page-title">Students</h2>
-      <p class="page-desc">Add PhD, MTech, BTech students and alumni shown on the Students page.</p>
+      <p class="page-desc">Add PhD, MTech, and BTech students shown on the Students page.</p>
       <div class="sub-tabs">
         <button class="sub-tab active" id="stutab-phd" onclick="showTab('stu','phd')">PhD</button>
         <button class="sub-tab" id="stutab-mtech" onclick="showTab('stu','mtech')">MTech</button>
         <button class="sub-tab" id="stutab-btech" onclick="showTab('stu','btech')">BTech</button>
-        <button class="sub-tab" id="stutab-alumni" onclick="showTab('stu','alumni')">Alumni</button>
       </div>
       <div id="stupanel-phd"><div class="form-card"><h3>PhD Students</h3><div id="stu_phd_container"></div><button class="btn-add" onclick="addStudent('phd')">+ Add</button></div><button class="btn-save" onclick="saveStudents('phd')">💾 Save PhD</button></div>
       <div id="stupanel-mtech" style="display:none"><div class="form-card"><h3>MTech Students</h3><div id="stu_mtech_container"></div><button class="btn-add" onclick="addStudent('mtech')">+ Add</button></div><button class="btn-save" onclick="saveStudents('mtech')">💾 Save MTech</button></div>
       <div id="stupanel-btech" style="display:none"><div class="form-card"><h3>BTech Students</h3><div id="stu_btech_container"></div><button class="btn-add" onclick="addStudent('btech')">+ Add</button></div><button class="btn-save" onclick="saveStudents('btech')">💾 Save BTech</button></div>
-      <div id="stupanel-alumni" style="display:none"><div class="form-card"><h3>Alumni</h3><div id="stu_alumni_container"></div><button class="btn-add" onclick="addStudent('alumni')">+ Add</button></div><button class="btn-save" onclick="saveStudents('alumni')">💾 Save Alumni</button></div>
     </div>
 
     <!-- ===== GALLERY ===== -->
@@ -488,7 +489,6 @@ const state = {
 };
 
 // ── Load all data from DB on startup ────────────────────────
-// Attempt to build an "all" object from localStorage when the API/backend is unreachable.
 function getOfflineAll() {
   const parse = (k) => {
     try { return JSON.parse(localStorage.getItem(k) || 'null') || null; } catch (e) { return null; }
@@ -544,10 +544,8 @@ async function loadAll() {
     console.warn('API.getAll failed, falling back to offline data', e);
     all = {};
   }
-  // if backend returned empty object or failed, fall back to offline/localStorage data
   if (!all || Object.keys(all).length === 0) {
     const off = getOfflineAll();
-    // use offline only if it has some meaningful data (profile name or about or quicklinks)
     if ((off.profile && off.profile.name) || off.about || (off.quicklinks && off.quicklinks.length)) {
       all = off;
       toast('Loaded offline data');
@@ -570,27 +568,21 @@ async function loadAll() {
     showImgBox('profile_box', p.photo, p.photoName || 'profile photo');
   }
 
-  // About
   state.about = all.about || '';
   document.getElementById('about_text').value = state.about;
 
-  // Quick Links
   state.quicklinks = all.quicklinks || [];
   renderLinks();
 
-  // Research
   state.research = all.research || [];
   renderResearch();
 
-  // Gallery
   state.gallery = all.gallery || [];
   renderGallery();
 
-  // Positions
   state.positions = all.positions || [];
   renderPositions();
 
-  // Publications
   state['pubs_journal']     = all['pubs_journal']     || [];
   state['pubs_conference']  = all['pubs_conference']  || [];
   state['pubs_book']        = all['pubs_book']        || [];
@@ -598,25 +590,21 @@ async function loadAll() {
   renderPubs('conference');
   renderPubs('book');
 
-  // Projects
   state['proj_current'] = all['proj_current'] || [];
   state['proj_closed']  = all['proj_closed']  || [];
   renderProjects('current');
   renderProjects('closed');
 
-  // Students
-  ['phd','mtech','btech','alumni'].forEach(t => {
+  ['phd','mtech','btech'].forEach(t => {
     state['stu_'+t] = all['stu_'+t] || [];
     renderStudents(t);
   });
 
-  // Courses
   state['courses_current'] = all['courses_current'] || [];
   state['courses_prev']    = all['courses_prev']    || [];
   renderCourses('current');
   renderCourses('prev');
 
-  // CV
   const cv = all.cv || {};
   state.cv = cv;
   document.getElementById('cv_awards').value      = cv.awards      || '';
@@ -631,9 +619,7 @@ async function loadAll() {
 
 loadAll().catch(e => toast('Could not load data: ' + e.message, true));
 
-// Reusable population logic so we can manually force-load offline data too
 function populateFrom(all) {
-  // Profile
   const p = all.profile || {};
   state.profile = p;
   document.getElementById('prof_name').value      = p.name || '';
@@ -646,46 +632,36 @@ function populateFrom(all) {
   document.getElementById('prof_cal').value       = p.cal || '';
   if (p.photo) { document.getElementById('prof_photo_data').value = p.photo; showImgBox('profile_box', p.photo, p.photoName || 'profile photo'); }
 
-  // About
   state.about = all.about || '';
   document.getElementById('about_text').value = state.about;
 
-  // Quick Links
   state.quicklinks = all.quicklinks || [];
   renderLinks();
 
-  // Research
   state.research = all.research || [];
   renderResearch();
 
-  // Gallery
   state.gallery = all.gallery || [];
   renderGallery();
 
-  // Positions
   state.positions = all.positions || [];
   renderPositions();
 
-  // Publications
   state['pubs_journal']     = all['pubs_journal']     || [];
   state['pubs_conference']  = all['pubs_conference']  || [];
   state['pubs_book']        = all['pubs_book']        || [];
   renderPubs('journal'); renderPubs('conference'); renderPubs('book');
 
-  // Projects
   state['proj_current'] = all['proj_current'] || [];
   state['proj_closed']  = all['proj_closed']  || [];
   renderProjects('current'); renderProjects('closed');
 
-  // Students
-  ['phd','mtech','btech','alumni'].forEach(t => { state['stu_'+t] = all['stu_'+t] || []; renderStudents(t); });
+  ['phd','mtech','btech'].forEach(t => { state['stu_'+t] = all['stu_'+t] || []; renderStudents(t); });
 
-  // Courses
   state['courses_current'] = all['courses_current'] || [];
   state['courses_prev']    = all['courses_prev']    || [];
   renderCourses('current'); renderCourses('prev');
 
-  // CV
   const cv = all.cv || {};
   state.cv = cv;
   document.getElementById('cv_awards').value      = cv.awards      || '';
@@ -698,7 +674,6 @@ function populateFrom(all) {
   document.getElementById('cv_other').value       = cv.other       || '';
 }
 
-// Check API reachability and show status
 async function checkApiAndShow() {
   const statusEl = document.getElementById('admin_status_text');
   try {
@@ -722,7 +697,6 @@ function showLocalStorageSnapshot() {
   win.document.write('<pre style="font-family:monospace;white-space:pre-wrap">' + JSON.stringify(sample, null, 2) + '</pre>');
 }
 
-// Update status after loadAll completes with a small summary
 setTimeout(() => {
   const p = localStorage.getItem('admin_prof_name') || '';
   const stat = document.getElementById('admin_status_text');
@@ -730,7 +704,6 @@ setTimeout(() => {
   else stat.textContent = 'No profile found in localStorage / offline';
 }, 800);
 
-// ── Save with fallback helper: try API, otherwise persist to localStorage prefixed with admin_
 async function saveOrFallback(key, value) {
   try {
     await API.save(key, value);
@@ -797,12 +770,12 @@ function syncLinksFromDOM() {
   }));
 }
 function addLink() {
-  syncLinksFromDOM();  // save what's currently typed before re-rendering
+  syncLinksFromDOM();
   state.quicklinks.push({ label: 'New Link', url: '#', isNew: false });
   renderLinks();
 }
 function removeLink(i) {
-  syncLinksFromDOM();  // save what's currently typed before re-rendering
+  syncLinksFromDOM();
   state.quicklinks.splice(i, 1);
   renderLinks();
 }
@@ -848,7 +821,6 @@ function renderResearch() {
   });
 }
 function syncResearchFromDOM() {
-  // Read current DOM values into state.research so unsaved edits are preserved
   const updated = state.research.map((_, i) => {
     const boxId = `rc_box_${i}`;
     return {
@@ -859,23 +831,17 @@ function syncResearchFromDOM() {
   });
   state.research = updated;
 }
-
-function addResearchCard() { 
-  // preserve current inputs before adding a new card
+function addResearchCard() {
   syncResearchFromDOM();
   state.research.push({ imgData:'', imgName:'', desc:'New research description.' });
   renderResearch();
 }
-
-function removeResearch(i) { 
-  // preserve current inputs, then remove the requested index and re-render
+function removeResearch(i) {
   syncResearchFromDOM();
-  state.research.splice(i,1); 
-  renderResearch(); 
+  state.research.splice(i,1);
+  renderResearch();
 }
-
 async function saveResearch() {
-  // Collect current DOM values, update state, then persist
   const updated = state.research.map((_, i) => {
     const boxId = `rc_box_${i}`;
     return {
@@ -997,7 +963,6 @@ function syncPubsFromDOM(type) {
   }));
   state[`pubs_${type}`] = updated;
 }
-
 function addPub(type) { syncPubsFromDOM(type); state[`pubs_${type}`].push({ title:'',authors:'',journal:'',details:'',year:'',url:'' }); renderPubs(type); }
 function removePub(type, i) { syncPubsFromDOM(type); state[`pubs_${type}`].splice(i,1); renderPubs(type); }
 async function savePubs(type) {
@@ -1034,7 +999,6 @@ function renderProjects(type) {
     </div>`;
   });
 }
-// Sync current DOM inputs into state for projects (to avoid losing unsaved edits on add/remove)
 function syncProjectsFromDOM(type) {
   const list = state[`proj_${type}`] || [];
   for (let i = 0; i < list.length; i++) {
@@ -1047,7 +1011,6 @@ function syncProjectsFromDOM(type) {
   }
   state[`proj_${type}`] = list;
 }
-
 function addProject(type) { syncProjectsFromDOM(type); state[`proj_${type}`].push({ title:'',sponsor:'',role:'',duration:'' }); renderProjects(type); }
 function removeProject(type, i) { syncProjectsFromDOM(type); state[`proj_${type}`].splice(i,1); renderProjects(type); }
 async function saveProjects(type) {
@@ -1061,7 +1024,6 @@ async function saveProjects(type) {
   try {
     const res = await saveOrFallback(`proj_${type}`, updated);
     state[`proj_${type}`] = updated;
-    // publish HTML rows for the public projects page
     let rows = '';
     updated.forEach((p, idx) => {
       rows += `<tr><td class="col-no">${idx+1}</td><td>${esc(p.title)}</td><td>${esc(p.sponsor)}</td><td>${esc(p.role)}</td><td class="col-duration">${esc(p.duration)}</td></tr>`;
@@ -1073,38 +1035,105 @@ async function saveProjects(type) {
   } catch(e) { toast(e.message, true); }
 }
 
+// ════════════════════════════════════════════════════════════
+// ── STUDENTS (with photo upload + BTech major/minor) ─────────
+// ════════════════════════════════════════════════════════════
 
-
-// ── STUDENTS ─────────────────────────────────────────────────
 function renderStudents(type) {
   const c = document.getElementById(`stu_${type}_container`);
   const list = state[`stu_${type}`] || [];
   c.innerHTML = '';
   if (!list.length) { c.innerHTML = '<p style="color:#777;font-style:italic">No entries yet.</p>'; return; }
   list.forEach((s, i) => {
+    const boxId  = `stu_box_${type}_${i}`;
+    const dataId = `stu_photo_${type}_${i}`;
+    const hasImg = s.photo && s.photo.length > 100;
+
+    // BTech-specific dropdown for Major/Minor
+    const btechFields = type === 'btech' ? `
+      <div class="field">
+        <label>Programme Type</label>
+        <select id="stu_programme_${type}_${i}">
+          <option value="" ${!s.programme ? 'selected' : ''}>-- Select --</option>
+          <option value="Major" ${s.programme === 'Major' ? 'selected' : ''}>Major</option>
+          <option value="Minor" ${s.programme === 'Minor' ? 'selected' : ''}>Minor</option>
+        </select>
+      </div>` : '';
+
     c.innerHTML += `<div class="research-item">
       <button class="btn-del del-btn" onclick="removeStudent('${type}',${i})">✕ Remove</button>
-      <div style="margin-right:100px">
+      <div style="margin-right:110px">
         <div class="row">
-          <div class="field"><label>Name</label><input type="text" id="stu_name_${type}_${i}" value="${esc(s.name||'')}"></div>
-          <div class="field"><label>Role / Degree</label><input type="text" id="stu_role_${type}_${i}" value="${esc(s.role||'')}"></div>
+          <div class="field"><label>Name</label>
+            <input type="text" id="stu_name_${type}_${i}" value="${esc(s.name||'')}">
+          </div>
+          <div class="field"><label>Role / Degree</label>
+            <input type="text" id="stu_role_${type}_${i}" value="${esc(s.role||'')}">
+          </div>
         </div>
-        <div class="field"><label>Note</label><textarea id="stu_note_${type}_${i}" rows="2">${esc(s.note||'')}</textarea></div>
+        ${btechFields}
+        <div class="field"><label>Photo (optional)</label>
+          <div class="img-upload-box" id="${boxId}">
+            <div class="img-upload-area" ${hasImg ? 'style="display:none"' : ''}>
+              <div class="icon">👤</div>
+              <div class="label-text">Browse photo</div>
+              <div class="hint">JPG, PNG, WEBP · student photo</div>
+            </div>
+            <input type="file" accept="image/*" onchange="handleImg(this,'${boxId}','${dataId}')">
+            <img class="img-upload-preview" ${hasImg ? `src="${s.photo}" style="display:block"` : ''}>
+            <div class="img-upload-footer" style="${hasImg ? 'display:flex' : ''}">
+              <span class="fname">${esc(s.photoName||'')}</span>
+              <button class="img-clear-btn" onclick="clearImg('${boxId}','${dataId}')">✕ Remove</button>
+            </div>
+          </div>
+          <input type="hidden" id="${dataId}" value="${hasImg ? esc(s.photo) : ''}">
+        </div>
+        <div class="field"><label>Note</label>
+          <textarea id="stu_note_${type}_${i}" rows="2">${esc(s.note||'')}</textarea>
+        </div>
       </div>
     </div>`;
   });
 }
-function addStudent(type) { state[`stu_${type}`].push({ name:'',role:'',note:'' }); renderStudents(type); }
-function removeStudent(type, i) { state[`stu_${type}`].splice(i,1); renderStudents(type); }
+
+// Sync DOM → state before add/remove so no data is lost
+function syncStudentsFromDOM(type) {
+  const list = state[`stu_${type}`] || [];
+  for (let i = 0; i < list.length; i++) {
+    const boxId = `stu_box_${type}_${i}`;
+    list[i] = {
+      name:      document.getElementById(`stu_name_${type}_${i}`)?.value || '',
+      role:      document.getElementById(`stu_role_${type}_${i}`)?.value || '',
+      note:      document.getElementById(`stu_note_${type}_${i}`)?.value || '',
+      photo:     document.getElementById(`stu_photo_${type}_${i}`)?.value || '',
+      photoName: document.getElementById(boxId)?.querySelector('.fname')?.textContent || '',
+      ...(type === 'btech' ? { programme: document.getElementById(`stu_programme_${type}_${i}`)?.value || '' } : {})
+    };
+  }
+  state[`stu_${type}`] = list;
+}
+
+function addStudent(type) {
+  syncStudentsFromDOM(type);
+  const newEntry = { name:'', role:'', note:'', photo:'', photoName:'' };
+  if (type === 'btech') newEntry.programme = '';
+  state[`stu_${type}`].push(newEntry);
+  renderStudents(type);
+}
+
+function removeStudent(type, i) {
+  syncStudentsFromDOM(type);
+  state[`stu_${type}`].splice(i, 1);
+  renderStudents(type);
+}
+
 async function saveStudents(type) {
-  const list = state[`stu_${type}`];
-  const updated = list.map((_,i) => ({
-    name: document.getElementById(`stu_name_${type}_${i}`)?.value || '',
-    role: document.getElementById(`stu_role_${type}_${i}`)?.value || '',
-    note: document.getElementById(`stu_note_${type}_${i}`)?.value || ''
-  }));
-  try { const res = await saveOrFallback(`stu_${type}`, updated); toast(res.ok ? 'Saved!' : 'Saved locally (offline)'); }
-  catch(e) { toast(e.message, true); }
+  syncStudentsFromDOM(type);
+  const updated = state[`stu_${type}`];
+  try {
+    const res = await saveOrFallback(`stu_${type}`, updated);
+    toast(res.ok ? 'Students saved!' : 'Saved locally (offline)');
+  } catch(e) { toast(e.message, true); }
 }
 
 // ── COURSES ──────────────────────────────────────────────────
@@ -1131,7 +1160,6 @@ function syncCoursesFromDOM(type) {
   }));
   state[`courses_${type}`] = updated;
 }
-
 function addCourse(type) { syncCoursesFromDOM(type); state[`courses_${type}`].push({ name:'',meta:'' }); renderCourses(type); }
 function removeCourse(type, i) { syncCoursesFromDOM(type); state[`courses_${type}`].splice(i,1); renderCourses(type); }
 async function saveCourses(type) {
