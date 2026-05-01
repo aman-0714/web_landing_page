@@ -3,47 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CV - Madan Kumar Das</title>
+  <title>CV – Dr Madan Kumar Das</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .cv-grid {
+    .cv-wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px 56px; }
+
+    .sub-nav { display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:28px;overflow-x:auto;-webkit-overflow-scrolling:touch; }
+    .sub-nav a { text-decoration:none;font-size:13px;color:var(--muted);padding:10px 18px;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s; }
+    .sub-nav a:hover { color:var(--text); }
+    .sub-nav a.active { color:var(--green);border-bottom-color:var(--green);font-weight:500; }
+
+    /* Identity card */
+    .cv-identity {
+      display: flex; align-items: center; gap: 28px;
+      background: linear-gradient(135deg, #1a4a0a 0%, #2d7a2d 70%);
+      border-radius: 10px; padding: 28px 32px; color: #fff;
+      margin-bottom: 36px; flex-wrap: wrap;
+    }
+    .cv-identity-photo img {
+      width: 100px; height: 100px; border-radius: 50%;
+      object-fit: cover; border: 3px solid rgba(255,255,255,0.4);
+    }
+    .cv-identity-photo .no-photo {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); display:flex; align-items:center;
+      justify-content:center; font-size:40px;
+    }
+    .cv-identity-info h2 { font-family:'EB Garamond',serif; font-size:26px; margin-bottom:4px; }
+    .cv-identity-info p { font-size:13px; opacity:.88; line-height:1.7; }
+    .cv-id-badges { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .cv-id-badge {
+      background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 4px; padding: 4px 10px; font-size: 11.5px;
+      color: #fff; text-decoration: none; white-space: nowrap; transition: background .2s;
+    }
+    .cv-id-badge:hover { background: rgba(255,255,255,0.30); }
+    .cv-download-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.5);
+      color: #fff; text-decoration: none; border-radius: 5px;
+      padding: 8px 16px; font-size: 13px; font-weight: 600; margin-top: 14px;
+      transition: background .2s;
+    }
+    .cv-download-btn:hover { background: rgba(255,255,255,0.38); }
+
+    /* Stats row */
+    .cv-stats {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 32px;
-      padding-bottom: 48px;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 14px; margin-bottom: 36px;
     }
-    .cv-section h3 {
-      font-family: 'EB Garamond', serif;
-      font-size: 17px;
-      font-weight: 500;
-      margin: 20px 0 6px;
-      color: var(--text);
-      border-top: 1px solid var(--border);
-      padding-top: 14px;
+    .cv-stat {
+      background: #fff; border: 1px solid var(--border); border-radius: 8px;
+      padding: 16px 18px; text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
-    .cv-section p, .cv-section li {
-      font-size: 13.5px;
-      color: var(--muted);
-      line-height: 1.7;
+    .cv-stat-num { font-family:'EB Garamond',serif; font-size:28px; color:var(--green); }
+    .cv-stat-label { font-size: 11.5px; color:var(--muted); margin-top:4px; }
+
+    /* Main 3-col grid */
+    .cv-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
+
+    .cv-section-head {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'EB Garamond', serif; font-size: 20px; font-weight: 500;
+      margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border);
     }
-    .cv-section ul { padding-left: 16px; margin-top: 4px; }
-    .cv-section li { margin-bottom: 6px; }
+    .cv-section-head .dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+    .dot-green { background:var(--green); }
+    .dot-orange { background:var(--orange); }
+    .dot-blue { background:var(--blue); }
+
+    .cv-sub-head {
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .04em;
+      margin: 20px 0 8px; padding-top: 14px; border-top: 1px solid #f0f0f0;
+    }
+
     .cv-entry { margin-bottom: 14px; }
     .cv-entry strong { color: var(--text); font-weight: 500; font-size: 14px; display: block; }
     .cv-entry small { display: block; font-size: 12px; color: #999; margin-top: 2px; }
+    .cv-entry .tag {
+      display: inline-block; background: #eef5e8; color: var(--green);
+      font-size: 10.5px; padding: 2px 7px; border-radius: 3px; margin-top: 4px; font-weight: 600;
+    }
+
+    ul.cv-list { padding-left: 0; list-style: none; }
+    ul.cv-list li {
+      font-size: 13.5px; color: var(--muted); line-height: 1.7;
+      padding: 5px 0; border-bottom: 1px solid #f8f8f8;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    ul.cv-list li::before { content:'›'; color:var(--green); font-weight:bold; flex-shrink:0; }
+    ul.cv-list li:last-child { border-bottom:none; }
+
     .cv-links a {
-      display: block;
-      font-size: 13.5px;
-      color: var(--blue);
-      text-decoration: none;
-      padding: 5px 0;
-      border-bottom: 1px solid #f0f0f0;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13.5px; color: var(--blue); text-decoration: none;
+      padding: 7px 0; border-bottom: 1px solid #f0f0f0; transition: color .15s;
     }
     .cv-links a:last-child { border-bottom: none; }
     .cv-links a:hover { color: var(--green); }
+    .cv-links a .icon { font-size:16px; }
+
     .contact-info { font-size: 13px; color: var(--muted); line-height: 1.8; margin-top: 10px; }
-    @media (max-width: 700px) {
-      .cv-grid { grid-template-columns: 1fr; }
+    .contact-info a { color: var(--blue); }
+
+    .id-box {
+      background: #f8fbf5; border: 1px solid #d4ebc0; border-radius: 6px;
+      padding: 14px 16px; margin-bottom: 16px; font-size: 12.5px;
+    }
+    .id-box div { display:flex; justify-content:space-between; gap:8px;
+      padding: 4px 0; border-bottom: 1px solid #edf5e8; color:var(--muted); }
+    .id-box div:last-child { border-bottom:none; }
+    .id-box strong { color:var(--text); white-space:nowrap; }
+    .id-box a { color:var(--blue); word-break:break-all; }
+
+    .count-badge {
+      display:inline-block; background:#fff8e1; color:#b8720a;
+      border:1px solid #ffe082; border-radius:3px;
+      font-size:11px; font-weight:700; padding:1px 7px; margin-left:6px;
+    }
+
+    @media (max-width:860px) { .cv-grid { grid-template-columns:1fr 1fr; } }
+    @media (max-width:600px) {
+      .cv-grid { grid-template-columns:1fr; }
+      .cv-identity { padding:20px; }
+      .cv-identity-photo { display:none; }
+      .cv-wrap { padding: 0 12px 40px; }
     }
   </style>
 </head>
@@ -53,7 +140,7 @@
   <div>
     <div class="hdr-name" id="hdr_name">Dr Madan Kumar Das</div>
     <div class="hdr-sub" id="hdr_sub">
-      Assistant Professor (Grade-II), Dept. of Electrical Engineering,<br>
+      Assistant Professor (Level-II), Dept. of Electrical Engineering,<br>
       Dr B R Ambedkar National Institute of Technology, Jalandhar
     </div>
   </div>
@@ -68,175 +155,334 @@
 
 <div class="page-wrap">
   <div class="page-bar">Curriculum Vitae</div>
-
-  <div class="cv-grid">
-
-    <!-- COLUMN 1: Awards + Memberships -->
-    <div class="cv-section">
-      <h2 class="sec-heading">
-        <span class="sec-bar bar-green"></span> Awards &amp; Fellowships
-      </h2>
-      <ul id="awards_list">
-        <li>Cited 437+ times on Google Scholar</li>
-        <li>Post-Doctoral Fellow, IIT Delhi</li>
-        <li>Research on Multilevel Inverters &amp; Grid-Connected Renewable Energy</li>
-        <li>Active Power Factor Correction (PFC) Systems</li>
-      </ul>
-
-      <h3>Professional Memberships</h3>
-      <ul id="memberships_list">
-        <li>IEEE Member</li>
-      </ul>
-    </div>
-
-    <!-- COLUMN 2: Experience + Education -->
-    <div class="cv-section">
-      <h2 class="sec-heading">
-        <span class="sec-bar bar-orange"></span> Experience
-      </h2>
-      <div id="experience_list">
-        <div class="cv-entry">
-          <strong>Assistant Professor (Grade-II)</strong>
-          <small>Dr B R Ambedkar NIT, Jalandhar — Present</small>
-        </div>
-        <div class="cv-entry">
-          <strong>Post-Doctoral Fellow</strong>
-          <small>IIT Delhi — 2020–2021</small>
-        </div>
-      </div>
-
-      <h3>Education</h3>
-      <div id="education_list">
-        <div class="cv-entry">
-          <strong>PhD — Electrical Engineering</strong>
-          <small>IIT (ISM) Dhanbad, 2019</small>
-        </div>
-        <div class="cv-entry">
-          <strong>B.Tech — Electrical &amp; Electronics</strong>
-          <small>Vinoba Bhave University, Hazaribagh</small>
-        </div>
-      </div>
-    </div>
-
-    <!-- COLUMN 3: Links + Contact -->
-    <div class="cv-section">
-      <h2 class="sec-heading">
-        <span class="sec-bar bar-blue"></span> Links &amp; Contact
-      </h2>
-      <div class="cv-links" id="cv_links_list">
-        <a href="publications.html">Publications</a>
-        <a href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ" target="_blank">Google Scholar</a>
-        <a href="https://departments.nitj.ac.in/" target="_blank">NITJ Faculty Profile</a>
-      </div>
-
-      <h3>Contact</h3>
-      <div class="contact-info" id="contact_info">
-        303, 3rd Floor Academic Building,<br>
-        Dept. of Electrical Engineering,<br>
-        Dr B R Ambedkar NIT, Jalandhar 144008<br>
-        Tel: 01815037465<br>
-        Email: <a href="mailto:dasmk@nitj.ac.in">dasmk@nitj.ac.in</a>
-      </div>
-    </div>
-
-  </div>
 </div>
 
-<footer class="site-footer">
-  <a href="admin-login.html">⚙ Admin</a>
-</footer>
+<div class="cv-wrap">
 
-<!-- JS at bottom so DOM is ready -->
+  <!-- Sub nav -->
+  <div class="sub-nav">
+    <a href="research.html">Overview</a>
+    <a href="publications.html">Publications</a>
+    <a href="projects.html">Projects</a>
+    <a href="students.html">Students</a>
+    <a href="researchlab.html">Power Electronics Research Lab</a>
+    <a href="positions.html">Open Positions</a>
+  </div>
+
+  <!-- Identity card -->
+  <div class="cv-identity">
+    <div class="cv-identity-photo" id="cv_photo_wrap">
+      <div class="no-photo">👤</div>
+    </div>
+    <div class="cv-identity-info">
+      <h2 id="cv_full_name">Dr. Madan Kumar Das</h2>
+      <p id="cv_designation">Assistant Professor (Level-II, AGP 6000)<br>
+        Department of Electrical Engineering,<br>
+        Dr. B.R. Ambedkar NIT, Jalandhar — Punjab, India 144008</p>
+      <div class="cv-id-badges" id="cv_badges">
+        <a href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ&hl=en" target="_blank" class="cv-id-badge">🎓 Google Scholar</a>
+        <a href="https://www.linkedin.com/in/madankumardas1988/" target="_blank" class="cv-id-badge">💼 LinkedIn</a>
+        <a href="https://www.scopus.com/authid/detail.uri?authorId=57192159406" target="_blank" class="cv-id-badge">🔬 Scopus</a>
+        <a href="https://vidwan.inflibnet.ac.in/profile/201032" target="_blank" class="cv-id-badge">🆔 Vidwan</a>
+      </div>
+      <div id="cv_download_wrap"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="cv-stats">
+    <div class="cv-stat"><div class="cv-stat-num" id="stat_citations">440+</div><div class="cv-stat-label">Citations (Google Scholar)</div></div>
+    <div class="cv-stat"><div class="cv-stat-num" id="stat_journals">7</div><div class="cv-stat-label">Journal Papers</div></div>
+    <div class="cv-stat"><div class="cv-stat-num" id="stat_conf">16+</div><div class="cv-stat-label">Conference Papers</div></div>
+    <div class="cv-stat"><div class="cv-stat-num" id="stat_patents">4</div><div class="cv-stat-label">Patents Filed</div></div>
+    <div class="cv-stat"><div class="cv-stat-num" id="stat_projects">3</div><div class="cv-stat-label">Research Projects</div></div>
+    <div class="cv-stat"><div class="cv-stat-num" id="stat_students">2+</div><div class="cv-stat-label">Students Guided</div></div>
+  </div>
+
+  <!-- 3-Column grid -->
+  <div class="cv-grid">
+
+    <!-- COL 1: Awards + Memberships + Research IDs + Skills -->
+    <div>
+      <div class="cv-section-head"><span class="dot dot-green"></span> Awards &amp; Fellowships</div>
+      <ul class="cv-list" id="awards_list">
+        <li>Cited 440+ times on Google Scholar</li>
+        <li>Post-Doctoral Fellow, IIT Delhi (2020–2022)</li>
+        <li>Qualified GATE 2013 (Electrical Engineering)</li>
+      </ul>
+
+      <div class="cv-sub-head">Professional Memberships</div>
+      <ul class="cv-list" id="memberships_list">
+        <li>IEEE Member</li>
+      </ul>
+
+      <div class="cv-sub-head">Research IDs</div>
+      <div class="id-box" id="research_ids_box">
+        <div><strong>Web of Science</strong> <span id="rid_wos">L-7323-2018</span></div>
+        <div><strong>Scopus ID</strong> <a id="rid_scopus" href="https://www.scopus.com/authid/detail.uri?authorId=57192159406" target="_blank">57192159406</a></div>
+        <div><strong>Vidwan ID</strong> <a id="rid_vidwan" href="https://vidwan.inflibnet.ac.in/profile/201032" target="_blank">201032</a></div>
+        <div><strong>ORCID</strong> <span id="rid_orcid">—</span></div>
+      </div>
+
+      <div class="cv-sub-head">Technical Skills</div>
+      <ul class="cv-list" id="skills_list">
+        <li>MATLAB / SIMULINK</li>
+        <li>dSPACE (DS1103, DS1104)</li>
+        <li>PSIM, OPAL-RT, Typhoon HIL</li>
+        <li>STM32F407VG, TI F28335/F28379</li>
+      </ul>
+    </div>
+
+    <!-- COL 2: Experience + Education -->
+    <div>
+      <div class="cv-section-head"><span class="dot dot-orange"></span> Experience</div>
+      <div id="experience_list">
+        <div class="cv-entry">
+          <strong>Assistant Professor (Level-II, AGP 6000)</strong>
+          <small>Dr B R Ambedkar NIT, Jalandhar</small>
+          <small>4 Sep 2023 – Till date</small>
+          <span class="tag">Current</span>
+        </div>
+        <div class="cv-entry">
+          <strong>Post-Doctoral Fellow (Research &amp; TA)</strong>
+          <small>IIT Delhi, Dept. of EEE</small>
+          <small>20 Oct 2020 – 19 Oct 2022</small>
+        </div>
+      </div>
+
+      <div class="cv-sub-head">Education</div>
+      <div id="education_list">
+        <div class="cv-entry">
+          <strong>Post-Doctoral Fellow – Electrical Engineering</strong>
+          <small>Indian Institute of Technology, Delhi</small>
+          <small>Guide: Prof. Sukumar Mishra | Oct 2020 – Oct 2022</small>
+        </div>
+        <div class="cv-entry">
+          <strong>Ph.D. – Electrical Engineering</strong>
+          <small>IIT (ISM), Dhanbad (Awarded 27 Feb 2020)</small>
+          <small>Guide: Dr Kartick Chandra Jana | Jan 2014 – Feb 2020</small>
+        </div>
+        <div class="cv-entry">
+          <strong>B.Tech – Electrical &amp; Electronics Engineering</strong>
+          <small>Vinoba Bhave University, Hazaribagh</small>
+          <small>Year: 2011 | 65.8% (First Div.)</small>
+        </div>
+      </div>
+
+      <div class="cv-sub-head">Thesis / Projects Guided</div>
+      <ul class="cv-list" id="thesis_list">
+        <li>Shivani Arora (M.Tech, NIT Hamirpur) — Speed Control of BLDC Motor [Co-guide, Completed]</li>
+        <li>Zaheen Javid (M.Tech, NITJ) — Multiport DC Fast Charger for EVs [Main guide, Ongoing]</li>
+      </ul>
+    </div>
+
+    <!-- COL 3: Links + Contact + Admin Responsibilities + Patents -->
+    <div>
+      <div class="cv-section-head"><span class="dot dot-blue"></span> Links &amp; Contact</div>
+      <div class="cv-links" id="cv_links_list">
+        <a href="publications.html"><span class="icon">📄</span> Publications</a>
+        <a href="https://scholar.google.co.in/citations?user=sRbONFIAAAAJ&hl=en" target="_blank"><span class="icon">🎓</span> Google Scholar</a>
+        <a href="https://www.linkedin.com/in/madankumardas1988/" target="_blank"><span class="icon">💼</span> LinkedIn</a>
+        <a href="https://www.scopus.com/authid/detail.uri?authorId=57192159406" target="_blank"><span class="icon">🔬</span> Scopus</a>
+        <a href="https://vidwan.inflibnet.ac.in/profile/201032" target="_blank"><span class="icon">🆔</span> Vidwan</a>
+      </div>
+
+      <div class="cv-sub-head">Contact</div>
+      <div class="contact-info" id="contact_info">
+        3rd Floor Main Building,<br>
+        Department of Electrical Engineering,<br>
+        Dr. B.R. Ambedkar NIT, Jalandhar — 144008<br><br>
+        📞 <a href="tel:+916207667319">+91 6207667319</a><br>
+        ✉ <a href="mailto:dasmk@nitj.ac.in">dasmk@nitj.ac.in</a>
+      </div>
+
+      <div class="cv-sub-head">Admin &amp; Lab Responsibilities</div>
+      <ul class="cv-list" id="admin_list">
+        <li>Power Electronics Lab In-Charge (2023–Till date)</li>
+        <li>Project Implementation Team – CoE for EVs Lab (2025–)</li>
+        <li>DUGC Secretary, Dept. of EE (2025–2026)</li>
+        <li>Major Project (Faculty) Coordinator (B.Tech 2021–25)</li>
+        <li>Coordinator, B.Tech Batch 2022–2026</li>
+      </ul>
+
+      <div class="cv-sub-head">Patents Filed <span class="count-badge" id="patent_count_badge">4</span></div>
+      <ul class="cv-list" id="patents_list">
+        <li>Asymmetrical 31-Level Inverter System — Indian Patent 202211023058 (IIT Delhi, 2022)</li>
+        <li>Automated Turn Signal Control — NITJ, App No. 202511041328A (2025)</li>
+        <li>DC Fast Charging for Multiple EVs — NITJ, App No. 202511103607A (2025)</li>
+        <li>Two-Phase Immersion Cooling Module — NITJ, Filing No. 480491-001 (2025)</li>
+      </ul>
+    </div>
+
+  </div><!-- /cv-grid -->
+
+</div><!-- /cv-wrap -->
+
+<footer class="site-footer"><a href="admin-login.html">⚙ Admin</a></footer>
+
+<script src="api.js"></script>
 <script>
-function adminGet(k) { return localStorage.getItem('admin_' + k); }
+(async () => {
+  let all = {};
+  try { all = await API.getAll(); } catch(e) {}
+  all = all || {};
 
-// ── Profile header ───────────────────────────────────────────
-const profName = adminGet('prof_name');
-const profTitle = adminGet('prof_title');
-const profDept = adminGet('prof_dept');
-const profInst = adminGet('prof_institute');
-if (profName) document.getElementById('hdr_name').textContent = profName;
-if (profTitle || profDept || profInst) {
-  document.getElementById('hdr_sub').innerHTML =
-    (profTitle || 'Assistant Professor (Grade-II)') + ', ' +
-    (profDept || 'Dept. of Electrical Engineering') + ',<br>' +
-    (profInst || 'Dr B R Ambedkar National Institute of Technology, Jalandhar');
-}
+  const p = all.profile || {};
+  const cv = all.cv || {};
 
-// ── Awards ───────────────────────────────────────────────────
-const awardsRaw = adminGet('cv_awards');
-if (awardsRaw && awardsRaw.trim()) {
-  const items = awardsRaw.split('\n').filter(Boolean);
-  document.getElementById('awards_list').innerHTML = items.map(a => `<li>${a}</li>`).join('');
-}
+  // ── Header
+  if (p.name) {
+    document.getElementById('hdr_name').textContent = p.name;
+    document.getElementById('cv_full_name').textContent = p.name;
+  }
+  if (p.title || p.dept || p.institute) {
+    document.getElementById('hdr_sub').innerHTML =
+      (p.title || 'Assistant Professor (Level-II)') + ', ' +
+      (p.dept || 'Dept. of Electrical Engineering') + ',<br>' +
+      (p.institute || 'Dr B R Ambedkar National Institute of Technology, Jalandhar');
+    document.getElementById('cv_designation').innerHTML =
+      (p.title || 'Assistant Professor (Level-II, AGP 6000)') + '<br>' +
+      (p.dept || 'Department of Electrical Engineering') + ',<br>' +
+      (p.institute || 'Dr. B.R. Ambedkar NIT, Jalandhar') + ' — Punjab, India 144008';
+  }
+  if (p.photo) {
+    document.getElementById('cv_photo_wrap').innerHTML =
+      `<img src="${p.photo}" alt="${p.name || 'Profile'}">`;
+  }
 
-// ── Memberships ──────────────────────────────────────────────
-const membRaw = adminGet('cv_memberships');
-if (membRaw && membRaw.trim()) {
-  const items = membRaw.split('\n').filter(Boolean);
-  document.getElementById('memberships_list').innerHTML = items.map(m => `<li>${m}</li>`).join('');
-}
+  // ── Download CV button
+  if (cv.pdf_url) {
+    document.getElementById('cv_download_wrap').innerHTML =
+      `<a href="${cv.pdf_url}" target="_blank" class="cv-download-btn">📥 Download CV (PDF)</a>`;
+  }
 
-// ── Experience ───────────────────────────────────────────────
-const expRaw = adminGet('cv_experience');
-if (expRaw && expRaw.trim()) {
-  const items = expRaw.split('\n').filter(Boolean);
-  document.getElementById('experience_list').innerHTML = items.map(e => {
-    const parts = e.split('|').map(s => s.trim());
-    const role = parts[0] || '';
-    const inst = parts[1] || '';
-    const dur  = parts[2] || '';
-    return `<div class="cv-entry">
-      <strong>${role}</strong>
-      ${inst ? `<small>${inst}${dur ? ' — ' + dur : ''}</small>` : ''}
-    </div>`;
-  }).join('');
-}
+  // ── Stats — use admin-entered values first, then auto-count
+  const journals  = cv.journals  || ((all.pubs_journal  ||[]).length || 7);
+  const confs     = cv.conf      || ((all.pubs_conference||[]).length || '16+');
+  const patents   = cv.patents_count || ((all.pubs_patent||[]).length || 4);
+  const projects  = cv.projects_count || ((all.proj_current||[]).length + (all.proj_closed||[]).length || 3);
+  const stuTotal  = cv.students_count || ((all.stu_phd||[]).length + (all.stu_mtech||[]).length + (all.stu_btech||[]).length || '2+');
 
-// ── Education ────────────────────────────────────────────────
-const eduRaw = adminGet('cv_education');
-if (eduRaw && eduRaw.trim()) {
-  const items = eduRaw.split('\n').filter(Boolean);
-  document.getElementById('education_list').innerHTML = items.map(ed => {
-    const parts = ed.split('|').map(s => s.trim());
-    const deg  = parts[0] || '';
-    const inst = parts[1] || '';
-    const year = parts[2] || '';
-    return `<div class="cv-entry">
-      <strong>${deg}</strong>
-      ${inst ? `<small>${inst}${year ? ', ' + year : ''}</small>` : ''}
-    </div>`;
-  }).join('');
-}
+  if (cv.citations)    document.getElementById('stat_citations').textContent = cv.citations;
+  document.getElementById('stat_journals').textContent = journals;
+  document.getElementById('stat_conf').textContent = confs;
+  document.getElementById('stat_patents').textContent = patents;
+  document.getElementById('stat_projects').textContent = projects;
+  document.getElementById('stat_students').textContent = stuTotal;
+  document.getElementById('patent_count_badge').textContent = patents;
 
-// ── Links ────────────────────────────────────────────────────
-const linkedin = adminGet('cv_linkedin');
-const scholar  = adminGet('cv_scholar');
-const nitj     = adminGet('cv_nitj');
-const other    = adminGet('cv_other');
-const linksEl  = document.getElementById('cv_links_list');
-let linksHtml  = '<a href="publications.html">Publications</a>';
-if (linkedin) linksHtml += `<a href="${linkedin}" target="_blank">LinkedIn Profile</a>`;
-if (scholar)  linksHtml += `<a href="${scholar}" target="_blank">Google Scholar</a>`;
-if (nitj)     linksHtml += `<a href="${nitj}" target="_blank">NITJ Faculty Profile</a>`;
-if (other)    linksHtml += `<a href="${other}" target="_blank">Other Link</a>`;
-if (!linkedin && !scholar && !nitj && !other) {
-  // keep defaults already in HTML
-} else {
-  linksEl.innerHTML = linksHtml;
-}
+  // ── Profile badges / links
+  const badgeLinks = [];
+  if (cv.scholar)     badgeLinks.push(`<a href="${cv.scholar}" target="_blank" class="cv-id-badge">🎓 Google Scholar</a>`);
+  if (cv.linkedin)    badgeLinks.push(`<a href="${cv.linkedin}" target="_blank" class="cv-id-badge">💼 LinkedIn</a>`);
+  if (cv.scopus_url)  badgeLinks.push(`<a href="${cv.scopus_url}" target="_blank" class="cv-id-badge">🔬 Scopus</a>`);
+  if (cv.vidwan_url)  badgeLinks.push(`<a href="${cv.vidwan_url}" target="_blank" class="cv-id-badge">🆔 Vidwan</a>`);
+  if (cv.nitj)        badgeLinks.push(`<a href="${cv.nitj}" target="_blank" class="cv-id-badge">🏛 NITJ Profile</a>`);
+  if (cv.other)       badgeLinks.push(`<a href="${cv.other}" target="_blank" class="cv-id-badge">🔗 Other</a>`);
+  if (badgeLinks.length) document.getElementById('cv_badges').innerHTML = badgeLinks.join('');
 
-// ── Contact ──────────────────────────────────────────────────
-const addr  = adminGet('prof_address');
-const phone = adminGet('prof_phone');
-const email = adminGet('prof_email');
-if (addr || phone || email) {
-  document.getElementById('contact_info').innerHTML =
-    (addr ? addr.replace(/\n/g, '<br>') + '<br>' : '') +
-    (phone ? 'Tel: ' + phone + '<br>' : '') +
-    (email ? 'Email: <a href="mailto:' + email + '">' + email + '</a>' : '');
-}
+  // ── Profile links list (col 3)
+  const linkItems = ['<a href="publications.html"><span class="icon">📄</span> Publications</a>'];
+  if (cv.scholar)    linkItems.push(`<a href="${cv.scholar}" target="_blank"><span class="icon">🎓</span> Google Scholar</a>`);
+  if (cv.linkedin)   linkItems.push(`<a href="${cv.linkedin}" target="_blank"><span class="icon">💼</span> LinkedIn</a>`);
+  if (cv.scopus_url) linkItems.push(`<a href="${cv.scopus_url}" target="_blank"><span class="icon">🔬</span> Scopus Profile</a>`);
+  if (cv.vidwan_url) linkItems.push(`<a href="${cv.vidwan_url}" target="_blank"><span class="icon">🆔</span> Vidwan Profile</a>`);
+  if (cv.nitj)       linkItems.push(`<a href="${cv.nitj}" target="_blank"><span class="icon">🏛</span> NITJ Faculty Profile</a>`);
+  if (cv.other)      linkItems.push(`<a href="${cv.other}" target="_blank"><span class="icon">🔗</span> Other Profile</a>`);
+  if (linkItems.length > 1) document.getElementById('cv_links_list').innerHTML = linkItems.join('');
+
+  // ── Research IDs
+  if (cv.wos)       document.getElementById('rid_wos').textContent = cv.wos;
+  if (cv.scopus_id) {
+    const el = document.getElementById('rid_scopus');
+    el.textContent = cv.scopus_id;
+    if (cv.scopus_url) el.href = cv.scopus_url;
+  }
+  if (cv.vidwan_id) {
+    const el = document.getElementById('rid_vidwan');
+    el.textContent = cv.vidwan_id;
+    if (cv.vidwan_url) el.href = cv.vidwan_url;
+  }
+  if (cv.orcid) {
+    const el = document.getElementById('rid_orcid');
+    el.textContent = cv.orcid;
+    el.outerHTML = `<a id="rid_orcid" href="https://orcid.org/${cv.orcid}" target="_blank">${cv.orcid}</a>`;
+  }
+
+  // ── Awards
+  if (cv.awards && cv.awards.trim()) {
+    const items = cv.awards.split('\n').filter(Boolean);
+    document.getElementById('awards_list').innerHTML = items.map(a => `<li>${a}</li>`).join('');
+  }
+
+  // ── Memberships
+  if (cv.memberships && cv.memberships.trim()) {
+    const items = cv.memberships.split('\n').filter(Boolean);
+    document.getElementById('memberships_list').innerHTML = items.map(m => `<li>${m}</li>`).join('');
+  }
+
+  // ── Skills
+  if (cv.skills && cv.skills.trim()) {
+    const items = cv.skills.split('\n').filter(Boolean);
+    document.getElementById('skills_list').innerHTML = items.map(s => `<li>${s}</li>`).join('');
+  }
+
+  // ── Admin responsibilities
+  if (cv.admin && cv.admin.trim()) {
+    const items = cv.admin.split('\n').filter(Boolean);
+    document.getElementById('admin_list').innerHTML = items.map(a => `<li>${a}</li>`).join('');
+  }
+
+  // ── Patents list
+  if (cv.patents_list && cv.patents_list.trim()) {
+    const items = cv.patents_list.split('\n').filter(Boolean);
+    document.getElementById('patents_list').innerHTML = items.map(pt => `<li>${pt}</li>`).join('');
+    document.getElementById('patent_count_badge').textContent = items.length;
+    document.getElementById('stat_patents').textContent = items.length;
+  }
+
+  // ── Thesis guided
+  if (cv.thesis && cv.thesis.trim()) {
+    const items = cv.thesis.split('\n').filter(Boolean);
+    document.getElementById('thesis_list').innerHTML = items.map(t => `<li>${t}</li>`).join('');
+  }
+
+  // ── Experience (pipe-separated: Role | Institution | Duration | Tag)
+  if (cv.experience && cv.experience.trim()) {
+    const items = cv.experience.split('\n').filter(Boolean);
+    document.getElementById('experience_list').innerHTML = items.map(e => {
+      const [role='', inst='', dur='', tag=''] = e.split('|').map(s => s.trim());
+      return `<div class="cv-entry">
+        <strong>${role}</strong>
+        ${inst ? `<small>${inst}</small>` : ''}
+        ${dur  ? `<small>${dur}</small>`  : ''}
+        ${tag  ? `<span class="tag">${tag}</span>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Education (pipe-separated: Degree | Institution | Details)
+  if (cv.education && cv.education.trim()) {
+    const items = cv.education.split('\n').filter(Boolean);
+    document.getElementById('education_list').innerHTML = items.map(ed => {
+      const [deg='', inst='', det=''] = ed.split('|').map(s => s.trim());
+      return `<div class="cv-entry">
+        <strong>${deg}</strong>
+        ${inst ? `<small>${inst}</small>` : ''}
+        ${det  ? `<small>${det}</small>`  : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Contact
+  if (p.address || p.phone || p.email) {
+    let html = '';
+    if (p.address) html += p.address.replace(/\n/g, '<br>') + '<br><br>';
+    if (p.phone)   html += `📞 <a href="tel:${p.phone}">${p.phone}</a><br>`;
+    if (p.email)   html += `✉ <a href="mailto:${p.email}">${p.email}</a>`;
+    document.getElementById('contact_info').innerHTML = html;
+  }
+})();
 </script>
-
 </body>
 </html>
